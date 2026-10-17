@@ -1,0 +1,39 @@
+# Python environment and caches
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local secrets and credentials (keep sanitized examples trackable)
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+.aws/
+.ssh/
+secrets/
+credentials/
+secrets.*
+credentials.*
+*credentials*.json
+*service-account*.json
+*service_account*.json
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Source data and generated local artifacts
+*.csv
+/data/raw/
+/data/warehouse/
+/data/published/
+/data/backups/
+/data/exports/
+/data/input.db*
+logs/
+*.duckdb
+*.duckdb.wal
+*.db
+*.db-wal
+*.db-shm
