@@ -772,7 +772,7 @@ của thành viên khác. “COMPLETED” mô tả phạm vi hạ tầng đã c�
 | SQLite Business Schema | NOT IMPLEMENTED | `sqlite_master` không có bảng. |
 | DuckDB Warehouse nghiệp vụ | NOT IMPLEMENTED | Có file DuckDB rỗng; chưa có schema/bảng hoặc dữ liệu nghiệp vụ. |
 | Bronze / Silver / Gold / Mart | NOT IMPLEMENTED | Không có source pipeline hoặc output. |
-| Model Integration | NOT IMPLEMENTED | `src/models/` trống; chưa có runner/contract tích hợp đã duyệt. |
+| Model Integration | PLANNED — NOT IMPLEMENTED | Đã có [thiết kế contract](model_integration_contract.md) và [checklist bàn giao](model_handover_checklist.md) ở mức DRAFT; chưa duyệt theo từng BT, chưa có Model Runner hoặc code tích hợp. |
 | Streamlit Integration | NOT IMPLEMENTED | Chưa có app/form/auth; module DB mới sẵn sàng để tái sử dụng. |
 
 <a id="phan-12"></a>
@@ -791,7 +791,7 @@ Mỗi bước phải có người nhận trách nhiệm, đầu vào được du
 | 6 | Gold Data Warehouse | Mô hình dữ liệu và chỉ số thống nhất, kiểm tra tính đúng. |
 | 7 | Data Mart BT1–BT8 | Input theo grain/key và lịch dữ liệu được từng thành viên xác nhận. |
 | 8 | Data Quality | Quy tắc, ngưỡng, báo lỗi/quarantine; kiểm tra xuyên các tầng khi xây dựng. |
-| 9 | Model Integration Contract | Phiên bản model/input/output, command, dependencies và evaluation; tránh data leakage. |
+| 9 | Model Integration Contract (PLANNED) | Đã soạn [thiết kế DRAFT](model_integration_contract.md) và [checklist](model_handover_checklist.md); chờ notebook/dữ liệu/dependencies và xác nhận input/output, phụ thuộc, cách chạy, metric/dung sai. Chưa tích hợp model. |
 | 10 | Prediction outputs và publish snapshots | Schema/phiên bản, kiểm tra output, quy tắc công bố và snapshot nhất quán. |
 | 11 | Streamlit Integration | UI, phân quyền, nhập liệu, đọc output theo contract, không chia sẻ connection toàn cục. |
 | 12 | End-to-end tests | Nhập liệu → lưu → pipeline → mô hình → xuất → UI, chỉ kiểm thử khi luồng tồn tại. |
@@ -841,5 +841,6 @@ roadmap hoặc tự commit/push chỉ vì cập nhật tài liệu.
 
 | Ngày | Thay đổi | File/code liên quan | Xác minh |
 | --- | --- | --- | --- |
+| 18/10/2026 | TASK 04: thêm thiết kế Model Integration Contract A–G và checklist BT1–BT8; liên kết roadmap và README. | `docs/model_integration_contract.md`, `docs/model_handover_checklist.md`, tutorial, README; đối chiếu baseline `be20f7c`, Data Contracts, Rohlik v3 DOCX và Cẩm nang chương 16. | Kiểm tra tài liệu/link; mọi bàn giao vẫn PENDING và tích hợp PLANNED. Không chạy model, đổi source/database, commit hoặc push. |
 | 18/10/2026 | Tạo tutorial 12 phần, policy, quy trình bàn giao và phân biệt hiện trạng/roadmap; thêm link README. | `docs/setup_tutorial.md`, `README.md`; đối chiếu `src/db/sqlite.py`, `src/db/backup.py`, `src/init_sqlite.py`, `tests/test_sqlite.py`, requirements/ignore, docs/contracts và kế hoạch v3. | VERIFIED cho kiểm tra môi trường hiện tại và SQLite: 14 PASS, integrity nguồn/backup ok, settings đúng, schema rỗng. DBeaver VERIFIED theo người dùng. Cài sạch/GitHub/restore thật/LAN chưa thử. |
 | 18/10/2026 | Bổ sung DuckDB Infrastructure: CLI, kết nối đọc/ghi, transaction, test và hướng dẫn backup offline; sửa cây thư mục, trạng thái và checklist, giữ lịch sử SQLite. | `src/db/duckdb.py`, `src/init_duckdb.py`, `tests/test_duckdb.py`, `docs/duckdb_setup.md`, tutorial và README. | VERIFIED: init mới và chạy lại SUCCESS với v1.5.6; file thật không có bảng; toàn bộ 28 PASS (14 SQLite + 14 DuckDB). Git ignore đúng. Chưa có backup CLI DuckDB, restore thật, Warehouse/ETL hoặc published snapshots. |

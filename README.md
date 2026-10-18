@@ -129,3 +129,11 @@ CLI có thể chạy lại; file đã có được xác minh read-only. Hiện c
 14 ca SQLite. Quy tắc một tiến trình ghi, kiểm tra kết nối, backup offline và lỗi
 thường gặp: [DuckDB Setup](docs/duckdb_setup.md). Streamlit dự kiến đọc published
 snapshots; exporter và Warehouse Bronze/Silver/Gold/Mart chưa triển khai.
+
+## Model Integration — thiết kế và bàn giao (PLANNED)
+
+- [Model Integration Contract BT1–BT8](docs/model_integration_contract.md): ranh giới DE/ML/người tích hợp, input/output, execution và phụ thuộc tham khảo chưa xác nhận.
+- [Model Handover Checklist](docs/model_handover_checklist.md): notebook và toàn bộ file liên quan, thông tin môi trường và bảng theo dõi nhận bàn giao.
+
+Đây là tài liệu thiết kế DRAFT; chưa có Model Runner, chuyển đổi notebook, training
+hoặc tích hợp Streamlit. Gold/Data Mart và dataset chính thức vẫn chờ xác nhận.
