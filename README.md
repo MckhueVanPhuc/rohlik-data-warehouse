@@ -1,5 +1,9 @@
 # Rohlik Decision Hub — setup môi trường (A1)
 
+Hướng dẫn setup và vận hành chính của Data Engineering:
+[Living Setup Tutorial & Technical Handover](docs/setup_tutorial.md).
+Tài liệu phân biệt hạ tầng đã kiểm chứng, xác nhận DBeaver của người dùng và roadmap chưa triển khai.
+
 Dự án chuẩn bị nền tảng cho công việc dữ liệu Rohlik Decision Hub. Hiện chỉ hoàn thành setup môi trường; dữ liệu nghiệp vụ chuẩn cuối cùng chưa được chốt. Pipeline, schema nghiệp vụ, Data Warehouse, giao diện và mô hình ML chưa được triển khai.
 
 ## Yêu cầu và tech stack
@@ -91,3 +95,37 @@ Phạm vi A1 kết thúc ở setup và kiểm tra môi trường. Chờ phê duy
 ## Quy tắc Git và dữ liệu cục bộ
 
 `.gitignore` bỏ qua môi trường, cache, CSV, database, đầu ra dữ liệu, log và các tên file secrets phổ biến. File nhạy cảm có tên khác cần được rà soát trước khi stage; ignore không tự loại file đã được theo dõi khỏi Git history. Chỉ stage từng file đã kiểm tra. Setup không commit, push hay cấu hình remote.
+
+## SQLite Setup
+
+Hạ tầng SQLite dùng thư viện chuẩn `sqlite3`: database cục bộ `data/input.db`, WAL,
+busy timeout 5000 ms và foreign keys bật cho mỗi connection Python mới. Chưa tạo bảng
+nghiệp vụ; schema chờ Data Contract BT1–BT8. Các phần mô tả A1 phía trên là mốc setup ban đầu.
+
+```powershell
+.\.venv\Scripts\python.exe -m src.init_sqlite
+.\.venv\Scripts\python.exe -m pytest -q
+.\.venv\Scripts\python.exe -m src.db.backup
+```
+
+Khởi tạo có thể chạy lại, không xoá dữ liệu. Module dùng chung cho backend/Streamlit
+nằm tại `src/db/sqlite.py`; backup dùng SQLite Backup API và kiểm tra integrity.
+Hướng dẫn DBeaver, transaction, backup và xử lý lỗi: [SQLite Setup](docs/sqlite_setup.md).
+Database nằm trên máy chủ cục bộ; người dùng truy cập ứng dụng qua LAN.
+Hoàn thành giai đoạn này thì chờ nghiệm thu, chưa chuyển sang Data Warehouse.
+
+## DuckDB Infrastructure Setup
+
+Đã có database rỗng `data/warehouse/rohlik.duckdb`, module đọc/ghi và transaction
+riêng tại `src/db/duckdb.py`. Chưa tạo schema/bảng nghiệp vụ hoặc nạp CSV.
+
+```powershell
+.\.venv\Scripts\python.exe -m src.init_duckdb
+.\.venv\Scripts\python.exe -m pytest tests/test_duckdb.py -q
+.\.venv\Scripts\python.exe -m pytest -q
+```
+
+CLI có thể chạy lại; file đã có được xác minh read-only. Hiện có 14 ca DuckDB và
+14 ca SQLite. Quy tắc một tiến trình ghi, kiểm tra kết nối, backup offline và lỗi
+thường gặp: [DuckDB Setup](docs/duckdb_setup.md). Streamlit dự kiến đọc published
+snapshots; exporter và Warehouse Bronze/Silver/Gold/Mart chưa triển khai.
