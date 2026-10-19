@@ -6,8 +6,9 @@ Tài liệu phân biệt hạ tầng đã kiểm chứng, xác nhận DBeaver c�
 
 Dự án chuẩn bị nền tảng cho công việc dữ liệu Rohlik Decision Hub. Đã có Python,
 SQLite/DuckDB infrastructure, Streamlit smoke test, profiling sáu CSV lịch sử và
-Source Registry/validator. Source Tables, ETL, Bronze/Silver/Gold/Mart, model integration,
-CSV Upload và dashboard nghiệp vụ chưa được triển khai. Repository chính thức:
+Source Registry/validator và Task 08A provisional historical bootstrap trong DuckDB
+thử nghiệm riêng. Warehouse chính thức, Silver/Gold/Mart, model integration, CSV
+Upload và dashboard nghiệp vụ chưa được triển khai. Repository chính thức:
 https://github.com/MckhueVanPhuc/rohlik-data-warehouse (`main`).
 
 ## Yêu cầu và tech stack
@@ -201,6 +202,26 @@ tách biệt sau khi phạm vi được duyệt; **Task 08B: NOT_READY** cho d�
 Hướng dẫn cấu trúc, API, lỗi, phê duyệt và bàn giao: [Source Registry](docs/source_registry.md)
 và [config README](config/README.md). CSV Upload→SQLite audit→DE batch→DuckDB→Parquet
 vẫn PLANNED; YAML không phải hệ thống phân quyền hoặc implementation ETL.
+
+## Task 08A — Provisional Historical Source Bootstrap
+
+Sáu CSV lịch sử được preflight và có thể nạp nguyên trạng vào database thử nghiệm
+`data/warehouse/rohlik_bootstrap_dev.duckdb`. Bootstrap tạo sáu Bronze raw tables,
+12 Source projections trực tiếp và metadata run/lineage/DQ; không ghi SQLite hoặc
+`data/warehouse/rohlik.duckdb`. Finance/HR vẫn MISSING, schema/mapping vẫn pending.
+
+```powershell
+.\.venv\Scripts\python.exe -m src.bootstrap_sources --dry-run
+.\.venv\Scripts\python.exe -m src.bootstrap_sources --execute --provisional
+.\.venv\Scripts\python.exe -m src.bootstrap_sources --validate-only
+.\.venv\Scripts\python.exe -m pytest tests/test_bootstrap_sources.py -q
+.\.venv\Scripts\python.exe -m pytest -q
+```
+
+Lần xác minh hiện tại: dry run, execute, validate và rerun no-op đều SUCCESS; 21 test
+Task 08A và **109 test toàn bộ PASS**. Báo cáo JSON/database đều được ignore. Xem
+[Historical Source Bootstrap](docs/bootstrap_sources.md) cho bảng, row counts,
+calendar rule, DBeaver queries, recovery và ranh giới Task 08B/09.
 
 ## Task 05 — Streamlit Infrastructure Smoke Test
 

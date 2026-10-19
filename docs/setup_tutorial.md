@@ -330,7 +330,8 @@ rohlik-data-warehouse/
 │   │   ├── orders/               # CSV đã có
 │   │   └── sales/                # CSV đã có
 │   ├── warehouse/
-│   │   └── rohlik.duckdb          # file DuckDB rỗng, chưa có bảng nghiệp vụ
+│   │   ├── rohlik.duckdb          # DuckDB chính thức vẫn rỗng
+│   │   └── rohlik_bootstrap_dev.duckdb # Task 08A provisional, được ignore
 │   ├── published/                # trống
 │   ├── backups/                  # hiện có một SQLite backup
 │   └── exports/                  # thư mục đầu ra dự kiến
@@ -340,6 +341,10 @@ rohlik-data-warehouse/
 │   ├── init_duckdb.py
 │   ├── profile_sources.py        # Task 06: read-only nguồn; DuckDB :memory:
 │   ├── validate_source_registry.py # Task 07: chỉ validate metadata/hash
+│   ├── bootstrap_sources.py      # Task 08A CLI: dry-run/execute/validate
+│   ├── ingestion/
+│   │   ├── __init__.py
+│   │   └── source_bootstrap.py   # Bronze/projection/lineage/idempotency
 │   ├── config/
 │   │   ├── __init__.py
 │   │   └── source_registry.py
@@ -355,6 +360,7 @@ rohlik-data-warehouse/
 │   ├── test_duckdb.py
 │   ├── test_profile_sources.py    # 10 ca, chỉ dùng CSV tạm
 │   ├── test_source_registry.py    # 39 ca, config/files tạm
+│   ├── test_bootstrap_sources.py   # 21 ca, CSV/DuckDB tạm
 │   └── test_streamlit_smoke.py    # 11 ca, gồm AppTest
 ├── docs/
 │   ├── setup_tutorial.md
@@ -366,6 +372,7 @@ rohlik-data-warehouse/
 │   ├── source_mapping.md
 │   ├── data_quality_rules.md
 │   ├── source_registry.md
+│   ├── bootstrap_sources.md
 │   ├── model_integration_contract.md # Integration Guide, filename giữ tương thích
 │   └── model_handover_checklist.md
 ├── .streamlit/config.toml        # localhost 127.0.0.1:8501
@@ -818,9 +825,10 @@ của thành viên khác. “COMPLETED” mô tả phạm vi hạ tầng đã c�
 | Data Contract BT1–BT8 workflow | RETIRED | Template và tám biểu mẫu đã loại khỏi HEAD; không còn là điều kiện Source Bootstrap. |
 | Data Source Registry (Task 07) | IMPLEMENTED / VERIFIED cho cấu hình | sources.yaml đủ 14 bảng, loader/CLI hoạt động, sáu file/hash đúng; schema/mapping nghiệp vụ vẫn pending, Finance/HR MISSING. Xem [hướng dẫn](source_registry.md). |
 | Source Profiling / Dictionary / V3 Gap (Task 06) | VERIFIED cho phân tích nguồn | CLI đủ sáu CSV, dictionary 64 cột, mapping thiết kế 14 bảng, 10 ca test mới PASS; chưa tạo schema hoặc xử lý nghiệp vụ. |
+| Historical Source Bootstrap (Task 08A) | IMPLEMENTED / VERIFIED — PROVISIONAL | Database thử nghiệm riêng có 6 Bronze raw + 12 Source projections + lineage/DQ; rerun no-op; 21 ca mới PASS. Không phê duyệt business schema. Xem [hướng dẫn](bootstrap_sources.md). |
 | SQLite Business Schema | NOT IMPLEMENTED | `sqlite_master` không có bảng. |
-| DuckDB Warehouse nghiệp vụ | NOT IMPLEMENTED | Có file DuckDB rỗng; chưa có schema/bảng hoặc dữ liệu nghiệp vụ. |
-| Bronze / Silver / Gold / Mart | NOT IMPLEMENTED | Không có source pipeline hoặc output. |
+| DuckDB Warehouse nghiệp vụ chính thức | NOT IMPLEMENTED | `rohlik.duckdb` vẫn giữ nguyên; Task 08A chỉ dùng `rohlik_bootstrap_dev.duckdb`. |
+| Bronze / Silver / Gold / Mart | BRONZE PROVISIONAL ONLY | Sáu raw Bronze và 12 projection chỉ tồn tại trong DB Task 08A; Silver/Gold/Mart NOT IMPLEMENTED. |
 | Model Integration | PLANNED — NOT IMPLEMENTED | Có [Integration Guide](model_integration_contract.md) và [checklist bàn giao](model_handover_checklist.md); xác minh trực tiếp bằng notebook/source/output, chưa có Model Runner. |
 | CSV Upload / backend validation / audit / sync / Parquet publish | PLANNED — NOT IMPLEMENTED | Đã thống nhất kiến trúc ở [CSV Upload Contract](csv_upload_contract.md); chưa có code/schema hoặc test luồng. |
 | Streamlit Infrastructure (Task 05) | VERIFIED | Smoke app localhost-only, AppTest, HTTP và hai kết nối read-only PASS. |
@@ -932,14 +940,90 @@ cho API, cách sửa mapping/thêm source, status và bàn giao ETL/Streamlit.
 - [x] Sáu verified file metadata đủ 64 cột, hash thực tế khớp.
 - [x] Finance/HR MISSING, mọi pending được báo rõ, CSV upload chưa enabled.
 - [x] 39 registry tests và 88 toàn bộ PASS; CSV/database và kết quả Task 06 giữ nguyên.
-- [ ] Phê duyệt phạm vi thử nghiệm trước Task 08A; dùng database/schema tách biệt.
+- [x] Phạm vi Task 08A đã được triển khai trong database thử nghiệm tách biệt.
 - [ ] Task 08B vẫn cần schema, mapping, policy, Finance/HR và effective keys được duyệt.
+
+<a id="task-08a"></a>
+### Task 08A — Historical Source Bootstrap & Bronze Layer (đã thực hiện)
+
+Task 08A là bootstrap lịch sử provisional từ sáu CSV vào
+`data/warehouse/rohlik_bootstrap_dev.duckdb`. `data/input.db` và
+`data/warehouse/rohlik.duckdb` không bị mở để ghi. Database/report được ignore và
+không đưa vào Git.
+
+#### Chạy từng bước trên Windows
+
+Từ project root, đóng DBeaver/client đang mở bootstrap database rồi chạy:
+
+```powershell
+# 1. Xác minh Registry và sáu source hashes
+.\.venv\Scripts\python.exe -m src.validate_source_registry
+
+# 2. Read-only preflight; mặc định CLI cũng là dry run
+.\.venv\Scripts\python.exe -m src.bootstrap_sources --dry-run
+
+# 3. Chỉ execute khi bước 2 READY_PROVISIONAL
+.\.venv\Scripts\python.exe -m src.bootstrap_sources --execute --provisional
+
+# 4. Read-only validation/report
+.\.venv\Scripts\python.exe -m src.bootstrap_sources --validate-only
+
+# 5. Rerun để xác minh no-op cùng fingerprint
+.\.venv\Scripts\python.exe -m src.bootstrap_sources --execute --provisional
+
+# 6. Unit + regression
+.\.venv\Scripts\python.exe -m pytest tests/test_bootstrap_sources.py -q
+.\.venv\Scripts\python.exe -m pytest -q
+git diff --check
+```
+
+Kết quả thực tế ngày 19/10/2026: registry SUCCESS; dry run READY_PROVISIONAL;
+execute/validate SUCCESS; rerun `idempotency=NO_OP`; 21 test Task 08A và **109 test
+toàn bộ PASS**. Báo cáo nằm trong `data/exports/source_bootstrap/`.
+
+Bootstrap tạo sáu bảng `bronze.raw_*`, 12 Source projections và schema
+`bootstrap_meta`. Bronze giữ toàn bộ cột/dòng; không fill 52 null Sales, không clip
+32 discount cells âm và không loại 42 inventory-only SKU. Calendar overlap 13.307,
+năm shared fields conflict=0 và union 23.016 keys; tám Orders-only fields, gồm
+`warehouse_limited`, chỉ ở raw/deferred metadata.
+
+Finance `cost_params` và HR `workforce_params` là `SKIPPED_MISSING`, không có bảng
+hay records giả. Mọi projection là `SUCCESS_PROVISIONAL`; schema/mapping Registry
+vẫn PENDING_CONFIRMATION. Chi tiết row counts, DBeaver SQL, lineage và recovery ở
+[Task 08A Guide](bootstrap_sources.md).
+
+#### Troubleshooting Task 08A
+
+| Triệu chứng | Xử lý an toàn |
+| --- | --- |
+| `source hash changed` / thiếu cột / row-null mismatch | Dừng; xác minh bàn giao, profile/review nguồn mới. Không sửa CSV hay hash để vượt validation. |
+| `Unsafe/protected output database path` | Dùng mặc định bootstrap dev. Không trỏ tới SQLite, `rohlik.duckdb`, raw hoặc ngoài `data/warehouse`. |
+| `Existing database is not owned by Task 08A` | Không xoá/ghi đè. Chọn database thử nghiệm mới hoặc bàn giao owner hiện tại để review. |
+| DuckDB lock/conflicting configuration | Đóng DBeaver/writer khác rồi chạy lại tuần tự; không xoá WAL. |
+| `PARTIAL` / calendar `SKIPPED_PENDING` | Review conflict và xin Planning duyệt precedence; không tự chọn source. |
+| `FAILED` giữa run | Chạy `--validate-only`, xem `bootstrap_meta.bootstrap_runs`; giữ DB/WAL và rerun cùng fingerprint sau khi xử lý nguyên nhân. |
+| Không đủ disk | Giải phóng dung lượng ngoài source; không nâng memory limit tùy tiện hoặc commit output dữ liệu. |
+
+#### Checklist nghiệm thu Task 08A
+
+- [x] HEAD/remote/working tree và Registry đã kiểm tra trước triển khai.
+- [x] Sáu CSV tồn tại, strict parse được, header/hash/count/null/key khớp Task 06.
+- [x] Free disk vượt estimate bảo thủ; database thử nghiệm tách biệt.
+- [x] Sáu Bronze raw counts khớp nguồn; 12 projections không mất/nhân dòng.
+- [x] Calendar unique/overlap/conflict được kiểm tra; không đặt official precedence.
+- [x] Run/lineage/table loads/DQ metadata đầy đủ; failure rollback có test.
+- [x] Rerun cùng fingerprint no-op; changed fingerprint bị chặn để review.
+- [x] Finance/HR MISSING; không tạo dữ liệu giả.
+- [x] Hash sáu CSV, SQLite và primary DuckDB trước/sau giống nhau.
+- [x] 21 Task 08A tests / 109 toàn bộ PASS; `git diff --check` được chạy khi kết thúc.
+- [ ] Người dùng nghiệm thu Task 08A trước khi Task 09 bắt đầu.
+- [ ] Task 08B và Task 09 vẫn NOT_READY.
 
 ### Roadmap tiếp theo — chờ nghiệm thu
 
 | Thứ tự dự kiến | Công việc | Điều kiện / đầu ra cần bàn giao |
 | --- | --- | --- |
-| 1 | Task 08A — Provisional Historical Source Bootstrap | Có thể chuẩn bị sáu CSV + registry trong database/schema thử nghiệm tách biệt sau khi phạm vi được duyệt; không yêu cầu Data Contract BT1–BT8. Chưa triển khai trong đợt này. |
+| 1 | Task 08A — Provisional Historical Source Bootstrap | IMPLEMENTED/VERIFIED trong database thử nghiệm; chờ người dùng nghiệm thu, không chuyển thành official Warehouse. |
 | 2 | Task 08B — Approved Source Finalization | Cần phê duyệt schema/mapping/policy và nguồn Finance/HR trước dữ liệu chính thức; hiện NOT_READY. |
 | 3 | SQLite Business Schema và CSV Upload API (PLANNED) | Chốt schema/keys/types/DQ/quyền, INSERT/UPSERT, chống trùng, metadata và audit cùng transaction theo [contract](csv_upload_contract.md). Chưa tạo schema/API; Finance/HR chờ phê duyệt. |
 | 4 | DuckDB Source/Bronze và sync (PLANNED) | DE chạy batch SQLite PENDING_SYNC → DuckDB, chốt version/watermark/retry; giữ nguyên sáu CSV gốc, có lineage và cách chạy tái lập. |
@@ -997,6 +1081,7 @@ roadmap hoặc tự commit/push chỉ vì cập nhật tài liệu.
 
 | Ngày | Thay đổi | File/code liên quan | Xác minh |
 | --- | --- | --- | --- |
+| 19/10/2026 | Task 08A: bootstrap sáu CSV vào DuckDB thử nghiệm; sáu Bronze raw, 12 Source projections, metadata run/lineage/DQ, calendar reconciliation, path/ownership guards và idempotent recovery. | `src/bootstrap_sources.py`, `src/ingestion/`, `tests/test_bootstrap_sources.py`, `docs/bootstrap_sources.md`, README/tutorial. | Registry/dry-run/execute/validate SUCCESS; rerun NO_OP; 21 test mới / 109 toàn bộ PASS. Hash sáu CSV, SQLite và primary DuckDB không đổi; Finance/HR SKIPPED_MISSING; không commit/push. |
 | 19/10/2026 | RETIRED workflow Data Contract BT1–BT8; xóa template/tám biểu mẫu, chuyển model docs sang hướng dẫn xác minh trực tiếp; phân tách readiness Task 08A/08B. | Data Contract files bị xóa; README, tutorial, model/source docs và metadata registry được cập nhật. | Backup ngoài repository đã xác minh; 08A chưa triển khai, 08B NOT_READY; không tự phê duyệt schema/mapping/model. |
 | 19/10/2026 | Task 05: cấu hình Streamlit localhost-only, smoke test runtime và SQLite/DuckDB read-only, tài liệu vận hành. | `.streamlit/config.toml`, `app_smoke.py`, `tests/test_streamlit_smoke.py`, `docs/streamlit_setup.md`, README/tutorial. | 11 smoke tests PASS gồm AppTest; regression/runtime/registry được xác minh trong cùng Task 05. Không sửa database, CSV hay Source Registry; dashboard nghiệp vụ và Task 08 không triển khai. |
 | 18/10/2026 | Task 07: Source Registry cho 14 bảng/9 phòng ban, verified catalog tách approvals; loader strict YAML/Pydantic, path/key/mapping/status validation và CLI read-only. | config/sources.yaml, config/README.md, src/config/source_registry.py, src/config/__init__.py, src/validate_source_registry.py, tests/test_source_registry.py, docs/source_registry.md, README/tutorial. | CLI VALID, sáu hash VERIFIED; hai nguồn MISSING, toàn bộ nghiệp vụ pending; 39 registry tests / 77 toàn bộ PASS. Task 08 NOT_READY; chưa ingestion, DB schema, upload/sync hoặc commit/push. |
