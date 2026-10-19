@@ -8,8 +8,8 @@ CLI đã chạy SUCCESS; summary tại `data/exports/source_profiling/profile.js
 ## Nguồn đối chiếu và phương pháp
 
 Đã đối chiếu [v3 A2/C1–C4/D1/E0/E1](../Rohlik_Decision_Hub_Huong_dan_thuc_hien_v3.md),
-README, Setup Tutorial, CSV Upload Contract, Model Integration Contract và tám
-Data Contracts (đều PENDING_CONFIRMATION). Kế hoạch
+README, Setup Tutorial, CSV Upload Contract và Model Integration Guide. Workflow tám
+Data Contract từng được đối chiếu ở Task 06 đã RETIRED ngày 19/10/2026. Kế hoạch
 `Rohlik_Plan_Data_Warehouse_Streamlit_Step_by_Step.docx`: **NOT_AVAILABLE**.
 Không tự tạo nội dung thay thế; không coi số liệu v3 đã chạy tại repository này.
 
@@ -370,7 +370,7 @@ giữ REFERENCE_ONLY/PENDING_CONFIRMATION thay vì tự suy từ ngày có/khôn
 
 Cần xác nhận 52 null Sales, 42 inventory-only SKU, warehouse_limited, discount âm,
 currency/unit, calendar precedence/known-future, upload key/update policy, nguồn
-Finance/HR và notebook/input/output thật BT1–BT8. Không sửa Data Contracts pending.
+Finance/HR và notebook/input/output thật BT1–BT8.
 
 **Task 07 Source Registry: READY có điều kiện để soạn registry nháp** từ metadata
 đã đo; policy/domain còn mở giữ PENDING_CONFIRMATION, Finance/HR MISSING. Chưa làm Task 07.
@@ -383,7 +383,8 @@ mapping/key/type/null và các nguồn/chính sách chưa chốt. Không giả F
 Lỗi development đã sửa: alias SQL cần AS cho value/days, NaN serialization khi
 correlation không xác định. Không sửa nguồn để vượt test. Không coi 18/18 của v3
 hoặc 26 DQ rule specs là số tests PASS. Baseline SHA-256 sáu CSV, database/backup
-và các Data Contracts được kiểm tra trước/sau; kết quả nghiệm thu được rà lại khi
-hoàn tất tài liệu: **20 file được bảo toàn, toàn bộ hash khớp**. Dictionary đã kiểm
+và các Data Contract lịch sử được kiểm tra trước/sau tại thời điểm Task 06; kết quả
+nghiệm thu khi đó ghi nhận **20 file được bảo toàn, toàn bộ hash khớp**. Workflow này
+đã RETIRED sau đó; bằng chứng lịch sử không phải yêu cầu hiện hành. Dictionary đã kiểm
 tra đủ 64 cột/6 nguồn, mapping đủ 14 bảng và đúng hai nguồn MISSING; links/anchors/
 whitespace và `git diff --check` đạt. Không mở database nghiệp vụ để lấy số liệu profiling.

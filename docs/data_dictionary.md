@@ -3,7 +3,8 @@
 Ngày 18/10/2026. Nguồn số liệu: CLI `src.profile_sources`, DuckDB 1.5.6;
 nghiệp vụ: [v3 C2/C3/A2/E1](../Rohlik_Decision_Hub_Huong_dan_thuc_hien_v3.md).
 Đây là dictionary quan sát và đề xuất, **không phải schema SQLite/Gold đã duyệt**.
-Data Contracts BT1–BT8 vẫn PENDING_CONFIRMATION.
+Workflow Data Contract BT1–BT8 đã RETIRED ngày 19/10/2026; dictionary vẫn là bằng
+chứng quan sát, không tự phê duyệt schema nghiệp vụ.
 
 Inferred types dùng full-file sample_size=-1 và strict parse. DOUBLE là float,
 không phải DECIMAL chính xác. Tiền chưa chốt precision/scale/currency nên không tự

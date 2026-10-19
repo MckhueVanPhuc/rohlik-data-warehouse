@@ -311,10 +311,10 @@ global_decisions:
     status: PENDING_CONFIRMATION
     detail: Phân công backend, kiểm quyền server-side, audit/retention và thông tin upload.
     evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
-  model_contracts:
+  model_integration_evidence:
     status: PENDING_CONFIRMATION
-    detail: BT1–BT8 input/output vẫn PENDING_CONFIRMATION; consumers hiện REFERENCE_ONLY.
-    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    detail: Notebook/source/input/output/artifact BT1–BT8 chưa được xác minh trực tiếp; consumers hiện REFERENCE_ONLY. Không phụ thuộc biểu mẫu Data Contract.
+    evidence: docs/model_integration_contract.md; docs/model_handover_checklist.md; Task 06
 analysis_only_derived_fields:
   order_index:
     status: REFERENCE_ONLY

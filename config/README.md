@@ -9,7 +9,9 @@ Source Registry không thực thi ETL, CSV upload, authentication hoặc INSERT/
 ```
 
 Chạy tại root repository. Kỳ vọng cấu hình VALID, sáu file/hash VERIFIED, Finance/HR
-MISSING đúng thiết kế; Task 08 NOT_READY vì schema/mapping/chính sách còn pending.
+MISSING đúng thiết kế. Task 08A có thể được chuẩn bị trong schema/database thử nghiệm
+tách biệt sau khi phạm vi được duyệt; Task 08B vẫn NOT_READY vì schema/mapping/chính
+sách còn pending. Không yêu cầu Data Contract BT1–BT8 cho bootstrap thử nghiệm.
 Để kiểm tra source-free checkout, dùng `--metadata-only`; tùy chọn này không xác
 nhận nguồn hiện tại tồn tại. Có `--json` để xem báo cáo có cấu trúc.
 

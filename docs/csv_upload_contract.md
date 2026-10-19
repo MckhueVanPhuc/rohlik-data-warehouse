@@ -129,7 +129,7 @@ mới hoàn chỉnh**. Nếu thất bại, không công bố bản dở; giữ b
 đó và hiển thị snapshot/as_of phù hợp. Trạng thái sau `PENDING_SYNC`, điều kiện retry
 và thời điểm coi batch đã đồng bộ/publish cần chốt; không tự gán đã thành công.
 
-Mô hình/optimization sau này tuân theo [Model Integration Contract](model_integration_contract.md):
+Mô hình/optimization sau này tuân theo [Model Integration Guide](model_integration_contract.md):
 output model qua kiểm định trước publish, không sửa Silver/Gold hay SQLite tùy tiện.
 
 ## 8. Dữ liệu gốc và Finance/HR

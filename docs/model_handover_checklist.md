@@ -1,13 +1,13 @@
 # Checklist bàn giao model — BT1–BT8
 
-**Ngày:** 18/10/2026. **Trạng thái:** đang thu thập, chưa xác nhận nhận đủ gói nào.
-Dùng cùng [Model Integration Contract](model_integration_contract.md) và
-[Data Contract template](data_contract_template.md).
+**Cập nhật:** 19/10/2026. **Trạng thái:** chưa xác minh nhận đủ gói kỹ thuật nào.
+Dùng cùng [Model Integration Guide](model_integration_contract.md). Checklist này
+ghi nhận bằng chứng bàn giao thực tế; không phải biểu mẫu Data Contract bắt buộc.
 
 ## Thành viên ML cần gửi
 
 Gửi những gì đang có; không cần viết lại notebook hay đổi thuật toán/preprocessing.
-Thông tin đã điền ở contract thì dẫn link/cell, không nhập lại. Thiếu gì cứ ghi rõ.
+Thông tin đã có bằng chứng thì dẫn link/cell, không nhập lại. Thiếu gì cứ ghi rõ.
 
 - [ ] Notebook `.ipynb` hoàn chỉnh, kèm code/module ngoài notebook nếu có.
 - [ ] Toàn bộ dataset/file notebook dùng hoặc tạo: raw, clean, features, predictions,
@@ -23,7 +23,7 @@ Thông tin đã điền ở contract thì dẫn link/cell, không nhập lại. 
   hoặc phương pháp không dùng artifact thì ghi rõ, không bắt tạo lại ngay.
 - [ ] Điểm chưa hoàn thiện, dữ liệu còn thiếu, lỗi đã biết, giả định và hạn chế.
 
-Kèm mã BT, tên người phụ trách và link Data Contract tương ứng. Không gửi mật khẩu,
+Kèm mã BT, tên người phụ trách và link notebook/source/output tương ứng. Không gửi mật khẩu,
 token hoặc dữ liệu nhạy cảm vào tài liệu/Git. Nếu không thể chuyển một dataset,
 ghi rõ hạn chế quyền và cách cấp quyền/tái tạo để người nhận xác minh.
 
@@ -31,26 +31,26 @@ ghi rõ hạn chế quyền và cách cấp quyền/tái tạo để người nh
 
 - [ ] Mở được notebook và link/file, nhận đủ theo inventory hoặc ghi phần thiếu.
 - [ ] Xác minh cách chạy lại, input/output và môi trường với chủ model; ghi bằng chứng.
-- [ ] Ghi mapping, phụ thuộc và trở ngại; chưa đủ thì giữ PENDING, không tự suy diễn.
+- [ ] Ghi mapping, phụ thuộc và trở ngại; chưa đủ bằng chứng thì ghi rõ, không tự suy diễn.
 - [ ] Thống nhất phần việc chuyển notebook với người tích hợp; chưa triển khai Model Runner.
 
 ## Theo dõi BT1–BT8
 
-`PENDING` nghĩa là chưa có bằng chứng đã nhận/xác minh tại đây, không kết luận thành
+`CHƯA XÁC MINH` nghĩa là chưa có bằng chứng đã nhận/xác minh tại đây, không kết luận thành
 viên chưa làm. “Đã nhận” và “đã chạy lại/được nghiệm thu” là hai trạng thái khác nhau.
 Chỉ cập nhật khi có người nhận, ngày, phiên bản và link bằng chứng. Artifact không
 áp dụng có thể đổi N/A sau khi chủ model xác nhận lý do.
 
-| BT / Data Contract | Notebook/code | Dữ liệu và output | Nguồn + cách chạy | Dependencies + artifact/N/A | Điểm còn thiếu | Người nhận / ngày / bằng chứng | Tái lập / nghiệm thu |
+| BT | Notebook/code | Dữ liệu và output | Nguồn + cách chạy | Dependencies + artifact/N/A | Điểm còn thiếu | Người nhận / ngày / bằng chứng | Tái lập / nghiệm thu |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [BT1](contracts/BT1.md) | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
-| [BT2](contracts/BT2.md) | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
-| [BT3](contracts/BT3.md) | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
-| [BT4](contracts/BT4.md) | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
-| [BT5](contracts/BT5.md) | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
-| [BT6](contracts/BT6.md) | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
-| [BT7](contracts/BT7.md) | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
-| [BT8](contracts/BT8.md) | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
+| BT1 | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH |
+| BT2 | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH |
+| BT3 | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH |
+| BT4 | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH |
+| BT5 | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH |
+| BT6 | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH |
+| BT7 | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH |
+| BT8 | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH | CHƯA XÁC MINH |
 
 Người tích hợp sẽ kiểm tra notebook, xác nhận mapping với DE, tách inference/tối ưu
 khi phù hợp, đối chiếu kết quả rồi mới publish cho Streamlit. Đây là quy trình dự

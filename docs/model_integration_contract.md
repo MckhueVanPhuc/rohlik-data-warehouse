@@ -1,6 +1,6 @@
-# Model Integration Contract — BT1–BT8
+# Model Integration Guide — BT1–BT8
 
-**Phiên bản tài liệu:** 0.1 — DRAFT / PENDING_CONFIRMATION. **Ngày:** 18/10/2026.
+**Phiên bản tài liệu:** 0.2 — DRAFT. **Cập nhật:** 19/10/2026.
 **Trạng thái tích hợp:** PLANNED, chưa triển khai hoặc nghiệm thu model nào.
 Baseline hạ tầng: commit `be20f7c` (Python, SQLite, DuckDB). Tài liệu này không xác
 nhận notebook/model đã chạy và không quyết định schema Gold/Data Mart chính thức.
@@ -8,23 +8,21 @@ nhận notebook/model đã chạy và không quyết định schema Gold/Data Ma
 ## Nguồn và cách đọc
 
 - [Setup Tutorial](setup_tutorial.md): trạng thái source và hạ tầng đã có.
-- [Data Contract template](data_contract_template.md), [BT1](contracts/BT1.md),
-  [BT2](contracts/BT2.md), [BT3](contracts/BT3.md), [BT4](contracts/BT4.md),
-  [BT5](contracts/BT5.md), [BT6](contracts/BT6.md), [BT7](contracts/BT7.md),
-  [BT8](contracts/BT8.md): đều PENDING_CONFIRMATION khi đối chiếu.
+- [Source Profiling](data_profiling_report.md), [Data Dictionary](data_dictionary.md),
+  [Source Mapping](source_mapping.md), [Source Registry](source_registry.md) và
+  [Data Quality Rules](data_quality_rules.md): bằng chứng dữ liệu dùng chung hiện có.
 - [Hướng dẫn Rohlik v3 — DOCX](../Rohlik_Decision_Hub_Huong_dan_thuc_hien_v3.docx),
   mục D1, E0, E1 và E2–E9: nguồn tham khảo chuỗi bài toán; có
   [bản Markdown](../Rohlik_Decision_Hub_Huong_dan_thuc_hien_v3.md) để tra cứu.
 - [Cẩm nang hệ thống hoá](../CAM_NANG_Kien_thuc_He_thong_hoa.md), chương 16,
   đặc biệt 16.0–16.1: ranh giới DE, dữ liệu dùng chung, kiểm định và truy vết.
 
-`REFERENCE_ONLY` = theo tài liệu, chưa được chủ model xác nhận.
-`PENDING_CONFIRMATION` = còn thiếu xác nhận/bằng chứng, không kết luận thành viên chưa làm.
-`CONFIRMED` chỉ dùng sau khi ghi người xác nhận, ngày, phiên bản và bằng chứng.
+`REFERENCE_ONLY` = theo tài liệu, chưa được notebook/source/output thực tế xác minh.
+Thông tin chưa có bằng chứng phải được ghi rõ; không kết luận thành viên chưa làm.
 Các interface, metadata và đường dẫn mới dưới đây là **đề xuất cần nhóm duyệt**,
 không phải module/CLI hoặc thư mục đã được tạo. Checklist nhận file nằm tại
 [Model Handover Checklist](model_handover_checklist.md); không yêu cầu nhóm điền lại
-thông tin đã có bằng chứng trong Data Contract.
+thông tin đã có bằng chứng trong notebook, source code, output hoặc trao đổi kỹ thuật.
 
 ## A. Integration Architecture
 
@@ -47,7 +45,7 @@ vụ, snapshots, publisher, Model Runner hoặc Streamlit integration.
 
 | Bên phụ trách | Trách nhiệm | Ranh giới |
 | --- | --- | --- |
-| Data Engineer | Chuẩn hoá nguồn và preprocessing dùng chung; Silver/Gold/Mart, dictionary, chất lượng, snapshot/version đầu vào khi được giao triển khai. | Không tự quyết định preprocessing/thuật toán riêng của BT. Gold/Mart phải dựa trên Data Contract được duyệt. |
+| Data Engineer | Chuẩn hoá nguồn và preprocessing dùng chung; Silver/Gold/Mart, dictionary, chất lượng, snapshot/version đầu vào khi được giao triển khai. | Không tự quyết định preprocessing/thuật toán riêng của BT. Gold/Mart phải dựa trên bằng chứng dữ liệu và quyết định nghiệp vụ đã được duyệt. |
 | Chủ model BT1–BT8 | Preprocessing và feature engineering đặc thù, training, inference/tối ưu, artifacts, dependencies, metric và giải thích kết quả. | Không sửa Silver/Gold, tự thay schema hoặc ghi tuỳ tiện vào SQLite/Warehouse. |
 | Người tích hợp (phụ trách Streamlit/tích hợp) | Chuyển notebook thành chương trình gọi được, adapter input/output, Model Runner, thứ tự chạy, xử lý lỗi, kiểm định output và kết nối Streamlit. | Không tự sửa logic mô hình để làm kết quả “khớp”; mọi thay đổi ngữ nghĩa cần chủ model xác nhận. |
 | DE + người tích hợp + chủ model | Duyệt mapping, version, dependencies giữa BT và chính sách publish; phân công người vận hành publisher. | Chưa chốt tên người chịu trách nhiệm và quyền ghi. |
@@ -56,14 +54,14 @@ Model chỉ nhận dữ liệu đầu vào được cấp và ghi output của l
 Streamlit đọc dữ liệu đã publish, không chia sẻ connection ghi DuckDB giữa các phiên.
 Chỉ tác vụ DE được phân công ghi Warehouse theo quy tắc vận hành DuckDB hiện tại.
 
-## B. Model Input Contract
+## B. Model Input Specification
 
-Với mỗi BT, dẫn chiếu Data Contract B–D/F và bổ sung thông tin tích hợp còn thiếu.
-Chưa có mapping từ dataset Colab sang Gold/Mart thì giữ PENDING_CONFIRMATION.
+Với mỗi BT, đối chiếu trực tiếp notebook/source, input/output và artifact thực tế.
+Chưa có mapping từ dataset nghiên cứu sang Gold/Mart thì ghi rõ là chưa xác minh.
 
 | Nhóm thông tin | Cần xác nhận cho từng model |
 | --- | --- |
-| Định danh | Mã/tên BT thực tế, chủ model, model_version, phiên bản code/notebook và contract. |
+| Định danh | Mã/tên BT thực tế, chủ model, model_version và phiên bản code/notebook. |
 | Nguồn | File/bảng thực sự đọc, nguồn gốc, quyền truy cập, raw/clean/features, file bổ sung và snapshot/hash nếu có. |
 | Schema | Cột bắt buộc/tùy chọn, datatype chính xác, nullability, đơn vị, định dạng ngày và timezone; không tự suy ra từ tên cột. |
 | Grain và keys | Một dòng đại diện cho gì; business key, tính duy nhất; JOIN keys, cardinality và cách xử lý không khớp. |
@@ -85,7 +83,7 @@ nếu cần. Không fit lại encoder/scaler bằng dữ liệu tương lai ho�
 Các quy tắc này cần đối chiếu notebook trước khi chấp nhận mapping, không tự viết
 Gold/Mart để ép notebook chạy.
 
-## C. Model Execution Contract
+## C. Model Execution Guide
 
 ### Tách nghiên cứu, training và inference
 
@@ -164,7 +162,7 @@ runner truyền trạng thái phải được người tích hợp xác nhận. 
 cũ hoặc file rỗng để giả SUCCESS. Mỗi lần thử có run_id riêng hoặc attempt_id gắn
 run_id; không ghi đè output đã publish, không âm thầm thay kết quả của run cũ.
 
-## D. Model Output Contract
+## D. Model Output Specification
 
 Giữ **payload riêng của từng BT** và metadata truy vết chung. Không ép forecast,
 optimization, causal effect, comparison và growth curve vào một bảng dự báo chung.
@@ -243,7 +241,7 @@ chủ model xác nhận logic/kết quả; DE xác nhận mapping dữ liệu d�
 3. Xác định preprocessing dùng chung/riêng, phần training, artifact và inference/tối
    ưu. Hỏi chủ model về trạng thái ẩn của Colab, dữ liệu mount và package cài trong cell.
 4. Cùng DE và chủ model xác nhận mapping input sang Gold/Mart đã duyệt. Chưa có
-   Gold/Mart hoặc contract thì ghi BLOCKED cho bước tích hợp liên quan, không tự tạo schema.
+   Gold/Mart hoặc bằng chứng mapping thì ghi BLOCKED cho bước liên quan, không tự tạo schema.
 5. Tách inference/optimization thành adapter/module Python khi phù hợp, tham số hoá
    path/config và kiểm tra Windows/Python 3.13. Notebook nghiên cứu vẫn được giữ.
 6. Chuẩn hoá input/output manifest, run_id và metadata theo B–D; giữ payload riêng.
@@ -271,8 +269,8 @@ bằng chứng để đánh PASS cho bất kỳ model nào. Tiêu chí dưới �
 | Thiếu dữ liệu/lỗi được xử lý | Bằng chứng BLOCKED/SKIPPED/FAILED, không publish output dở hoặc giả. | Người tích hợp |
 | Publish/Streamlit đúng snapshot | Truy vết được run/as_of, chỉ đọc bản đã duyệt; hiển thị trạng thái cũ nếu có. | Người tích hợp + bên nghiệm thu |
 
-Phiếu nghiệm thu mỗi BT cần: trạng thái PENDING/PASS/FAIL, người xác nhận, ngày,
-phiên bản contract/code/data/model và link bằng chứng. PASS khi toàn bộ tiêu chí áp
+Biên bản kiểm tra mỗi BT cần: trạng thái CHƯA XÁC MINH/PASS/FAIL, người xác nhận, ngày,
+phiên bản code/data/model và link bằng chứng. PASS khi toàn bộ tiêu chí áp
 dụng đạt; N/A phải có lý do được duyệt. Hiện mọi BT vẫn PENDING, không dùng số test
 hạ tầng SQLite/DuckDB làm bằng chứng tích hợp model.
 
@@ -290,4 +288,5 @@ hạ tầng SQLite/DuckDB làm bằng chứng tích hợp model.
 
 | Ngày | Thay đổi | Trạng thái |
 | --- | --- | --- |
+| 19/10/2026 | Retire workflow Data Contract BT1–BT8; giữ hướng dẫn tích hợp và xác minh trực tiếp từ notebook/source/output/artifact. | DRAFT; không có model nào được tuyên bố đã tích hợp. |
 | 18/10/2026 | Tạo thiết kế A–G từ source/tài liệu hiện có; ghi rõ khác biệt với v3 và phụ thuộc chưa xác nhận. | DRAFT; kiểm tra tài liệu, không chạy model hoặc đổi database. |

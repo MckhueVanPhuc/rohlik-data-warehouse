@@ -7,8 +7,8 @@ Registry hợp lệ về kỹ thuật **không đồng nghĩa READY_FOR_INGESTIO
 Nguồn đối chiếu: [Task 06 Dictionary](data_dictionary.md), [Mapping](source_mapping.md),
 [Profiling Report](data_profiling_report.md), [DQ Rules](data_quality_rules.md),
 [v3 C1–C4/D1/E0–E1](../Rohlik_Decision_Hub_Huong_dan_thuc_hien_v3.md),
-[CSV Upload Contract](csv_upload_contract.md), README và Setup Tutorial.
-Data Contracts BT1–BT8 giữ PENDING_CONFIRMATION, không được chỉnh trong Task 07.
+[CSV Upload Contract](csv_upload_contract.md), README và Setup Tutorial. Workflow
+Data Contract BT1–BT8 đã RETIRED ngày 19/10/2026; registry dựa trên bằng chứng nguồn.
 
 ## 1. Kiến trúc và phạm vi
 
@@ -29,7 +29,7 @@ Task 07 chỉ cung cấp config cho các bước sau, chưa thực thi luồng n
 | --- | --- |
 | `source_files` | Catalog sáu file với paths, hash SHA-256, số dòng, UTF-8 compatibility, delimiter/header, inferred types và null counts đủ 64 cột từ Task 06. |
 | `tables` | 14 định nghĩa logic: name, department, description, source_type/source_files/source_availability, grain/keys, columns, mappings, deferred_mappings, transformations, DQ refs, consumers, approvals, upload, provenance, pending_decisions. |
-| `global_decisions` | Null Sales, discount âm, warehouse_limited, currency/units, calendar precedence, known-future, update/duplicate policy, Finance/HR, effective keys, authorization/audit và model contracts. |
+| `global_decisions` | Null Sales, discount âm, warehouse_limited, currency/units, calendar precedence, known-future, update/duplicate policy, Finance/HR, effective keys, authorization/audit và bằng chứng tích hợp model. |
 | `upload_batch_metadata` | 11 tên metadata đã được đề xuất, không phải DDL hoặc cột tự động của Source Tables. |
 | `analysis_only_derived_fields` | `order_index`, `max_discount`, `final_price` là REFERENCE_ONLY cho tầng phân tích, không phải cột CSV nguồn. |
 
@@ -217,11 +217,15 @@ Kết quả thực tế trên cấu hình hoàn chỉnh: **39 registry tests PAS
 77 PASS, 0 FAIL, không skip** (baseline Task 06 là 38). Không hardcode số tests trong
 API hoặc validator. Test hạ tầng không xác nhận Finance/HR hay CSV upload đã hoạt động.
 
-**Task 08 đầy đủ: NOT_READY.** Có thể dùng registry để lập kế hoạch, đối chiếu nguồn,
-thảo luận layout và test thiết kế trên fixtures sau khi được giao việc. Chưa được
-tạo/nạp Source Tables thật. Còn BLOCKED: approval schemas/mappings, null/discount,
+**Task 08A — Provisional Historical Source Bootstrap:** có thể chuẩn bị triển khai từ
+sáu CSV và registry hiện tại trong database/schema thử nghiệm tách biệt sau khi phạm
+vi thử nghiệm được phê duyệt. Không cần Data Contract BT1–BT8; Task 07 không tự cấp
+quyền chạy bootstrap.
+
+**Task 08B — Approved Source Finalization: NOT_READY.** Chưa được tạo/nạp Source Tables
+chính thức. Còn BLOCKED: approval schemas/mappings, null/discount,
 warehouse_limited/calendar/currency/known-future/update/duplicate policy, effective
-keys và nguồn/giá trị Finance/HR, contracts của model. Đừng gọi 12 bảng có source là
+keys và nguồn/giá trị Finance/HR, bằng chứng tích hợp model. Đừng gọi 12 bảng có source là
 12 bảng đã duyệt hoặc tự chọn subset ingestion trong Task 07.
 
 Người ETL nhận Registry API, proposed mappings/DQ refs và pending list; người Streamlit

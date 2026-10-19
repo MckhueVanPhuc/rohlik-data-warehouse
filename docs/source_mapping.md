@@ -266,5 +266,6 @@ aggregate từ Sales, không sửa thành orders hoặc SUM tổng đơn qua SKU
 batch_id/as_of và schema_version cần chốt trong Source Registry/CSV Upload Contract,
 không thêm vào CSV gốc ở Task 06. Finance/HR chỉ có CSV riêng sau duyệt schema/giá trị.
 Giữ kiến trúc CSV lịch sử read-only và CSV upload→SQLite records+audit/metadata cùng
-transaction→PENDING_SYNC→DE batch DuckDB→Parquet sau kiểm định. Không sửa Data Contracts.
-Task 07 chỉ READY có điều kiện để soạn nháp sau nghiệm thu; Task 08 đầy đủ còn NOT READY.
+transaction→PENDING_SYNC→DE batch DuckDB→Parquet sau kiểm định. Workflow Data Contract
+BT1–BT8 đã RETIRED. Task 08A có thể chuẩn bị trong môi trường thử nghiệm tách biệt sau
+phê duyệt phạm vi; Task 08B chính thức vẫn NOT_READY vì các quyết định trên chưa chốt.

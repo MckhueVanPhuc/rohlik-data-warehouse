@@ -4,7 +4,11 @@ Hướng dẫn setup và vận hành chính của Data Engineering:
 [Living Setup Tutorial & Technical Handover](docs/setup_tutorial.md).
 Tài liệu phân biệt hạ tầng đã kiểm chứng, xác nhận DBeaver của người dùng và roadmap chưa triển khai.
 
-Dự án chuẩn bị nền tảng cho công việc dữ liệu Rohlik Decision Hub. Đã có setup môi trường, SQLite/DuckDB infrastructure, profiling sáu CSV lịch sử và Source Registry/validator; dữ liệu nghiệp vụ chuẩn cuối cùng chưa được chốt. Pipeline, schema nghiệp vụ, Data Warehouse, giao diện và mô hình ML chưa được triển khai.
+Dự án chuẩn bị nền tảng cho công việc dữ liệu Rohlik Decision Hub. Đã có Python,
+SQLite/DuckDB infrastructure, Streamlit smoke test, profiling sáu CSV lịch sử và
+Source Registry/validator. Source Tables, ETL, Bronze/Silver/Gold/Mart, model integration,
+CSV Upload và dashboard nghiệp vụ chưa được triển khai. Repository chính thức:
+https://github.com/MckhueVanPhuc/rohlik-data-warehouse (`main`).
 
 ## Yêu cầu và tech stack
 
@@ -104,13 +108,14 @@ Phạm vi A1 kết thúc ở setup và kiểm tra môi trường. Chờ phê duy
 
 ## Quy tắc Git và dữ liệu cục bộ
 
-`.gitignore` bỏ qua môi trường, cache, CSV, database, đầu ra dữ liệu, log và các tên file secrets phổ biến. File nhạy cảm có tên khác cần được rà soát trước khi stage; ignore không tự loại file đã được theo dõi khỏi Git history. Chỉ stage từng file đã kiểm tra. Setup không commit, push hay cấu hình remote.
+`.gitignore` bỏ qua môi trường, cache, CSV, database, đầu ra dữ liệu, log và các tên file secrets phổ biến. File nhạy cảm có tên khác cần được rà soát trước khi stage; ignore không tự loại file đã được theo dõi khỏi Git history. Chỉ stage từng file đã kiểm tra. Remote `origin` trỏ tới repository chính thức nêu trên.
 
 ## SQLite Setup
 
 Hạ tầng SQLite dùng thư viện chuẩn `sqlite3`: database cục bộ `data/input.db`, WAL,
 busy timeout 5000 ms và foreign keys bật cho mỗi connection Python mới. Chưa tạo bảng
-nghiệp vụ; schema chờ Data Contract BT1–BT8. Các phần mô tả A1 phía trên là mốc setup ban đầu.
+nghiệp vụ; schema chờ bằng chứng dữ liệu và quyết định nghiệp vụ được duyệt. Workflow
+Data Contract BT1–BT8 đã RETIRED. Các phần mô tả A1 phía trên là mốc setup ban đầu.
 
 ```powershell
 .\.venv\Scripts\python.exe -m src.init_sqlite
@@ -140,13 +145,14 @@ CLI có thể chạy lại; file đã có được xác minh read-only. Hiện c
 thường gặp: [DuckDB Setup](docs/duckdb_setup.md). Streamlit dự kiến đọc published
 snapshots; exporter và Warehouse Bronze/Silver/Gold/Mart chưa triển khai.
 
-## Model Integration — thiết kế và bàn giao (PLANNED)
+## Model Integration — hướng dẫn và bàn giao kỹ thuật (PLANNED)
 
-- [Model Integration Contract BT1–BT8](docs/model_integration_contract.md): ranh giới DE/ML/người tích hợp, input/output, execution và phụ thuộc tham khảo chưa xác nhận.
+- [Model Integration Guide BT1–BT8](docs/model_integration_contract.md): ranh giới DE/ML/người tích hợp, input/output, execution và phụ thuộc tham khảo chưa xác nhận.
 - [Model Handover Checklist](docs/model_handover_checklist.md): notebook và toàn bộ file liên quan, thông tin môi trường và bảng theo dõi nhận bàn giao.
 
-Đây là tài liệu thiết kế DRAFT; chưa có Model Runner, chuyển đổi notebook, training
-hoặc tích hợp Streamlit. Gold/Data Mart và dataset chính thức vẫn chờ xác nhận.
+Đây là tài liệu kỹ thuật DRAFT; xác minh trực tiếp từ notebook/source/output/artifact,
+không yêu cầu biểu mẫu Data Contract riêng. Chưa có Model Runner, chuyển đổi notebook,
+training hoặc tích hợp Streamlit. Gold/Data Mart và dataset chính thức vẫn chờ xác nhận.
 
 ## Task 06 — Source Profiling, Dictionary và V3 Gap Analysis
 
@@ -190,7 +196,34 @@ không nạp CSV, kết nối database hoặc tạo Source Tables.
 CLI mặc định kiểm sáu file tồn tại và hash khớp; `--metadata-only` không yêu cầu CSV
 trên máy nhận. Config VALID có thể vẫn có quyết định pending. Finance cost/HR workforce
 MISSING đúng thiết kế; mọi schema/mapping/upload approval vẫn PENDING_CONFIRMATION,
-upload disabled. **Task 08: NOT_READY**, không phải cho phép bootstrap/ingestion.
+upload disabled. **Task 08A** có thể được chuẩn bị trong database/schema thử nghiệm
+tách biệt sau khi phạm vi được duyệt; **Task 08B: NOT_READY** cho dữ liệu chính thức.
 Hướng dẫn cấu trúc, API, lỗi, phê duyệt và bàn giao: [Source Registry](docs/source_registry.md)
 và [config README](config/README.md). CSV Upload→SQLite audit→DE batch→DuckDB→Parquet
 vẫn PLANNED; YAML không phải hệ thống phân quyền hoặc implementation ETL.
+
+## Task 05 — Streamlit Infrastructure Smoke Test
+
+Task 05 cung cấp cấu hình localhost-only ở `.streamlit/config.toml` và ứng dụng kiểm tra
+read-only `app_smoke.py`. Ứng dụng xác minh runtime cùng `SELECT 42` trên SQLite/DuckDB;
+không tạo database, schema, dữ liệu, dashboard nghiệp vụ hoặc chạy ETL/model.
+
+```powershell
+.\.venv\Scripts\python.exe -m streamlit run app_smoke.py
+.\.venv\Scripts\python.exe -m pytest tests/test_streamlit_smoke.py -q
+```
+
+Truy cập `http://127.0.0.1:8501`, dừng bằng `Ctrl+C`. Xem
+[Streamlit Infrastructure Setup](docs/streamlit_setup.md) để biết trạng thái, xử lý lỗi
+và ranh giới với ứng dụng chính thức. LAN/public hosting chưa bật.
+
+## Quyết định quy trình và bước tiếp theo
+
+Workflow Data Contract BT1–BT8 đã **RETIRED** từ 19/10/2026. Source Bootstrap không
+còn phụ thuộc việc điền biểu mẫu riêng. DE sử dụng sáu CSV, profiling, dictionary,
+mapping, registry, DQ rules và bằng chứng kỹ thuật thực tế. Việc bỏ workflow không
+tự phê duyệt schema/mapping, không xác nhận model đã tích hợp và không bật ingestion.
+
+Bước tiếp theo dự kiến là Task 08A — provisional historical bootstrap trong môi trường
+thử nghiệm tách biệt, chỉ sau khi phạm vi được phê duyệt. Task 08B — finalization chính
+thức vẫn chờ schema, mapping, chính sách dữ liệu và nguồn Finance/HR được duyệt.

@@ -4,7 +4,8 @@
 
 SQLite là nơi lưu dữ liệu nhân viên nhập qua Streamlit trong tương lai. File mặc định:
 `C:\Users\win11\Documents\rohlik-data-warehouse\data\input.db`.
-Không có bảng nghiệp vụ hoặc dữ liệu mẫu; schema và phân quyền chờ Data Contract BT1–BT8.
+Không có bảng nghiệp vụ hoặc dữ liệu mẫu; schema và phân quyền vẫn cần quyết định
+nghiệp vụ dựa trên bằng chứng nguồn. Workflow Data Contract BT1–BT8 đã RETIRED.
 Không tạo DuckDB, ETL hay giao diện ở giai đoạn này.
 
 Phương thức nhập chính đã thống nhất là **CSV upload**, không bắt buộc form từng
@@ -132,5 +133,5 @@ git ls-files -- '*.db' '*.db-wal' '*.db-shm' 'data/backups/*'
 ```
 
 Lệnh thứ hai phải không có kết quả. Không sửa CSV, không tự commit/push.
-Giai đoạn này dừng tại hạ tầng SQLite. Chờ nghiệm thu và Data Contract trước schema,
+Giai đoạn này dừng tại hạ tầng SQLite. Chờ nghiệm thu và phê duyệt schema trước khi
 phân quyền nghiệp vụ, CSV upload/preview/xác nhận, ETL, Warehouse hoặc tích hợp BT1–BT8.
