@@ -1,0 +1,649 @@
+STT	Mục	Vai trò	Tên tài liệu	Loại	Link tài liệu
+134	0.4	Nguồn chính	5 kỹ năng mềm quan trọng trong ngành IT/CS	Bài đọc	
+491	0.4	Nguồn chính	Các công việc liên quan đến data (định hướng nghề)	Bài đọc	
+350	0.4	Nguồn chính	4 bài viết AIO Conquer: chiến lược trở thành Data Scientist, Frequentist vs Bayesian, loss cho segmentation, ML cơ bản	Blog	https://aioconquer.aivietnam.edu.vn/posts/hieu-minh-chien-luoc-tro-thanh-data-scientists-hieu-qua
+129	0.4	Nguồn chính	Blog hay và cập nhật về AI (link dưới comment)	Blog	https://outcomeschool.com/blog
+130	0.4	Nguồn chính	"Blog tổng quan về AI: ""Hiểu AI trước khi học AI"", ""AI dùng để làm gì…"""	Blog	https://aioconquer.aivietnam.edu.vn/posts/hieu-ai-truoc-khi-hoc-ai-tu-hieu-ban-chat-den-dinh-huong-va-lo-trinh-1
+131	0.4	Nguồn chính	Series bài đọc AI tiếng Việt (blog AIO)	Blog	https://aioconquer.aivietnam.edu.vn/
+133	0.4	Nguồn chính	Trang web kho tài liệu AI/DS	Repo / Công cụ	https://ml-resources.vercel.app/
+135	0.4	Nguồn chính	Trang web tự học AI: lộ trình cho DE, DA, DS… (roadmap.sh?) – link dưới comment	Repo / Công cụ	https://roadmap.sh/roadmaps
+1	1.1	Nguồn chính	Logic Thinking and Problem Solving for Data Science and AI	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/8
+138	1.1	Nguồn chính	Bài viết ~39 trang: Logical thinking & Problem solving trong AI và DS	Blog	https://aivietnam.edu.vn/blog/logical-thinking-problem-solving
+136	1.1	Cùng chủ đề	Bài giảng: Logical Thinking và Problem Solving trong AI	Slide	https://drive.google.com/file/d/1c2kcGAL4P2siJ4oS595xpe9t-YBvo5SE/view
+137	1.1	Cùng chủ đề	Video buổi học: Logical thinking và problem solving	Video	https://youtu.be/4NBh4_kb8TE
+2	1.2	Nguồn chính	Structured and Deep Thinking	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/88
+10	1.3	Nguồn chính	Data Structure and Applications	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/74
+7	1.3	Nguồn chính	List Applications in AI	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/5
+6	1.3	Nguồn chính	List cơ bản trong Python	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/71
+8	1.3	Nguồn chính	Ứng dụng của Python Dictionary trong các bài toán thực tế	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/7
+462	1.3	Cùng chủ đề	Bài đọc Python cơ bản: Xây dựng chatbot đơn giản	Bài đọc	https://drive.google.com/file/d/1OMcn-WpR0zmSPAwtxCFJY0Ed29hFnxPY/view
+12	1.3	Cùng chủ đề	Bài đọc Python nâng cao (RWarmup1-2026)	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/46
+149	1.3	Cùng chủ đề	Bài đọc Python nâng cao: biến và địa chỉ bộ nhớ	Bài đọc	https://drive.google.com/file/d/1Dvyb0UHLI05Fw83UE_RhiAhvmpjcTu91/view
+152	1.3	Cùng chủ đề	Bài đọc: Colab; biến và hàm trong Python (warm-up AIO2026)	Bài đọc	https://drive.google.com/file/d/1uOtHcw5OxqSYYmUkXDRHMaCnln4Q07rO/view
+146	1.3	Cùng chủ đề	Bài đọc: Ứng dụng của List trong bài toán AI/DS thực tế	Bài đọc	https://drive.google.com/file/d/12-cZ3TgxqKrw2MQjncxR7cGhRS6uV_yp/view
+154	1.3	Cùng chủ đề	Cheat-sheet: Xây dựng hàm trong Python	Bài đọc	
+143	1.3	Cùng chủ đề	Tutorial: Vòng lặp FOR và ứng dụng	Bài đọc	https://drive.google.com/file/d/1_zJnj5qORwzMH6vgftGzkYu4fFew6Pq4/view
+147	1.3	Cùng chủ đề	Tutorial: Ứng dụng của Dictionary trong AI	Bài đọc	https://drive.google.com/file/d/1dPMnziGc7DS2n2r7wT2g9E75Njauj4MZ/view
+155	1.3	Cùng chủ đề	Tài liệu 35 ngày học code Python từ số 0 (TA Đăng Nhã)	Bài đọc	
+367	1.3	Cùng chủ đề	Tài liệu 70 ngày học code Python và AI cho beginner (TA Vũ Nguyên)	Bài đọc	
+156	1.3	Cùng chủ đề	Tài liệu ~200 trang về Python/Data cơ bản (xử lý các loại dữ liệu)	Bài đọc	https://drive.google.com/file/d/1KipwYG9DJDzQj1hNUpaSxBuVlXsGzrP6/view
+13	1.3	Cùng chủ đề	Các bài đọc thêm lớp WarmUp2026	Tuyển tập	https://tutorial.aivietnam.edu.vn/pdf/47
+159	1.3	Cùng chủ đề	Tóm tắt List trong Python (infographic)	Slide	
+164	1.3	Cùng chủ đề	2 blog AI hằng tuần (Python … nâng cao)	Blog	https://www.notion.so/NH-T-K-AIO-2025-GRID056-20cb7abc5523802dbd65d65a04244570
+148	1.4	Nguồn chính	Advanced Python: Những lỗi phổ biến trong OOP (33 trang)	Bài đọc	https://drive.google.com/file/d/1YBaT3scval5EFkEHFpmM5n6Yip2Zlf2f/view
+11	1.4	Nguồn chính	Lập trình hướng đối tượng (OOP)	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/75
+9	1.4	Nguồn chính	Naming Convention with PEP-8 (bản tutorial & bản cập nhật)	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/72
+150	1.4	Cùng chủ đề	Bài đọc: Các chuẩn viết code trong Python (PEP8)	Bài đọc	https://aivietnam.edu.vn/blog/huong-dan-pep8
+151	1.4	Cùng chủ đề	Bài đọc: Các nguyên tắc lập trình Python (PEP8)	Bài đọc	https://drive.google.com/file/d/17EeidgWPYWuf6GXtWILT1P_7dA7cNnEF/view
+153	1.4	Cùng chủ đề	Bài đọc: Lập trình hướng đối tượng dùng Python	Bài đọc	https://drive.google.com/file/d/1EQxLPmdXS39mqIAIgfYxZ6vYOLV6K9nJ/view
+157	1.4	Cùng chủ đề	Bài giảng OOP dùng Python	Slide	https://drive.google.com/file/d/1qITEsAPs0OiczVHx7Cpo22glSjtmw9fG/view
+158	1.4	Cùng chủ đề	Slide: Các nguyên tắc lập trình trong Python	Slide	https://drive.google.com/file/d/1XmonF86Cp6OLRyYm8ZKWl8djo2CYpkRs/view
+160	1.4	Cùng chủ đề	Video (>3.5h): Viết code đúng trong Python (advanced programming, Dr. Hà)	Video	https://youtu.be/2rXiNQT4RO4
+161	1.4	Cùng chủ đề	Bài tập OOP + Data Structure dùng Python	Bài tập	https://drive.google.com/file/d/10MVFzaEgmyg9CONQyq3GNSPB3nkSPIPU/view
+162	1.4	Cùng chủ đề	Bài tập về OOP dùng Python (video)	Bài tập	
+144	1.5	Nguồn chính	Bài giảng Git & GitHub (Skills for DS/AI)	Repo / Công cụ	https://drive.google.com/file/d/1xWXYqzZCFUn3ZbHCd1jxO-s-l_tdP2xU/view
+145	1.5	Nguồn chính	Video (~3.5h): Git/GitHub quản lý phiên bản source code	Repo / Công cụ	https://youtu.be/LbNd2XgWFe0
+3	1.6	Nguồn chính	Vibe Coding dùng Claude Code	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/59
+5	1.6	Nguồn chính	Vibe Coding to reimplement Projects 1.1 and 1.2	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/77
+142	1.6	Cùng chủ đề	Buổi học Vibe Coding (Zoom 24/05) – slide	Slide	https://drive.google.com/file/d/1E54ugbhIb_bDvoT6WSbu1o9RytHk3q6X/view
+141	1.6	Cùng chủ đề	Bài giảng Vibe Coding dùng Claude Code (link dưới comment)	Slide	https://youtu.be/A9zYjQp3KIA
+4	1.6	Cùng chủ đề	Slide: Buổi học Vibe Coding cuối Module 2	Slide	https://drive.google.com/file/d/1S18UfOp4LmKLhMvXo2MZYTiu4S3DhDhY/view
+431	1.6	Cùng chủ đề	Video: Ứng dụng LLM (DeepSeek, ChatGPT) cho Data Science	Video	https://youtu.be/t9L8tfqMlmg
+14	1.7	Nguồn chính	Controlling Randomness	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/26
+551	1.7	Nguồn chính	Lặp lại kết quả thực nghiệm (Controlling Randomness)	Bài đọc	https://drive.google.com/file/d/1RaUE7Cv6YVXPHUitzUqJBZasLLLmNN1c/view
+169	2.1	Nguồn chính	4 bài đọc nhỏ từ AIO (đạo hàm trong ma trận, …)	Bài đọc	https://aioconquer.aivietnam.edu.vn/posts/dao-ham-trong-machine-learning
+15	2.1	Nguồn chính	Giới hạn của hàm số và ứng dụng	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/1
+184	2.1	Nguồn chính	Video: Làm quen toán học và ứng dụng giải quyết vấn đề	Video	https://youtu.be/4mL9niMHopM
+171	2.1	Cùng chủ đề	Sách mới về Calculus (>1300 trang) – link dưới comment	Sách	https://tutorial.math.lamar.edu/Classes/CalcI/CalcI.aspx
+185	2.1	Cùng chủ đề	Sách toán tham khảo (>2000 trang) cho CS và ML	Sách	https://www.cis.upenn.edu/~jean/math-deep.pdf
+170	2.1	Cùng chủ đề	Bài đọc Toán & lập trình cơ bản: giới hạn hàm số và ứng dụng [bản tương ứng trên kho tutorial: https://tutorial.aivietnam.edu.vn/pdf/1]	Bài đọc	https://drive.google.com/file/d/1h1taIPlmXwnbIJj8BzDqDsOfUkYBYpFb/view
+182	2.1	Cùng chủ đề	Bài đọc: Mô hình hóa tăng trưởng trong tự nhiên (hàm mũ + FOR)	Bài đọc	https://drive.google.com/file/d/1kn-jK3kxKo9bQQB9mpeh6KtEXz2wpHRJ/view
+183	2.1	Cùng chủ đề	Tài liệu 40 ngày học Toán và Lập trình (AI VIET NAM soạn)	Bài đọc	
+16	2.2	Nguồn chính	Giới thiệu về NumPy	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/40
+17	2.2	Nguồn chính	Đại số tuyến tính và NumPy	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/79
+176	2.2	Nguồn chính	Bản note NumPy (119 trang)	Slide	https://drive.google.com/file/d/1HVZZOl0QwfifvcDNZyMv8q8J8G-WMR5F/view
+180	2.2	Nguồn chính	Visualizer slicing cho list và NumPy	Repo / Công cụ	https://aivietnam.edu.vn/matrix-visualizer
+189	2.2	Cùng chủ đề	Sách mới (09/2025): Đại số tuyến tính cho Khoa học dữ liệu (~300 trang)	Sách	https://drive.google.com/file/d/1pLrhXT_wBeQNJegbkVbC2fll9z_ykXzD/view
+190	2.2	Cùng chủ đề	Sách mới 2025: Đại số tuyến tính cho AI (thị giác máy tính)	Sách	https://www.cis.upenn.edu/~cis5150/linalg-I-f.pdf
+191	2.2	Cùng chủ đề	Sách mới Đại số tuyến tính cho AI/DS	Sách	https://www2.math.upenn.edu/~ghrist/preprints/LAEF.pdf
+174	2.2	Cùng chủ đề	10 câu hỏi về Matrix và NumPy (Warmup AIO2026)	Bài đọc	
+175	2.2	Cùng chủ đề	Giới thiệu nhanh về NumPy	Bài đọc	
+177	2.2	Cùng chủ đề	Note chi tiết toán & ứng dụng trong AI: NumPy, Đại số tuyến tính… (nhóm MIX002)	Slide	https://www.notion.so/Module-2-Advanced-Math-and-Programming-22c9e7841ec480e7aeb0d717ff481294
+178	2.2	Cùng chủ đề	Bài tập Đại số tuyến tính cơ bản + NumPy	Bài tập	https://drive.google.com/file/d/1buJD49gBEq-AY-F3PthRNzsTZ4IsSY8I/view
+18	2.2	Cùng chủ đề	Bài tập Đại số tuyến tính cơ bản và NumPy	Bài tập	https://drive.google.com/file/d/1sOeGOeFKJauOW47j6MFttxlHab0p6uu4/view
+179	2.2	Cùng chủ đề	Giải 10 câu quiz NumPy	Đề thi / Quiz	
+186	2.3	Nguồn chính	Tutorial: Phân phối Gauss và định lý giới hạn trung tâm	Bài đọc	https://drive.google.com/file/d/1YSfPllDxT85VQTOlKQH-acf0lfspGGeK/view
+187	2.3	Nguồn chính	Video (~3.5h): Xác suất cơ bản và ứng dụng trong AI	Video	https://youtu.be/eRCrPQb49AM
+188	2.3	Nguồn chính	Bài tập: Xác suất (có điều kiện, Bayes) cho phân loại trong AI/DS	Bài tập	https://drive.google.com/file/d/1jpRGbFNJHc5wW55JXtOTHHASCTZweX5K/view
+398	2.3	Cùng chủ đề	Sách mới 2025 (~400 trang): Probabilistic Artificial Intelligence	Sách	https://arxiv.org/pdf/2502.05244
+19	2.3	Cùng chủ đề	Bài giảng Thống kê và ứng dụng trong AI	Slide	https://drive.google.com/file/d/1OqqfyBdUScKOd9y_RSb_RpL9LmB0iHyY/view
+181	2.3	Cùng chủ đề	Bài tập: Thống kê cơ bản và ứng dụng trong AI	Bài tập	https://drive.google.com/file/d/17mGvnx_h3GNzlUMUvnBBheME-HiKmAwi/view
+172	2.4	Nguồn chính	Bài đọc Toán & lập trình cho AI: hàm cross-entropy	Bài đọc	https://drive.google.com/file/d/1G6glKREW8cJt-wxCpdvfKnyq9rpDJIif/view
+295	2.4	Nguồn chính	Bài đọc: Binary Cross-entropy	Bài đọc	https://drive.google.com/file/d/1Kui1Y0eqmzA3jz7LiKQN-0ahhfuqmcUr/view
+173	2.4	Nguồn chính	Tutorial: Hàm cross-entropy	Bài đọc	https://drive.google.com/file/d/189bIXlwE3lJ1ACA03X-qe0EC-xkTc8Mb/view
+40	2.5	Nguồn chính	Step-by-Step Genetic Algorithm	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/13
+166	2.5	Nguồn chính	Video (~3.5h): Xây dựng giải thuật di truyền	Video	https://youtu.be/v3Mw_welVPQ
+168	2.5	Nguồn chính	Bài viết: Giải thuật di truyền từng bước	Blog	https://aivietnam.edu.vn/blog/giai-thuat-di-truyen
+165	2.5	Cùng chủ đề	Tutorial 25 trang: Giải thuật di truyền [bản tương ứng trên kho tutorial: https://tutorial.aivietnam.edu.vn/pdf/13]	Bài đọc	https://drive.google.com/file/d/1V1Gt1JLhEhO7tAKN4wCFeVPxp5ZaBzJE/view
+167	2.5	Cùng chủ đề	Bài tập Genetic Algorithm	Bài tập	https://drive.google.com/file/d/1GgDEY-Y85yNaOCF0zNI06nCxIgcXW5MD/view
+644	2.5	Cùng chủ đề	Di truyền học – từ sinh học qua máy học	Blog	https://aioconquer.aivietnam.edu.vn/posts/di-truyen-hoc-tu-sinh-hoc-qua-may-hoc
+642	2.5	Cùng chủ đề	Genetic Algorithm – bí quyết tối ưu dựa trên quy luật tiến hoá tự nhiên	Blog	https://aioconquer.aivietnam.edu.vn/posts/genetic-algorithm-bi-quyet-toi-uu-dua-tren-quy-luat-tien-hoa-tu-nhien
+643	2.5	Cùng chủ đề	Genetic Algorithm – nghệ thuật cân bằng giữa khai phá và khai thác	Blog	https://aioconquer.aivietnam.edu.vn/posts/genetic-algorithm-nghe-thuat-can-bang-giua-khai-pha-va-khai-thac
+23	3.1	Nguồn chính	Giới thiệu dữ liệu bảng và dữ liệu time-series	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/78
+195	3.1	Nguồn chính	Tổng quan dữ liệu bảng và time-series – video buổi học đầu AIO-2026 (Dr. Đình Vinh)	Video	https://youtu.be/LrXw7G0SBWg
+194	3.1	Cùng chủ đề	Bài đọc: Cách Python biểu diễn và thao tác với dữ liệu bảng	Bài đọc	https://drive.google.com/file/d/1uilsqLeAtgBDpwBXkoBL2afV29w38Ljg/view
+201	3.1	Cùng chủ đề	Buổi học WarmUp đầu tiên eDA-2026: Giới thiệu dữ liệu bảng và chuỗi thời gian (Dr. Đình Vinh) – link bài giảng dưới comment	Slide	https://youtu.be/9bW0Nx432Eg
+200	3.1	Cùng chủ đề	Bài đọc và slide buổi học đầu tiên eDA: dữ liệu bảng và time-series (Dr. Đình Vinh)	Slide	
+196	3.1	Cùng chủ đề	Giới thiệu dữ liệu time-series (AIO-2026) – video + slide	Video	https://drive.google.com/file/d/1TQFUSJmuv6s5TtNqa6H43mMWf7f7ZaBY/view
+197	3.1	Cùng chủ đề	Video (~3h15): Tổng quan dữ liệu time-series	Video	
+198	3.1	Cùng chủ đề	Quiz về dữ liệu time-series	Đề thi / Quiz	
+496	3.2	Nguồn chính	Bài đọc: Chuẩn hóa cơ sở dữ liệu (Đoàn Chiến Thắng, AIO2025)	Bài đọc	https://beryl-freckle-b85.notion.site/AIO2025-C-c-d-ng-chu-n-v-qu-tr-nh-chu-n-ho-trong-Thi-t-k-CSDL-210302d8792c80d980b3d53954a59594
+192	3.2	Cùng chủ đề	Bài đọc: Giới thiệu về cơ sở dữ liệu cho DA	Bài đọc	https://drive.google.com/file/d/1meA4gUNQZ7ioBuwlz2jA5i5D-vgFIror/view
+193	3.2	Cùng chủ đề	Slide WarmUp về database cho DA	Slide	https://drive.google.com/file/d/10gluzFBK8WyctL4vB62FfSv5HG136mLn/view
+228	3.3	Nguồn chính	Bài đọc SQL nâng cao (Database Object: view, stored procedure, trigger…) – PDF dưới comment	Bài đọc	https://drive.google.com/file/d/1lQ8vRKLDj3I3xAR9ZA46EFrL4nYxF5FB/view
+20	3.3	Nguồn chính	Introduction to SQL	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/70
+235	3.3	Nguồn chính	Công cụ web chạy SQL từng bước (trực quan)	Repo / Công cụ	https://aivietnam.edu.vn/space/selab-sql-animate-7
+230	3.3	Cùng chủ đề	Bài đọc: SQL cơ bản (bản 30/07)	Bài đọc	https://drive.google.com/file/d/1GYTPRvK84nMayVfkDmwRBMwzMAp4vDaY/view
+231	3.3	Cùng chủ đề	Bài đọc: SQL cơ bản cho phân tích dữ liệu	Bài đọc	https://drive.google.com/file/d/16C9XkolMgpTqt7aD3V2XVQWnOgLoGeyt/view
+234	3.3	Cùng chủ đề	Slide: Lấy dữ liệu dùng SQL	Slide	https://drive.google.com/file/d/1JyotE6blCo6md-aqJk_ZD_vEViEUbAhv/view
+106	3.3	Cùng chủ đề	Data Aggregation in SQL (Quiz 10, video)	Video + bài tập	Video chỉ phát trên Facebook (mở link bài post)
+227	3.4	Cùng chủ đề	[Data Analysis] Window Functions (SQL)	Bài đọc	
+628	3.5	Nguồn chính	Bài đọc: Quản lý Data Warehouse dùng Snowflake	Bài đọc	https://drive.google.com/file/d/1XrLNB-pSsid5v6TfVM9ClDKQbemuhW5O/view
+29	4.1	Nguồn chính	Bài đọc: Xử lý dữ liệu dùng SQL và Pandas (24 trang)	Bài đọc	https://drive.google.com/file/d/1O-96UTMnQn-zm8utaxuTIc6XNl4-Lhqp/view
+21	4.1	Nguồn chính	Pandas	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/6
+233	4.1	Nguồn chính	Bài giảng ôn tập và so sánh Pandas và SQL	Slide	https://drive.google.com/file/d/1lJsG0S6PiiUOXlQrfkz2I17AykI8LSXF/view
+229	4.1	Cùng chủ đề	Bài đọc: Pandas và SQL trong truy xuất và xử lý dữ liệu (WarmUp)	Bài đọc	https://drive.google.com/file/d/1Or-6kf-ZdklppLv7xkztR-fu5_hLppW_/view
+232	4.1	Cùng chủ đề	Mini-Tutorial: Pandas & SQL	Bài đọc	https://drive.google.com/file/d/1vF1nvVo-LrZmk7P41Ky7wt7kmpT2qF5S/view
+217	4.1	Cùng chủ đề	Buổi dạy: Python cho Phân tích dữ liệu (Pandas) – slide ảnh	Slide	
+218	4.1	Cùng chủ đề	Video (~3h30): Pandas để trực quan hóa và phân tích dữ liệu	Video	https://youtu.be/yWCBeGDfwWA
+220	4.1	Cùng chủ đề	Bài tập Pandas (video + file)	Bài tập	https://drive.google.com/file/d/1Bx_1WtWxzXeUzCbwX0Ydpfrhzd9mqv1B/view
+219	4.1	Cùng chủ đề	Bài đọc + 2 bài tập: Data Analysis dùng Pandas	Bài tập	https://drive.google.com/file/d/19_x7VmB8NdGe4iY_4LjNxnD66URoqrH_/view
+221	4.1	Cùng chủ đề	Thảo luận 10 câu quiz Series Pandas (STA Thế Hào)	Đề thi / Quiz	
+203	4.2	Nguồn chính	Bài đọc: Python và Excel (phân tích & trực quan hóa)	Bài đọc	https://drive.google.com/file/d/1kXJIyR06C8Nxj2dVcXkneeD-ggsFdbiz/view
+206	4.2	Nguồn chính	Phân tích dữ liệu dùng Excel và Claude – phần 2 (38 trang)	Bài đọc	https://drive.google.com/file/d/18iH25lgD7HjHLBF_poU6ECNhuq-5W-sm/view
+22	4.2	Nguồn chính	Python và Excel trong Phân tích dữ liệu	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/9
+209	4.2	Nguồn chính	Bài giảng Phân tích dữ liệu dùng Pivot Table trong Excel (link dưới comment)	Slide	https://youtu.be/F03IgMEgAv0
+202	4.2	Cùng chủ đề	Bài đọc: Phân tích dữ liệu với Excel (bài 2)	Bài đọc	
+204	4.2	Cùng chủ đề	Bài đọc: Sử dụng Excel cho Phân tích dữ liệu (bài 1)	Bài đọc	
+205	4.2	Cùng chủ đề	Claude cho Excel (phân tích dữ liệu)	Bài đọc	https://drive.google.com/file/d/1J12PcD7MUqcpuTeDAe-rvuyL94J5ddNH/view
+207	4.2	Cùng chủ đề	Phân tích dữ liệu nhanh chóng với Excel	Bài đọc	https://drive.google.com/file/d/1IyB6Sxq96pfP4dMn6H2HXvKJGE1FBJ8E/view
+208	4.2	Cùng chủ đề	Tài liệu đọc thêm: Trực quan hóa dữ liệu dùng Excel và thống kê mô tả (MSc. Quốc Thái, MSc. Thanh Kiều)	Bài đọc	https://drive.google.com/file/d/1MHbuJTAbtdK73DUT52b7BHlcrJE3L6cK/view
+210	4.2	Cùng chủ đề	Dùng Excel cho bước EDA trong DA/DS (slide)	Slide	https://drive.google.com/file/d/1ipUkQoLIRplbOP7shKjrSBEsPPmTCD3N/view
+211	4.2	Cùng chủ đề	Slide buổi học: Dữ liệu bảng và Excel	Slide	
+212	4.2	Cùng chủ đề	WarmUp buổi 2: Biểu diễn dữ liệu trong Python (từ góc nhìn Excel) – slide ảnh	Slide	
+214	4.2	Cùng chủ đề	Video: Phân tích dữ liệu dùng Excel (Dr. Thái Hà)	Video	https://youtu.be/5TRFk5oowLk
+215	4.2	Cùng chủ đề	Bài tập DA: Pivot table trong Excel (TA Phúc Thịnh)	Bài tập	
+637	4.3	Nguồn chính	Bài đọc: Làm sạch dữ liệu bán hàng với Power Query trong Excel (54 trang)	Bài đọc	https://drive.google.com/file/d/17t0nS9bIdgmpRqmmCOS4H6fc9AJqudxO/view
+223	4.3	Cùng chủ đề	Power Query Using Power BI	Bài đọc	
+636	4.3	Cùng chủ đề	Slide bài giảng: Power Query trong Excel (MSc. Quốc Thái, MSc. Thanh Kiều)	Slide	https://drive.google.com/file/d/1BaA1_G4HP-W0661yZ-pAOQuHQSkoyl0p/view
+213	4.3	Cùng chủ đề	Phân tích dữ liệu dùng Excel: Power Query (video)	Video	
+27	4.4	Nguồn chính	Interpolation for Temperature Data	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/36
+216	4.4	Nguồn chính	Toán + Lập trình: Nội suy giá trị thiếu cho dữ liệu thời tiết	Bài đọc	https://drive.google.com/file/d/1EYkPabRSE1EgE4P9eP3b4OIp2MTzzgJv/view
+107	4.5	Nguồn chính	Basic Data Pipeline with Pydantic and dbt	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/83
+108	4.5	Nguồn chính	Bài đọc: Xây dựng bước data transformation dùng dbt (SQL)	Bài đọc	https://drive.google.com/file/d/1iaDGMK0Mxf2b4ngWEJluYbLgZk1h23IM/view
+495	4.6	Nguồn chính	Video (>3h): ETL xử lý dữ liệu trong Data Science	Video	https://youtu.be/XvErOzKgyFE
+494	4.7	Nguồn chính	Data validation dùng Pydantic (ETL pipeline)	Bài đọc	https://drive.google.com/file/d/184WYduSV5EawhLPqLGqdCXH4E1iw95t_/view
+512	4.8	Nguồn chính	3 bài đọc MLOps: Apache Airflow, triển khai & giám sát hệ thống AI	Bài đọc	https://aioconquer.aivietnam.edu.vn/posts/logistic-regression-tu-truc-quan-den-toan-hoc-code
+513	4.8	Nguồn chính	Bài đọc MLOps: Apache Airflow	Bài đọc	https://drive.google.com/file/d/1YA2a6d6MBu9hvyP_VlJgaLm51V0gVekn/view
+240	5.1	Nguồn chính	Bài đọc: Dùng thống kê mô tả để trực quan hóa dữ liệu	Bài đọc	https://drive.google.com/file/d/12DaJoKVJUOSTxLHDG0K528g1KIQaA9cD/view
+239	5.1	Nguồn chính	Bài đọc: Mô tả dữ liệu dùng thống kê cơ bản (bài tóm tắt nhóm học viên, mentor Thế Hào)	Bài đọc	https://drive.google.com/file/d/1FipNRP8rbiOa8Fs8EbOnpNwcai98xH_6/view
+24	5.1	Nguồn chính	Data Exploration Using Descriptive Statistics (Thống kê mô tả cho Phân tích dữ liệu)	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/80
+132	5.1	Cùng chủ đề	Các công thức thường gặp khi làm việc với data (infographic)	Slide	
+243	5.1	Cùng chủ đề	Slide: Thống kê cơ bản cho phân tích dữ liệu (bước data visualization)	Slide	https://drive.google.com/file/d/1e5UU8w0dBIY49XfGhxwG7WpCO-ETTQjF/view
+246	5.2	Nguồn chính	5 bài viết AIO Conquer về DA/DS: trực quan hóa Python, Spotify hit, nghịch lý Simpson, pipeline trích xuất Facebook Reels, phát hiện bất thường	Sách	https://aioconquer.aivietnam.edu.vn/posts/nghien-cuu-va-thuc-hien-truc-quan-hoa-du-lieu-bang-python
+25	5.2	Nguồn chính	Bài đọc: Trực quan hóa dữ liệu dùng Python	Bài đọc	https://drive.google.com/file/d/16PrUoUfqn3x47-_SR8shNmqffklsR_TA/view
+241	5.2	Nguồn chính	Mini-tutorial: Trực quan hóa dữ liệu với Matplotlib + List	Bài đọc	https://drive.google.com/file/d/1sA0qrk5bF99cG4ugeMhe_Zpvz-w5Gy5U/view
+242	5.2	Cùng chủ đề	Buổi học áp dụng Thống kê mô tả cho data visualization (slide)	Slide	https://drive.google.com/file/d/1VWgl0PEswnFd_Bqs_xQfJNCmV-FYCHt-/view
+244	5.2	Cùng chủ đề	Slide: Trực quan hóa dữ liệu dùng Python	Slide	https://drive.google.com/file/d/1Sh41PEXOCkZh2JgQZvkqseOf1r_MgCbi/view
+245	5.2	Cùng chủ đề	Bài tập Data Visualization dùng Python (video)	Bài tập	
+26	5.3	Nguồn chính	A/B Testing	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/85
+477	5.3	Nguồn chính	Slide buổi học A/B Testing (kèm code)	Slide	https://drive.google.com/file/d/1mpEXRfnGxNKdeE_syPXpRDFOCTwLVZX6/view
+100	5.4	Nguồn chính	Tài liệu 139 trang: Power BI – Data Transformation and Modeling (+ bài tập, lời giải)	Sách	https://drive.google.com/file/d/1kPdclJvQ01ZjezAjOEy5ok6eCr0NCqKn/view
+101	5.4	Nguồn chính	Tài liệu Tableau (UI, data type, các loại biểu đồ, dashboard)	Bài đọc	https://drive.google.com/file/d/1gU1byQlMvPa5IEfiyvHecxjz1Ns3Uh4S/view
+105	5.4	Nguồn chính	4 video: Data Retrieval SQL, Power Query, Pandas, Pivot Table nâng cao	Video	https://youtu.be/kdbbHuBJfz8
+237	5.4	Nguồn chính	Bài giảng (~3 tiếng): Data analysis dùng Tableau – video dưới comment	Video	https://youtu.be/nT1DBy5WAgU
+236	5.4	Cùng chủ đề	Data Visualization Using Python + Tableau – Buổi 1	Bài đọc	
+225	5.4	Cùng chủ đề	Bài tập về Power BI	Bài tập	
+238	5.4	Cùng chủ đề	Solution quiz Tableau	Đề thi / Quiz	
+226	5.4	Cùng chủ đề	[Video Quiz] WarmUp PowerBI 03	Đề thi / Quiz	
+482	5.5	Nguồn chính	Bài giảng: Kỹ năng thiết kế và trình bày dữ liệu cho DA/DS (Dr. Hà)	Slide	https://drive.google.com/file/d/1F9a6yGCH7WyTjZrnjwnsWJT4fTwAV3zg/view
+481	5.5	Cùng chủ đề	Hai mức độ trình bày dữ liệu (data storytelling)	Bài đọc	
+632	6.1	Nguồn chính	Bài đọc: Hồi quy tuyến tính (49 trang, bản 2026)	Bài đọc	https://drive.google.com/file/d/1rZZA3tUhB-WLee3b7tE4JQ8IYgVGDolJ/view
+30	6.1	Nguồn chính	Step-by-Step Simple Linear Regression	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/10
+255	6.1	Nguồn chính	Video bài học Linear Regression	Video	https://youtu.be/JQ5p4RCJ--I
+258	6.1	Nguồn chính	Bài viết Hồi quy tuyến tính từng bước	Blog	https://aivietnam.edu.vn/blog/hoi-quy-tuyen-tinh-don-gian
+262	6.1	Cùng chủ đề	Lecture note Machine Learning 2025 (~110 trang)	Sách	https://arxiv.org/pdf/2505.03861
+263	6.1	Cùng chủ đề	Sách online: Machine Learning Q and AI (Sebastian Raschka) – link dưới comment	Sách	https://sebastianraschka.com/books/ml-q-and-ai/
+251	6.1	Cùng chủ đề	Bài đọc: Linear Regression tính tay từng bước [bản tương ứng trên kho tutorial: https://tutorial.aivietnam.edu.vn/pdf/10]	Bài đọc	https://drive.google.com/file/d/1JreuW40919V-Ej0C_2AiWOnB7JkrOhDG/view
+253	6.1	Cùng chủ đề	Slide: Nền tảng hướng tới Linear Regression (code + pdf dưới comment)	Slide	https://drive.google.com/file/d/1WGDMeZjrGtKIdt0kW_CQtV1OG23w4xdZ/view
+256	6.1	Cùng chủ đề	Bài tập Linear Regression	Bài tập	https://drive.google.com/file/d/1N8hrkTSb_6OQ_CIO9FnRW40lNFgtsI4U/view
+257	6.1	Cùng chủ đề	Bài tập Linear Regression nâng cao (doanh thu, Bitcoin)	Bài tập	https://drive.google.com/file/d/15pg4_ov-7cZRQQDzbVbH942BBsh5oaA_/view
+645	6.1	Cùng chủ đề	Introduction to Linear Regression and optimization based on Gradient Descent	Blog	https://aioconquer.aivietnam.edu.vn/posts/linear-regression-and-xai-3
+646	6.1	Cùng chủ đề	Linear Regression Exercise & Data Normalization	Blog	https://aioconquer.aivietnam.edu.vn/posts/linear-regression-exercise-data-normalization
+31	6.2	Nguồn chính	Step-by-Step Vectorized Linear Regression	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/18
+254	6.2	Nguồn chính	Video (~3h): vector/matrix & NumPy cho linear regression	Video	https://youtu.be/k9UoW6fQ3fw
+252	6.2	Cùng chủ đề	Tutorial: Linear Regression dạng vector/matrix với NumPy [bản tương ứng trên kho tutorial: https://tutorial.aivietnam.edu.vn/pdf/18]	Bài đọc	https://drive.google.com/file/d/1DBVyfYAd618sID-oRe3xXrehfgRY9sV3/view
+648	6.2	Cùng chủ đề	Hiểu về vector hoá trong hồi quy tuyến tính	Blog	https://aioconquer.aivietnam.edu.vn/posts/hieu-ve-vector-hoa-trong-hoi-quy-tuyen-tinh
+32	6.3	Nguồn chính	Evaluation Metrics for Regression Task	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/17
+199	6.3	Nguồn chính	Bài viết (32 trang): Các phương pháp đánh giá cho bài toán regression (nhóm Time-Series)	Blog	https://drive.google.com/file/d/1C-f9pNW0mkMxaakDcpliN3isTVqRQtR3/view
+268	6.3	Cùng chủ đề	Bài đọc: Phương pháp đánh giá mô hình hồi quy (Evaluation Metrics for Regression)	Bài đọc	https://drive.google.com/file/d/143WMMh1LjNyhkKVrnWl2pT-70Ui-xbor/view
+296	6.3	Cùng chủ đề	Video (~2h40) hàm loss và metric cho regression (Dr. Đình Vinh)	Video	https://youtu.be/6Hk-XyTG7OE
+647	6.3	Cùng chủ đề	Loss function for Linear Regression, Normalization và Regularization	Blog	https://aioconquer.aivietnam.edu.vn/posts/loss-function-for-linear-regression-and-its-utilization
+33	6.4	Nguồn chính	Tutorial: Logistic Regression	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/3
+260	6.4	Nguồn chính	Video: Xây dựng công thức Logistic Regression	Video	https://youtu.be/yN-CHTRxOUY
+261	6.4	Nguồn chính	Bài tập Logistic Regression (Titanic …)	Bài tập	https://drive.google.com/file/d/10tLslNRSZIh3of4bbXA2hlrpoEkU9054/view
+259	6.4	Cùng chủ đề	Bài đọc step-by-step: Logistic Regression [bản tương ứng trên kho tutorial: https://tutorial.aivietnam.edu.vn/pdf/3]	Bài đọc	https://drive.google.com/file/d/1gatrZ3x7hGWHqrPSgULlK_UABH5GcwYX/view
+267	6.5	Nguồn chính	Bài đọc: Đánh giá mô hình phân loại (metrics)	Bài đọc	https://drive.google.com/file/d/1EMq_J70Vyph5lJ9NbjABrpMjk7FJv33v/view
+34	6.5	Nguồn chính	Evaluation Metrics for Binary Classification Task	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/15
+265	6.6	Nguồn chính	Bài đọc: Softmax regression từng bước	Bài đọc	https://drive.google.com/file/d/1fduvdhX84Twi3neCXM2kcQ_98iD05-e_/view
+266	6.6	Nguồn chính	Bài tập Softmax Regression (Credit Card …)	Bài tập	https://drive.google.com/file/d/1pCDr-gdVVyq0__adUoNd8aJvHJ1ASTjA/view
+629	6.6	Cùng chủ đề	Bài tập Softmax Regression dùng PyTorch (MSc. Đình Thắng, TA Duy Tân)	Bài tập	https://drive.google.com/file/d/1gsUsb1odOM3DphwLfgEtAc00GZ-HXQm5/view
+248	6.7	Nguồn chính	Bài đọc: k-Nearest Neighbors step by step	Bài đọc	https://drive.google.com/file/d/1E-NcArjLd_0Ic_o8E_62usYLslSQNr2x/view
+249	6.7	Nguồn chính	Bài tập KNN và K-Means	Bài tập	https://drive.google.com/file/d/1xA4jG-EnINdq62l_P3ouLLczIOv8ljqc/view
+250	6.7	Nguồn chính	KNN Playground (STA Trường Bình)	Repo / Công cụ	https://aivietnam.edu.vn/space/sta-b%C3%ACnh-d%C6%B0%C6%A1ng-knn-demo-11
+35	6.8	Nguồn chính	Step-by-Step: K-means Clustering	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/11
+36	6.8	Nguồn chính	Bài tập về K-Means và KNN	Bài tập	https://drive.google.com/file/d/1domEki6PN7GVGYchc0CIUYh7Tn46wQkx/view
+247	6.8	Cùng chủ đề	Bài viết: K-means từng bước	Blog	
+264	6.9	Nguồn chính	Tutorial: Naive Bayes cho bài toán phân loại	Bài đọc	https://drive.google.com/file/d/11SGw6zdanINUhYxEdurb7zr2jpEDxNZd/view
+380	6.9	Nguồn chính	Video (~3h): Ứng dụng XSTK cho phân loại văn bản (MSc. Quốc Thái)	Video	https://youtu.be/tM0m0CevEDg
+38	6.10	Nguồn chính	Bài đọc: Cây hồi quy (Decision Tree Regression)	Bài đọc	https://drive.google.com/file/d/13ZBTrMcdpShIaXanuu3SEsKtIXwS2Kj1/view
+37	6.10	Nguồn chính	Decision Tree for Classification (v2026) – Bài đọc Cây quyết định 25 trang	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/87
+274	6.10	Nguồn chính	Bài tập: Decision Tree cho phân loại và hồi quy	Bài tập	https://drive.google.com/file/d/1Jp2mam1e24DZSD753b90-iejvAASfhTU/view
+275	6.10	Nguồn chính	App mô phỏng từng bước Decision Tree	Repo / Công cụ	https://aivietnam.edu.vn/decision-tree
+271	6.10	Cùng chủ đề	Bài đọc 25 trang: Cây quyết định	Bài đọc	https://drive.google.com/file/d/1whEVyito5PurklvOf023pnsK1wS4BCqs/view
+272	6.10	Cùng chủ đề	Bài đọc step-by-step: Decision Tree cho bài toán dự đoán	Bài đọc	
+273	6.10	Cùng chủ đề	Video buổi học warm-up Decision Tree	Video	
+39	6.10	Cùng chủ đề	Bài tập: Cây quyết định và ứng dụng	Bài tập	https://drive.google.com/file/d/1PTYPDrx_Jy3oRyjPOgPE1PvY2ADFPOfO/view
+41	6.11	Cùng chủ đề	Bài tập Imbalanced Data (video chữa bài)	Video + bài tập	Video chỉ phát trên Facebook (mở link bài post)
+282	7.1	Nguồn chính	Bài đọc: Random Forest từng bước	Bài đọc	https://drive.google.com/file/d/1ytnfsPSdTHBmmw5bo3xJEqz4iH3li03m/view
+45	7.1	Nguồn chính	Bài tập về Random Forest và AdaBoost	Bài tập	https://drive.google.com/file/d/1qhwV_R3Iu8ZN7yMifCtRC5RivqC-Fsf8/view
+283	7.1	Nguồn chính	Tóm tắt lý thuyết + bài tập Random Forest và AdaBoost	Bài tập	https://drive.google.com/file/d/1kLLcoBxA_nCAIN1nMNI9RIZPLAisLIgD/view
+42	7.1	Cùng chủ đề	Bài đọc: Random Forest	Bài đọc	Comment không chứa link – cần hỏi page
+44	7.2	Nguồn chính	Bài đọc: AdaBoost cho data science	Bài đọc	https://drive.google.com/file/d/1P1okEY6rfANcbJRqDxp1DlwcjQInshFy/view
+269	7.2	Nguồn chính	Bài đọc: AdaBoost qua ví dụ tính tay (phân loại & hồi quy)	Bài đọc	https://drive.google.com/file/d/1FX7QakySiJHTbGO71onfr0vb3xIZsp-2/view
+43	7.2	Nguồn chính	Step-by-Step: AdaBoost	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/14
+277	7.3	Nguồn chính	Bài đọc: Gradient Boosting cho phân loại và hồi quy	Bài đọc	https://drive.google.com/file/d/17BSJWl9aCmeghDYRt_4VypJ4GBwxRIJp/view
+278	7.3	Nguồn chính	Video (~3h20): Gradient Boosting qua ví dụ tính tay	Video	https://youtu.be/m2wei4OV0WM
+279	7.3	Nguồn chính	Playground mô phỏng Gradient Boosting (STA Yến Linh)	Repo / Công cụ	https://aivietnam.edu.vn/space/vlai-gradient-boosting-demo-15
+46	7.3	Cùng chủ đề	Bài đọc: Gradient Boosting	Bài đọc	https://drive.google.com/file/d/1viBrttE1DKJNp9GcjpQFRwjHLN2kZNFd/view
+47	7.4	Nguồn chính	Bài đọc: XGBoost	Bài đọc	https://drive.google.com/file/d/1bfmqdW9toKfXeeRQuMKuGHKnmm8j6AaD/view
+290	7.4	Nguồn chính	Bài đọc: XGBoost qua ví dụ tính tay	Bài đọc	https://drive.google.com/file/d/1MyP653PXq19d66og7VRYAaawROrOzT-G/view
+291	7.4	Nguồn chính	Bài tập 23 trang: XGBoost và LightGBM	Bài tập	https://drive.google.com/file/d/1ml8OYIkVvolsQHDDaQ5OccBjlw8rXSsS/view
+280	7.5	Nguồn chính	Bài đọc 35 trang: LightGBM chi tiết (STA Yến Linh, TA Đình Thắng)	Bài đọc	https://drive.google.com/file/d/1kCj9_-VbKCgPyXuOtz9UO-rYl2B6IIHY/view
+48	7.5	Nguồn chính	Bài đọc: LightGBM (bản FB) + Step-by-Step: LightGBM (tutorial)	Bài đọc	https://drive.google.com/file/d/1B0ICw6_18aYHg7UXSmMotm98efWVHUy9/view
+117	7.5	Nguồn chính	Slide buổi dạy: Dự đoán doanh thu bán hàng dùng LightGBM và SHAP	Slide	https://drive.google.com/file/d/1-XX-q_LXvSYJgGf0D0K-zZZOmYFK4-yp/view
+281	7.5	Cùng chủ đề	Ví dụ minh họa histogram, bundling, GOSS (LightGBM) cho Decision Tree	Bài đọc	
+49	7.6	Nguồn chính	Feature Selection	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/81
+50	7.7	Nguồn chính	Feature Construction	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/82
+288	7.8	Nguồn chính	Bài đọc XAI: LIME và ANCHOR [bản tương ứng trên kho tutorial: https://tutorial.aivietnam.edu.vn/pdf/39]	Bài đọc	https://drive.google.com/file/d/1gtQe-4fmmeeeSs-wbsdS_9OX2vsOUkwV/view
+53	7.8	Nguồn chính	XAI Introduction: LIME and ANCHOR	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/39
+287	7.8	Nguồn chính	Bài viết về eXplainable AI (XAI)	Blog	https://aivietnam.edu.vn/blog/step-by-step-XAI
+286	7.8	Cùng chủ đề	Bài đọc eXplainable AI (XAI)	Bài đọc	
+640	7.8	Cùng chủ đề	XAI – Phần 1: LIME và Anchor	Blog	https://aioconquer.aivietnam.edu.vn/posts/xai-phan-1-lime-va-anchor
+51	7.9	Nguồn chính	Bài đọc (24 trang): SHAP trong XAI áp dụng cho Decision Tree	Bài đọc	https://drive.google.com/file/d/16FexEYqrCa4tEzBnPNC46OXr_t3P4-p7/view
+289	7.9	Nguồn chính	Tutorial: Giải thuật SHAP trong XAI	Bài đọc	https://drive.google.com/file/d/1gJcpQGLPwmpdAA3IVM97LU0856uV11q7/view
+52	7.9	Nguồn chính	Slide: XAI cho data science (SHAP, TreeSHAP)	Slide	https://drive.google.com/file/d/15nOD9ciwKzbrjTLg0QfPjmUDspGxIO8F/view
+270	7.10	Nguồn chính	Anomaly detection dùng Isolation Forest	Bài đọc	https://drive.google.com/file/d/1XkQj90TRnt8raWnimWp7Fp48MzTqI603/view
+121	7.10	Nguồn chính	Density-Based Spatial Clustering of Applications with Noise (DBSCAN)	Bài đọc	https://drive.google.com/file/d/15yOTx6z794CHxbooFLqsZd-UQUeifbV_/view
+284	7.11	Nguồn chính	Bài đọc: Mô hình ARIMA trong bài toán dự báo chuỗi thời gian – PDF dưới comment	Bài đọc	https://drive.google.com/file/d/1zOLXzvNooLgNHK2XAPxJwBrNmePmLk2g/view
+285	7.11	Cùng chủ đề	Bài đọc: Mô hình ARIMA trong dự báo chuỗi thời gian (PDF dưới comment)	Bài đọc	https://drive.google.com/file/d/1sYTy2lluxV8RpsYCp15G_AE6-Jynv_3u/view
+54	7.12	Nguồn chính	Recommender system	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/62
+276	7.13	Nguồn chính	TabPFN v2 (foundation model cho dữ liệu bảng)	Bài đọc	https://www.nature.com/articles/s41586-024-08328-6.pdf
+55	7.14	Cùng chủ đề	Quiz Solution: Domain Adaptation	Video + bài tập	Video chỉ phát trên Facebook (mở link bài post)
+56	8.1	Nguồn chính	Multi-layer Perceptron	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/2
+297	8.1	Nguồn chính	Tutorial: MLP – mô hình deep learning đơn giản	Bài đọc	https://drive.google.com/file/d/1d7yXV61lHLNSIgEoXwhuph5CHV3KjonZ/view
+300	8.1	Nguồn chính	3 bài viết chuyên sâu về MLP (gradient vanishing, dying ReLU, khởi tạo)	Blog	https://aioconquer.aivietnam.edu.vn/posts/module6-week3
+293	8.1	Cùng chủ đề	Sách Mathematical Engineering of Deep Learning (đọc song song khi học DL)	Sách	https://deeplearningmath.org/contents/chap1
+425	8.1	Cùng chủ đề	Slide về KAN model	Slide	
+298	8.1	Cùng chủ đề	Bài tập MLP cho các loại dữ liệu khác nhau (kèm code)	Bài tập	https://drive.google.com/file/d/1KzkOEllKBEOOrx8td2lL5RRnd2oJQ8Vs/view
+292	8.1	Cùng chủ đề	Khóa học Deep Learning free (U. Toronto: video, slide, bài tập)	Bài tập	https://bereyhi-courses.github.io/dl-utoronto/lectures/
+299	8.1	Cùng chủ đề	Giải quiz bài tập MLP (AIO2025)	Đề thi / Quiz	
+57	8.2	Nguồn chính	Slide: PyTorch và ứng dụng cho Linear, Logistic và Softmax Regression	Slide	https://tutorial.aivietnam.edu.vn/pdf/22
+630	8.2	Cùng chủ đề	Bài đọc (58 trang): Tóm tắt và so sánh NumPy, PyTorch và TensorFlow	Bài đọc	https://drive.google.com/file/d/1d-l-_qBWO_OK26EaeksXr4LxdKGTPysJ/view
+303	8.2	Cùng chủ đề	Thảo luận 10 câu bài tập PyTorch	Bài tập	
+304	8.2	Cùng chủ đề	2 blog: PyTorch cho người mới; xây dựng hàm loss logistic regression	Blog	
+302	8.3	Nguồn chính	Tóm tắt + bài tập Tối ưu hóa trong học sâu (optimizers)	Bài tập	https://drive.google.com/file/d/1_KUq196pA7q4kHLylKg5qL4iNnRkE3Lw/view
+294	8.4	Nguồn chính	Tutorial 35 trang: Gradient Vanishing và cách giải quyết	Bài đọc	https://drive.google.com/file/d/1y_rDDsOmDk8oUW15__Vn6SVadRT-EBiT/view
+313	8.4	Nguồn chính	Bài tập CNN nâng cao (BatchNorm, skip-connection, augmentation…)	Bài tập	https://drive.google.com/file/d/1NXN1TKyBNFU7OG0GaMbfCVlrbSY6VDYI/view
+58	8.5	Nguồn chính	Basic Knowledge Distillation	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/38
+325	8.5	Nguồn chính	Bài đọc: Knowledge Distillation trong Deep Learning	Bài đọc	https://aivietnam.edu.vn/blog/chuyen-giao-tri-thuc-pytorch
+326	8.5	Cùng chủ đề	Tutorial Knowledge Distillation (nhóm TA Đình Thắng)	Bài đọc	
+327	8.5	Cùng chủ đề	Slide Knowledge Distillation (phần 2)	Slide	
+306	8.6	Nguồn chính	Sách DL mới: Principles and Practice of Deep Representation Learning (v2, 03/2026)	Sách	https://ma-lab-berkeley.github.io/deep-representation-learning-book/index.html
+305	8.6	Cùng chủ đề	Sách Deep Representation Learning (Berkeley, bản 10/11/2025)	Sách	https://ma-lab-berkeley.github.io/deep-representation-learning-book/assets/book-main.pdf
+548	8.7	Nguồn chính	Sách Reinforcement Learning: A Comprehensive Overview (v2, Kevin Murphy)	Sách	https://arxiv.org/pdf/2412.05265
+113	8.7	Nguồn chính	Bài đọc: Reinforcement Learning cơ bản (Overview of RL)	Bài đọc	https://drive.google.com/file/d/1H9LzJ9Fo9ffzL5QwzOywt84Fubqia_PQ/view
+545	8.7	Nguồn chính	Khóa học RL free từ ĐH Toronto (slide, video, bài tập)	Bài tập	https://bereyhi-courses.github.io/rl-utoronto/lectures/
+547	8.7	Cùng chủ đề	Sách 2024: Mathematical Foundation of Reinforcement Learning	Sách	https://github.com/MathFoundationRL/Book-Mathematical-Foundation-of-Reinforcement-Learning/blob/main/Book-all-in-one.pdf
+114	8.7	Cùng chủ đề	Exercise: Reinforcement Learning	Bài tập	https://drive.google.com/file/d/11JOw3ejR-0lq4t5X1SIMCOeLoDNiX565/view
+28	9.1	Nguồn chính	Image and Video Data	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/69
+323	9.1	Nguồn chính	Video (~3.5h): NumPy và ứng dụng cho dữ liệu ảnh	Video	https://youtu.be/E-WA5DXO4s8
+324	9.1	Cùng chủ đề	Bài tập: NumPy và OpenCV (video)	Bài tập	
+59	9.2	Nguồn chính	From Vanilla CNN to ConvNeXt	Sách	https://tutorial.aivietnam.edu.vn/pdf/44
+60	9.2	Nguồn chính	ConvNeXt	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/52
+310	9.2	Nguồn chính	Tutorial 19 trang: Học CNN qua ví dụ từng bước	Bài đọc	https://drive.google.com/file/d/1BCoEeHaCYmeAH1PyCNU7Cg--Fm2u7SL5/view
+320	9.2	Nguồn chính	Video (~2h30) bài giảng ConvNeXt	Video	https://youtu.be/g6BwIKJdJGI
+309	9.2	Cùng chủ đề	Thực nghiệm so sánh CNN phổ biến (có/không pretrained ImageNet)	Bài đọc	
+311	9.2	Cùng chủ đề	Giải thích bước convolution trong CNN (video)	Video	
+312	9.2	Cùng chủ đề	10 câu hỏi bài tập CNN (buổi 4)	Bài tập	
+415	9.2	Cùng chủ đề	Bài tập CNN (giải thích ngắn + bài tập)	Bài tập	https://drive.google.com/file/d/1e4JjAPC5iOF98djyWX29T43si-rjDobn/view
+321	9.2	Cùng chủ đề	Bài tập ConvNeXt (video)	Bài tập	
+370	9.2	Cùng chủ đề	Đề và bài giải: CNN Generalization	Bài tập	https://drive.google.com/file/d/1G0Jg_zLs3wfAqd6PVz6rnvVHOhkvPGi8/view
+314	9.2	Cùng chủ đề	10 câu quiz về CNN (lớp warm-up)	Đề thi / Quiz	
+315	9.2	Cùng chủ đề	Quiz: Các layer quan trọng trong CNN	Đề thi / Quiz	
+316	9.2	Cùng chủ đề	Quiz: Cách train CNN hiệu quả	Đề thi / Quiz	
+317	9.2	Cùng chủ đề	Bài viết tổng quát về CNN (ảnh và text)	Blog	https://aioconquer.aivietnam.edu.vn/posts/test-8
+318	9.2	Cùng chủ đề	Demo CNN nhà làm (video minh họa)	Repo / Công cụ	
+319	9.2	Cùng chủ đề	Tài liệu + code demo: CNN x Emotion Classification	Repo / Công cụ	
+392	9.3	Nguồn chính	Bài đọc: Swin Transformer v2	Bài đọc	https://drive.google.com/file/d/1jQUF5I16SegYI9cSx9abPZWX0TfSerqy/view
+393	9.3	Nguồn chính	Bài đọc: Vision Transformer	Bài đọc	https://aivietnam.edu.vn/blog/vision-transformer
+61	9.3	Nguồn chính	Step-by-Step: Vision Transformer	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/24
+62	9.3	Nguồn chính	Step-by-step Tutorial: Swin Transformer V1	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/57
+389	9.3	Cùng chủ đề	10 câu hỏi nhanh về Swin Transformer	Bài đọc	https://drive.google.com/file/d/13494BTMb3p3fkPAHoxkhtwlDZcj0ixAR/view
+386	9.3	Cùng chủ đề	Bài tập Advanced DL Models (Swin 1&2, MaxViT, ConvNeXt 1&2)	Bài tập	https://drive.google.com/file/d/1gOnwH7frtG4dTqW7J0ELhFNc6Ep4MNeH/view
+355	9.4	Nguồn chính	Bài đọc 88 trang: Giải thuật YOLO cho nhận diện đối tượng	Bài đọc	https://drive.google.com/file/d/1sPwhJIKpqPLPtQWtmfg44sxdDWF25s3z/view
+65	9.4	Nguồn chính	Phát hiện đối tượng trong ảnh với YOLOv10	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/23
+331	9.4	Nguồn chính	Trực quan cách tính IoU (object detection)	Bài đọc	https://aivietnam.edu.vn/space/mlops-lab-iou-calculator-8
+358	9.4	Nguồn chính	YOLOv12: report, code	Repo / Công cụ	https://arxiv.org/pdf/2502.12524
+330	9.4	Cùng chủ đề	20 câu hỏi chuyên sâu về object detection	Bài đọc	https://drive.google.com/file/d/1VyujCBI1nE-XDrZjtsGlEW3ow_uQO2aD/view
+332	9.4	Cùng chủ đề	Slide Object Detection (buổi 1/4)	Slide	
+333	9.4	Cùng chủ đề	Slide Object Localization (cầu nối sang Object Detection)	Slide	https://drive.google.com/file/d/1LEynU3e-OvxM_-jAh0COxwCbaaZTDQ4l/view
+356	9.4	Cùng chủ đề	YOLOv12: slide + code (buổi nâng cao)	Slide	https://drive.google.com/file/d/1r6lBKziXskrYzRvmj56kNPxTTHljsp54/view
+334	9.4	Cùng chủ đề	Bài tập Object Detection (MSc. Quốc Thái, TA Quý Hùng)	Bài tập	https://drive.google.com/file/d/1bL0VVQ9vRTMQ3io1laWf9fF-i0MGjWQE/view
+335	9.4	Cùng chủ đề	Bài tập Object Detection cơ bản	Bài tập	
+336	9.4	Cùng chủ đề	Bài tập object detection cơ bản (video)	Bài tập	
+357	9.4	Cùng chủ đề	Bài tập về YOLO v1–v10 (video)	Bài tập	
+337	9.4	Cùng chủ đề	Bài tập ứng dụng Object Detection	Bài tập	
+338	9.4	Cùng chủ đề	Giải bài tập Object Detection nâng cao (video)	Bài tập	
+339	9.4	Cùng chủ đề	Quiz Warmup AIO-2025 về Object Localization	Đề thi / Quiz	
+340	9.4	Cùng chủ đề	Quiz: From Image Classification to Object Localization	Đề thi / Quiz	
+345	9.5	Nguồn chính	Bài đọc: Segmentation dùng UNet	Bài đọc	https://aivietnam.edu.vn/blog/intro-to-unet
+64	9.5	Nguồn chính	U-Net for Segmentation	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/21
+346	9.5	Nguồn chính	Bài giảng Segmentation và UNet (>3 tiếng) – link dưới comment	Video	https://youtu.be/iGqkLbMjyaQ
+347	9.5	Nguồn chính	Bài đọc + bài tập: UNet và bài toán segmentation	Bài tập	https://drive.google.com/file/d/1zynUd4GfsEheIvI5fX-FKkgAsL5JA5mV/view
+344	9.5	Cùng chủ đề	Bài đọc UNet cho Segmentation	Bài đọc	
+351	9.5	Cùng chủ đề	Slide xây dựng từng bước UNet	Slide	
+328	9.5	Cùng chủ đề	Video >3 tiếng: AI cho dữ liệu ảnh y tế	Video	https://youtu.be/Bm5rIqVJen0
+348	9.5	Cùng chủ đề	Bài tập Denoising và Segmentation (video)	Bài tập	
+352	9.5	Cùng chủ đề	Bài tập UNet và ứng dụng	Bài tập	
+353	9.5	Cùng chủ đề	Bài tập: UNet cho super-resolution và inpainting	Bài tập	https://drive.google.com/file/d/10dtE0yDEvjchxKYi2R2JGRhkbuzk5WY_/view
+349	9.5	Cùng chủ đề	Giải bài tập Segmentation dùng UNet (53 phút)	Bài tập	
+342	9.6	Nguồn chính	Tutorial 23 trang: Theo dõi và đếm đối tượng (object tracking/counting)	Bài đọc	https://drive.google.com/file/d/1D2VZVLdZ3_BrDZGFLlmHthlXvKg3y27s/view
+341	9.6	Cùng chủ đề	Bài đọc: Object Tracking	Bài đọc	
+68	9.6	Cùng chủ đề	Quiz/Project: Object Detection YOLO nâng cao, Object Counting, Face Recognition	Video + bài tập	Video trên page (chưa lấy link)
+329	9.6	Cùng chủ đề	Bài tập bài toán đếm xe (Object Counting) – TA Đức Tuấn	Bài tập	
+322	9.7	Cùng chủ đề	Slide chuyên đề Data Augmentation	Slide	
+354	9.8	Nguồn chính	Bài tập + lời giải Visual Grounding	Bài tập	https://drive.google.com/file/d/1bfLaKqsD3RF9L4GRr491xWA-boGoqaYl/view
+69	9.8	Cùng chủ đề	Bài trình bày Conquer: Similarity Matching Methods for Images and Text	Slide	Comment không chứa link – cần hỏi page
+308	9.8	Cùng chủ đề	Slide: CLIP và ứng dụng phân loại ảnh (TA Đăng Nhã)	Slide	
+307	9.9	Nguồn chính	Bài đọc: Giới thiệu về 3D Point Cloud (PDF dưới comment)	Bài đọc	https://drive.google.com/file/d/14O8vw6LpdiJDlrS58f1ptmHk_zYDCaLa/view
+343	9.10	Nguồn chính	Lý thuyết GNNs và bài tập (phân loại ảnh, citation network)	Bài tập	https://drive.google.com/file/d/1-8f0Nai6RIwBHNkvzs9Gj3xHJBZfSYvm/view
+366	10.1	Nguồn chính	Bài đọc (beginner): Xử lý dữ liệu văn bản	Bài đọc	https://drive.google.com/file/d/1IJaTVq1gZpWDtPxKNkQebg2EXepRqpa9/view
+361	10.1	Nguồn chính	Bài đọc: Giới thiệu dữ liệu text và audio	Bài đọc	https://drive.google.com/file/d/1sQjCD4UwRbX3auglcNCg_91MDHzoElH5/view
+372	10.1	Nguồn chính	NLP cơ bản: Kiểm tra lỗi chính tả dùng Levenshtein Distance	Bài đọc	https://drive.google.com/file/d/1sirBxD9brDZxN8t3Wb0LJbKdV8D43hPk/view
+374	10.1	Cùng chủ đề	Daily AI Lesson: Thống kê word cloud	Bài đọc	https://drive.google.com/drive/folders/1IC-HereSWKSyANV1ZMj9RhkFboWdbMao
+362	10.1	Cùng chủ đề	Xử lý văn bản (Python cơ bản) – video	Video	
+387	10.1	Cùng chủ đề	Bài đọc và bài tập về Tokenization	Bài tập	
+388	10.1	Cùng chủ đề	Quiz solution Tokenizer	Đề thi / Quiz	
+71	10.2	Nguồn chính	Text Classification Using CNN	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/33
+70	10.2	Nguồn chính	Text Classification Using FCL	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/34
+381	10.2	Nguồn chính	Bài viết 1: Phân loại văn bản với mô hình nền tảng nhất của DL	Blog	https://aivietnam.edu.vn/blog/text-classification-using-fcl
+383	10.2	Cùng chủ đề	Chapter 1: Text Classification Using FCL (pdf dưới comment)	Sách	
+377	10.2	Cùng chủ đề	Ví dụ từng bước bài toán phân loại text	Bài đọc	
+378	10.2	Cùng chủ đề	Slide + code: From Text Classification to POS Tagging	Slide	
+379	10.2	Cùng chủ đề	Slide bổ trợ: Phân loại text và POS Tagging	Slide	
+385	10.3	Cùng chủ đề	Video giải quiz LSTM/GRU	Đề thi / Quiz	
+75	10.4	Nguồn chính	Bài giải thích cách hoạt động của Attention và Transformer (<10 trang)	Bài đọc	https://arxiv.org/pdf/2604.00965
+391	10.4	Nguồn chính	Bài đọc giải thích chi tiết Transformer (link dưới comment)	Bài đọc	https://github.com/esmaeil-rezaei/transformers-math/blob/main/Mathematic_of_Transformer.pdf
+360	10.4	Nguồn chính	Tài liệu 20 trang giải thích Self-Attention	Bài đọc	https://drive.google.com/file/d/1Je2SAFBlsWcgwzK_gl1_f-LtPK3SOzg3/view
+382	10.4	Nguồn chính	Bài viết AIO Conquer: Transformer là gì, Transformer cho text classification, OCR hiện đại (YOLO+ConvNeXt+Transformer)	Blog	https://aioconquer.aivietnam.edu.vn/posts/transformer-la-gi-giai-thich-tu-goc-den-ngon
+394	10.4	Cùng chủ đề	Giải thích attention và transformer (<10 trang)	Bài đọc	https://arxiv.org/pdf/2604.00965v1
+395	10.4	Cùng chủ đề	Transformer Tutorial (STA Đỗ Huy Đức)	Bài đọc	
+396	10.4	Cùng chủ đề	Slide chuyên đề Transformer	Slide	
+397	10.4	Cùng chủ đề	Khóa học chuyên đề Transformer (seminar) – link dưới comment	Khóa học	https://web.stanford.edu/class/cs25/
+63	10.5	Nguồn chính	Mamba for Vision	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/25
+72	10.5	Nguồn chính	Mamba: When Transformer is Not All You Need	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/31
+73	10.5	Nguồn chính	Text Classification Using Mamba	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/35
+376	10.5	Cùng chủ đề	Tài liệu: Text Classification using Mamba	Bài đọc	
+363	10.6	Nguồn chính	Bài tập Dịch máy với tài nguyên hạn chế	Bài tập	https://drive.google.com/file/d/1jM5vsNjZqo786CsVzRU6YdlDN0CjY2uW/view
+364	10.6	Nguồn chính	Bài tập Machine Translation (22 trang)	Bài tập	https://drive.google.com/file/d/1z-eWfIY-OiGZFn2tC_Rmxe_HYWsfskkH/view
+375	10.6	Nguồn chính	Bài tập Object Localization và POS Tagging	Bài tập	https://drive.google.com/file/d/1T3exaJvK6hwQISSwpoYKj83PGt_9ELd6/view
+368	10.6	Cùng chủ đề	Ví dụ step-by-step: machine translation và text generation	Bài đọc	
+369	10.6	Cùng chủ đề	Introduction to NER (video)	Video	
+76	10.6	Cùng chủ đề	Bài tập NLP (POS, NER, QA, Machine Translation) + Solution Tokenizer/Machine Translation	Bài tập + video	Video/ảnh trên page (chưa lấy link)
+373	10.6	Cùng chủ đề	Bài tập ứng dụng NLP (tuần 1/4): POS tagging, NER	Bài tập	
+365	10.6	Cùng chủ đề	Solution Exercise: Machine Translation	Bài tập	
+384	10.7	Cùng chủ đề	Bài giải topic Question Answering (video)	Bài tập	
+443	11.1	Nguồn chính	Xây dựng hệ thống sinh nhạc dùng VAE (PDF dưới comment)	Bài đọc	https://drive.google.com/file/d/1l7tjjACD3hCurhDdWtJkLfKOGUOAvN8M/view
+78	11.1	Nguồn chính	Kiểm tra về Generative Models, Diffusion & LLM (GAN, Style Transfer, VAE, PEFT…)	Đề thi	https://drive.google.com/file/d/196MSXnXbhULEANl6ZuAwLCFSof-WygC5/view
+442	11.1	Cùng chủ đề	Bài đọc về VAE (nền tảng GenAI)	Bài đọc	
+444	11.1	Cùng chủ đề	Solution Exercise VAE	Bài tập	
+414	11.2	Nguồn chính	Slide buổi phụ đạo DCGAN (slide + code dưới comment)	Slide	https://drive.google.com/drive/folders/1jMZmu_R_qGMSruxh3gemMmSuOLh9z5bv
+416	11.2	Cùng chủ đề	Bài tập Text2Image (DCGAN + BERT)	Bài tập	
+77	11.3	Nguồn chính	Hướng dẫn về Diffusion Models cho Image và Vision (dịch từ Stanley Chan)	Sách	https://tutorial.aivietnam.edu.vn/pdf/37
+407	11.3	Nguồn chính	Sách 470 trang về Diffusion Models (The Principles of Diffusion Models)	Sách	https://arxiv.org/pdf/2510.21890
+401	11.3	Nguồn chính	Tài liệu tiếng Việt (>100 trang) về Diffusion Model	Bài đọc	https://drive.google.com/file/d/1bZMo4e4jQeRXtAeYiSzKWIsEVgiuK6QU/view
+406	11.3	Nguồn chính	Blog giải thích chi tiết Diffusion Model	Blog	https://goyalpramod.github.io/blogs/demysitifying_diffusion_models/
+400	11.3	Cùng chủ đề	Hướng dẫn: Image Inpainting dùng Denoising Diffusion Probabilistic Model (PDF dưới comment)	Bài đọc	https://drive.google.com/file/d/1CdBpzPMKa7vrKr6DI58Y-XoudPC9OP6e/view
+402	11.3	Cùng chủ đề	Ví dụ siêu đơn giản về Diffusion Model (DDPM)	Bài đọc	
+403	11.3	Cùng chủ đề	Diffusion Model (video)	Video	
+404	11.3	Cùng chủ đề	Bài tập: Khôi phục ảnh dùng Diffusion Model (DDPM)	Bài tập	
+408	11.4	Nguồn chính	Khóa học MIT 2025 về Flow Matching và Diffusion (slide, note, video, lab)	Khóa học	https://diffusion.csail.mit.edu/
+405	11.4	Nguồn chính	Khóa học MIT về Flow Matching và Diffusion (slide, note 80 trang, video, bài tập)	Bài tập	https://diffusion.csail.mit.edu/2026/index.html
+411	11.4	Cùng chủ đề	Slide buổi học Flow Matching	Slide	
+412	11.4	Cùng chủ đề	Slide về Flow Matching	Slide	
+413	11.4	Cùng chủ đề	Bài tập Conditional Flow Matching (image inpainting …)	Bài tập	
+441	11.5	Cùng chủ đề	Bài tập Style Transfer dùng Transformer	Bài tập	
+436	11.6	Nguồn chính	Sách 2025: Foundations of Large Language Models (~230 trang)	Sách	https://arxiv.org/pdf/2501.09223
+418	11.6	Nguồn chính	Bài đọc và code xây dựng GPT từ Karpathy	Bài đọc	https://karpathy.github.io/2026/02/12/microgpt/
+463	11.6	Nguồn chính	Hướng dẫn từng bước xây dựng LLM (pre-training + fine-tuning chatbot)	Bài đọc	https://github.com/FareedKhan-dev/train-llm-from-scratch
+79	11.6	Nguồn chính	LLMs Series: Pre-training GPT (+ video chữa quiz)	Bài đọc	https://drive.google.com/file/d/1nRu9iwOBSxFTFYSAoCsE9fIxHRsI_zZE/view
+435	11.6	Cùng chủ đề	Chương sách về Mô hình ngôn ngữ (Damien Benveniste)	Sách	https://drive.google.com/file/d/1O9Rfk1Sf_5coeUEiGyq0H5H0ucNCgoW9/view
+437	11.6	Cùng chủ đề	Sách mới (free) về ML và LLMs (~700 trang): toán, ML cơ bản → transformer → LLM	Sách	https://github.com/NiuTrans/NLPBook/blob/main/chapters/nlp-book.pdf
+438	11.6	Cùng chủ đề	Khóa học 2025 về LLMs	Khóa học	https://github.com/mlabonne/llm-course
+422	11.6	Cùng chủ đề	Khóa học Generative AI for Beginners v3 (Microsoft, 21 bài)	Khóa học	https://github.com/microsoft/generative-ai-for-beginners
+419	11.6	Cùng chủ đề	Video buổi học Pretraining GPT (TA Đình Thắng)	Video	https://youtu.be/b70denJEI9U
+440	11.6	Cùng chủ đề	Bài tập ứng dụng sinh thơ (pdf dưới comment)	Bài tập	https://drive.google.com/file/d/132iBrfK6BX0GB5FVpva78ihDaSLD29lP/view
+421	11.6	Cùng chủ đề	Solution Poem Generation GPT-2	Bài tập	
+420	11.6	Cùng chủ đề	[Video Solution] Pretraining GPT	Bài tập	
+399	11.7	Nguồn chính	Slide chuyên đề DeepSeek (v1, v2, v3)	Slide	https://drive.google.com/file/d/1xuqGGLkp3T8tTKnWSQc8RBa5bQXMEKPg/view
+80	11.7	Cùng chủ đề	Giải thích kiến trúc Kimi3 từ nền tảng GPT-2	Bài đọc	https://x.com/waterloo_intern/status/2081762065392541951
+439	11.7	Cùng chủ đề	Slide chuyên đề Mixture of Experts (MoE)	Slide	
+423	11.8	Nguồn chính	Sách 2025 về lập trình TPU (How to Scale Your Model)	Sách	https://jax-ml.github.io/scaling-book/
+426	11.9	Nguồn chính	Bài đọc trend: LoRA Without Regret in Fine-tuning LLM	Bài đọc	https://drive.google.com/file/d/1glyY0q06wJ3MaI7xh--9Ti0MRCpa50_l/view
+81	11.9	Nguồn chính	Low-rank Adaptation Techniques in Fine-tuning LLM (LoRA)	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/28
+429	11.9	Nguồn chính	Tutorial: Fine-tuning LLM dùng Low-rank Adaptation (LoRA)	Bài đọc	https://aivietnam.edu.vn/blog/finetune-lora-llms
+434	11.9	Nguồn chính	Tutorial + bài tập: Kỹ thuật fine-tune LLM (29 trang, có code)	Bài tập	https://drive.google.com/file/d/1T7qC34pHtDxCFatapG9xhknt2lG0wfeM/view
+427	11.9	Cùng chủ đề	LLMs Fine-tuning (PEFT, sau Pretraining)	Bài đọc	https://drive.google.com/file/d/1Xe9zR0uLn8wrd3ESpvgTwiSnpUSI4Gvx/view
+542	11.10	Nguồn chính	Sách chuyên đề RLHF (~120 trang, có code)	Sách	https://rlhfbook.com/book.pdf
+543	11.10	Nguồn chính	Sách, video và code về RLHF (Nathan Lambert)	Sách	https://arxiv.org/pdf/2504.12501
+540	11.10	Nguồn chính	Cải thiện LLM dùng RLHF và DPO (Vietnamese Custom Preference)	Bài đọc	https://drive.google.com/file/d/19d6xsPWZ5j7ZC4SWiBa1IBhj-HReh6Q_/view
+464	11.10	Nguồn chính	LLM Alignment để hoàn thiện chatbot	Bài đọc	https://drive.google.com/file/d/1qn3CPj5Pm9fFHXFreDAI9T7J415C-1rv/view
+541	11.10	Nguồn chính	Slide: Chatbot tiếng Việt dùng LLMs và RLHF	Slide	https://drive.google.com/file/d/1QDLHseDRroMZIuNtM_2exwZbjz7vGoh-/view
+424	11.10	Nguồn chính	Tutorial + bài tập Instruction Tuning (đọc hiểu SAT)	Bài tập	https://drive.google.com/file/d/1KEKIYwLoBNkWyR_0tnq7uH0ifs1dfSdU/view
+549	11.11	Nguồn chính	Bài khảo sát về DeepSeek	Bài đọc	https://aman.ai/primers/ai/deepseek-R1/
+428	11.11	Nguồn chính	Reasoning LLMs (sau Pretraining và Fine-tuning)	Bài đọc	https://drive.google.com/file/d/1p2-ZKyHzfvBmCgHAT3-CA30hlBdq816j/view
+550	11.11	Nguồn chính	Survey Agentic Reasoning (~75 trang)	Bài đọc	https://arxiv.org/pdf/2601.12538
+433	11.11	Nguồn chính	Tutorial + bài tập LLM Reasoning (pdf + code dưới comment)	Bài tập	https://drive.google.com/file/d/1v8XXKA2frA_fgHsgq9n1LcsgzLnvhYEs/view
+430	11.11	Cùng chủ đề	Slide: LLMs Reasoning (TA Đình Thắng, STA Trường Bình)	Slide	
+432	11.11	Cùng chủ đề	Solution Reasoning LLMs	Bài tập	
+84	11.12	Nguồn chính	LLM Evaluation and Safety	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/64
+87	11.12	Nguồn chính	Bộ câu hỏi phỏng vấn GenAI/LLM (interview questions, roadmaps, playbooks)	Sách (bên ngoài)	https://drive.google.com/file/d/1SikCWxV8HfpuRwNk_DOYJBnXlHqL6i8p/view
+82	11.13	Nguồn chính	Pre-training a Large Vision-Language Model	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/61
+83	11.13	Nguồn chính	Supervised Fine-Tuning a Large Vision-Language Model	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/63
+445	11.13	Nguồn chính	Tutorial Large Vision-Language Model (LVLM)	Bài đọc	https://drive.google.com/file/d/1_hm4bjq-mAtG9XVC5ML7275bMKS8MTNK/view
+409	11.13	Cùng chủ đề	Tài liệu + code demo: LVLM và fine-tuning mô hình thị giác-ngôn ngữ	Repo / Công cụ	
+88	12.1	Nguồn chính	RAG Tutorial (LangChain, QA trên PDF)	Sách	https://tutorial.aivietnam.edu.vn/pdf/48
+467	12.1	Nguồn chính	Bài đọc: Xây dựng hệ thống RAG (cơ bản + nâng cao, 113 trang)	Bài đọc	https://drive.google.com/file/d/1UJTAftsE4KzDyBYHDt5dIQAB7jWkYTnT/view
+468	12.1	Nguồn chính	Tutorial: Giới thiệu RAG (33 trang, có code)	Bài đọc	https://drive.google.com/file/d/1aah3wVckmWWG_Ie2HuTFJ9HWjyZcvFry/view
+473	12.1	Nguồn chính	GitHub kho tài liệu RAG từ cơ bản đến nâng cao	Repo / Công cụ	https://github.com/KalyanKS-NLP/rag-zero-to-hero-guide
+469	12.1	Cùng chủ đề	Các kiến trúc RAG phổ biến (infographic)	Slide	
+470	12.1	Cùng chủ đề	Bài tập: Dùng RAG tạo hệ thống hỏi đáp (chatbot đơn giản)	Bài tập	https://drive.google.com/file/d/109QcMEjCJDFzgC6Eo60QjZjtov0sWR_F/view
+476	12.1	Cùng chủ đề	[Quiz - Solution] Building Simple NotebookLM	Đề thi / Quiz	
+474	12.1	Cùng chủ đề	GitHub tập hợp ứng dụng LLM dùng RAG và Agent	Repo / Công cụ	https://github.com/Shubhamsaboo/awesome-llm-apps
+475	12.2	Nguồn chính	Video (>3h): Vector Database và ứng dụng trong AI	Video	https://youtu.be/6uvTLbhkWHA
+89	12.3	Nguồn chính	LLM Series: Agentic RAG	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/60
+471	12.3	Nguồn chính	Tutorial + bài tập RAG và LangChain	Bài tập	https://drive.google.com/file/d/17Qam2xQc7xDT4yP2Im7oLb-M4vhEcpOI/view
+472	12.3	Nguồn chính	Blog tổng hợp: Tạo chatbot dùng RAG (Lê Hùng, AIO2025)	Blog	https://spiffy-attention-05a.notion.site/T-ng-h-p-v-RAG-220e1a3b0e448002b18aea461f59f01d
+450	12.3	Cùng chủ đề	Reasoning Agents trong LLMs (PDF dưới comment)	Bài đọc	https://drive.google.com/file/d/1vDXp9X4mpOkFPQP08IwtmHd8-knEGKvD/view
+90	12.4	Nguồn chính	Building an AI Agent for News Summaries with smolagents	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/30
+447	12.4	Nguồn chính	Bài đọc (31 trang): AI Agent dùng tool calling	Bài đọc	https://drive.google.com/file/d/1XyoXzGnzfxbeR7HrY7JAmTzs2B-UK8Wb/view
+449	12.4	Nguồn chính	Hướng dẫn Reasoning Agents (ReAct & Plan-and-Execute, LangGraph)	Bài đọc	https://drive.google.com/file/d/1Yz_vdtcDLmNVsxgYqhEQX2e2hmysYEvG/view
+458	12.4	Nguồn chính	Khóa học free 2025 AI Agents (Hugging Face)	Khóa học	https://huggingface.co/learn/agents-course/en/unit0/introduction
+455	12.4	Cùng chủ đề	File tổng hợp tài liệu LLMs / AI Agent (sách, khóa học, repo)	Sách	https://docs.google.com/document/d/1Z5SX89FV6bTy2KKnGGb61xCcS9iPg_fv2USQYi4Wc3g/edit
+456	12.4	Cùng chủ đề	Sách mới về LLMs và Agentic AI (600+ trang, arXiv)	Sách	https://arxiv.org/pdf/2606.24937
+446	12.4	Cùng chủ đề	AI Agents: Tool Calling for AI Agent (PDF dưới comment)	Bài đọc	https://drive.google.com/file/d/1miDZTm2mSNwerfsUxFgq1GBpfHklJclb/view
+452	12.4	Cùng chủ đề	Xây dựng AI Agent qua thư viện Smolagents (PDF dưới comment)	Bài đọc	https://drive.google.com/file/d/1CVUyYfhra9MnNDRxNtCccTi5ETtScHFc/view
+457	12.4	Cùng chủ đề	Khóa học AI Agents từ CMU (slide, record, tài liệu đọc)	Khóa học	https://www.cmu-agents.com/
+459	12.4	Cùng chủ đề	Khóa học mới Stanford: Engineering AI Agents (link dưới comment)	Khóa học	https://cs329z.stanford.edu/index.html
+460	12.4	Cùng chủ đề	Khóa học: AI Agents for Beginners (Microsoft) – link dưới comment	Khóa học	https://github.com/microsoft/ai-agents-for-beginners
+454	12.4	Cùng chủ đề	Bài đọc + bài tập: AI Agent dùng smolagents	Bài tập	https://drive.google.com/file/d/1G-ic6sZxKVATBJz3dYFjTHJnz8SVMzfN/view
+451	12.5	Nguồn chính	Tài liệu Multi-agent Supervisor dùng LangGraph	Bài đọc	https://drive.google.com/file/d/1ioNgWjs3Cs16P6ucm5TbFYJj6Jpx7jTt/view
+93	12.5	Nguồn chính	Xây dựng hệ thống Multi-Agent	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/65
+453	12.5	Nguồn chính	Slide: Multi-agent Supervisor dùng LangGraph	Slide	https://drive.google.com/file/d/1SztvmXziA9O4UPJyC7s8PYG9_4_XSPKh/view
+466	12.6	Nguồn chính	Mini-book 94 trang: Giao thức MCP (Model Context Protocol)	Sách	https://drive.google.com/file/d/1io4wEGBztlaAiNpLAvXOiFZc95ieDugo/view
+91	12.6	Nguồn chính	Model Context Protocol (MCP)	Sách	https://tutorial.aivietnam.edu.vn/pdf/29
+92	12.6	Nguồn chính	Agent2Agent (A2A) Protocol	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/27
+448	12.6	Cùng chủ đề	Bài đọc: Agent2Agent Protocol (40 trang)	Bài đọc	
+94	12.7	Nguồn chính	LLM Series: Computer-Using Agents	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/66
+532	13.1	Nguồn chính	Sách online free 2025 về triển khai mô hình ML/DL thực tế	Sách	https://mlip-cmu.github.io/book/index.html
+524	13.1	Nguồn chính	Bài viết tổng hợp MLOps (~70 trang, có code)	Blog	https://drive.google.com/file/d/1dTHpY901zvPTamVl_V2uh4XwT-lZqcAt/view
+111	13.1	Nguồn chính	Paper tổng quan về MLOps (Machine Learning Operations: Overview, Definition, Architecture)	Paper (bên ngoài)	https://arxiv.org/pdf/2205.02302
+140	13.1	Cùng chủ đề	Sách AI mới 2025 (>1600 trang)	Sách	https://mlsysbook.ai/Machine-Learning-Systems.pdf
+511	13.1	Cùng chủ đề	Sách Machine Learning Systems (Harvard, 12/2025) + Mathematics for ML	Sách	https://mlsysbook.ai/assets/downloads/Machine-Learning-Systems.pdf
+510	13.1	Cùng chủ đề	Sách Machine Learning Systems (bản 11/2025, ~2600 trang)	Sách	http://www.mlsysbook.ai/assets/downloads/Machine-Learning-Systems.pdf
+301	13.1	Cùng chủ đề	Bài viết AIO Conquer: AI hardware, thực nghiệm MLP, MLDockFlow (experiment-monitor-deploy), metrics phát hiện gian lận tài chính	Blog	https://aioconquer.aivietnam.edu.vn/posts/diy-ai-hardware-architecture-in-a-nutshell
+641	13.1	Cùng chủ đề	Từ Linear Regression, XAI đến MLOps — một mạch xuyên suốt	Blog	https://aioconquer.aivietnam.edu.vn/posts/tu-linear-regression-xai-den-mlops
+515	13.2	Nguồn chính	Bài đọc MLOps: Quản lý phiên bản dữ liệu với DVC	Bài đọc	https://drive.google.com/file/d/1Nu_mnNWoKU8-RlI2isNHQYSOgplBsGmV/view
+522	13.2	Nguồn chính	Video MLOps: Data Version Control	Video	https://youtu.be/L77yDkSpsz0
+514	13.3	Nguồn chính	Bài đọc MLOps: Feature Store & Feast	Bài đọc	https://drive.google.com/file/d/1coSQjyxES_0m9j7J7nbTehHo1HnPrsdi/view
+528	13.4	Nguồn chính	Bài đọc: Triển khai mô hình ML/DL với FastAPI	Bài đọc	https://drive.google.com/file/d/1mZlvTBgmEISjMpxbscSVrOVrSx_erS19/view
+529	13.4	Nguồn chính	Video (~2h30): Triển khai ứng dụng ML dùng Gradio	Video	https://youtu.be/u9M0o0KG09Q
+521	13.4	Cùng chủ đề	Video buổi học thêm MLOps: FastAPI	Video	https://youtu.be/c6pEqxFiRzg
+530	13.4	Cùng chủ đề	Bài tập về Gradio (Deployment; AIO-2026)	Bài tập	
+531	13.4	Cùng chủ đề	Bài viết: Triển khai nhanh mô hình ML với Gradio	Blog	https://drive.google.com/file/d/1KhNuGoXuX8GINBBx0RKS3vVvLSb14JXn/view
+527	13.6	Nguồn chính	Tutorial MLOps (40 trang): CI/CD với GitHub Actions, Jenkins, GitLab CI	Repo / Công cụ	https://drive.google.com/file/d/1g_ZwK2bDIEDJMcprbLzCYbpS1mTzdiKP/view
+517	13.7	Nguồn chính	MLOps tutorial: Giám sát hệ thống AI với Grafana và Prometheus	Bài đọc	https://drive.google.com/file/d/1gZWLJddiuLd-ZZ8j_Nmfu_r7fISGRW6J/view
+516	13.8	Nguồn chính	Bài đọc MLOps: Tối ưu hiệu suất mô hình với ONNX và TensorRT	Bài đọc	https://drive.google.com/file/d/188aDmlV1yuwgCdNXB1QCnINyoYZ30Ba4/view
+518	13.8	Nguồn chính	MLOps: Nén và tối ưu mô hình trước khi triển khai (slide + code 3 buổi)	Slide	https://drive.google.com/file/d/1Lqe_p1Kq_2uhZ7fX_-9Cc8W_tVSAERCm/view
+537	13.8	Cùng chủ đề	Quantization cho mô hình học sâu	Bài đọc	
+508	13.10	Nguồn chính	Slide về LLMOps: triển khai LLM chấm thi trắc nghiệm (TA Dương Thuận)	Slide	https://drive.google.com/file/d/1cd7DYI46mBs1I4tF9upgIs4LfoL7NnDF/view
+483	14.2	Nguồn chính	Buổi học Kỹ năng làm việc nhóm cơ bản (PDF) – module 1 eDA	Slide	https://drive.google.com/file/d/1IXwIK9HLV6F47JuRIdrT2BSpLrQGbULl/view
+480	14.2	Nguồn chính	Buổi học kỹ năng: Công việc của DA trong domain Sales (PDF)	Slide	https://drive.google.com/file/d/1THvcD516N7bwYtGCKcS4VGS5NwNgi9y9/view
+485	14.2	Nguồn chính	Bài giảng (PDF v2): Cách làm việc với stakeholder trong phân tích dữ liệu	Slide	https://drive.google.com/file/d/1C7ZnrVdmLVCoo8WK07GQqyTEF2fVgAgw/view
+484	14.2	Nguồn chính	Bài tập làm nhóm trong eDA (chia việc, meeting, viết LaTeX)	Bài tập	https://drive.google.com/file/d/10p5UZjmYwRjx_HyJAcYGNV0ECs4oJEDY/view
+634	14.2	Cùng chủ đề	Buổi học soft skill cho DA/DS: Kỹ năng làm việc nhóm nâng cao (chuyên gia Vũ Trí)	Slide	https://drive.google.com/file/d/186A3wyEnVhOv-kIIwjYjyTRzH6aybueS/view
+486	14.2	Cùng chủ đề	Bài giảng Cách làm việc với stakeholder (slide v1, dạng ảnh)	Slide	
+98	14.3	Nguồn chính	Sales Analytics – Domain Knowledge	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/89
+99	14.3	Nguồn chính	Xây dựng KPIs và quy trình phân tích dữ liệu bán hàng	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/90
+489	14.3	Cùng chủ đề	Slide: Giới thiệu về Sales Analytics (yêu cầu, dữ liệu, KPI/metric) – slide dạng ảnh trong bài	Slide	
+635	14.3	Cùng chủ đề	Buổi giải bài tập tuần 2 eDA: Xử lý dữ liệu Sale dùng Excel	Bài tập	https://drive.google.com/file/d/1YQu1zJACtba0KjWmJRWGBHxeXQZ2-idd/view
+478	14.3	Cùng chủ đề	Bài tập tuần 1 chương trình eDA: Building Sales KPIs and Charts Using Excel	Bài tập	
+488	14.4	Nguồn chính	Bài đọc: Retail Analytics & Forecasting (81 trang) – trực quan & dự báo chuỗi thời gian e-commerce (demo eDA2026)	Repo / Công cụ	https://drive.google.com/file/d/1C6io3TZ59R9dyw9qWufkMICryOqt01eM/view
+490	14.5	Nguồn chính	Thư mục Drive tổng hợp các tài liệu eDA đã share qua comment/inbox (gồm sách eDA, …)	Sách	https://drive.google.com/drive/folders/1vwsMZ2YAdlCujJs7CafDBnSAULpmEoe5
+479	14.5	Nguồn chính	Seminar cựu học viên: DA domain HR -> DS FinTech US (video trong comment)	Khóa học	https://youtu.be/IVivWxkRfH0
+102	14.5	Cùng chủ đề	Bài đọc: Marketing Analytics (143 trang)	Sách	Nhận qua inbox sau khi comment
+104	14.5	Cùng chủ đề	Chia sẻ tài liệu: Phân tích dữ liệu nhân sự (121 trang)	Sách	Nhận qua inbox sau khi comment
+222	14.5	Cùng chủ đề	Buổi dạy Phân tích dữ liệu (DA+DS) chủ đề Marketing: slide + reading	Slide	https://drive.google.com/file/d/1JCRqh5YLGhd7LdfosE0_f5F9XtmzPkQy/view
+487	14.6	Nguồn chính	Bài đọc (51 trang): Phân tích nguy cơ lỗi trong dây chuyền sản xuất thép (project DA, mentor Phúc Nguyên)	Project	https://drive.google.com/file/d/1PnbVTnSdxs0se4jTeDfFHvrZHsQVgw91/view
+224	14.7	Nguồn chính	Buổi học Power BI (MSc. Quốc Thái) – link video dưới comment	Video	https://youtu.be/Ec4qxPrzT30
+103	14.8	Nguồn chính	Sách eDA v2026 (~938 trang): Excel, Tableau, Power BI, SQL & các project	Sách	https://drive.google.com/file/d/1UMvWg_ayXqKAF9OFaL_vTksp0KaXRtzm/view
+568	14.9	Nguồn chính	Dự án DS end-to-end: Phân cụm khách hàng dùng DeepSeek và ChatGPT (no-code)	Project	https://youtu.be/kc9QG2h-Hys
+118	14.9	Nguồn chính	Dự án Data Science: Phân khúc khách hàng dùng K-Means và XAI	Project	https://drive.google.com/file/d/1i5SOyf_tlLCKCCqxtun06bVwT7cBiWu0/view
+569	14.9	Nguồn chính	Dự án Phân tích dữ liệu dùng Python (48 trang) – project cuối WarmUp, SQL + Pandas + trực quan hóa + insight	Project	https://drive.google.com/file/d/1uL_iWwIrqzUMzSrnGplrzCz9ZK52NLLj/view
+577	14.9	Nguồn chính	Project case study: Phân cụm khách hàng dùng K-Means	Project	https://drive.google.com/file/d/1xdWX0tlh2ZTuDLjv0O249daLpA03uBCJ/view
+465	14.9	Nguồn chính	4 blog AIO Conquer: ý nghĩa đạo hàm, triển khai AI chatbot, dự báo nghỉ việc nhân sự, dự đoán điểm thi học sinh	Blog	https://aioconquer.aivietnam.edu.vn/posts/y-nghia-dao-ham-goc-nhin-tu-thuc-te-va-doi-song
+417	14.9	Nguồn chính	9 bài viết AIO Conquer về DA, DS, DL (churn, Olist logistics, anomaly time-series, retrieval, U-Net, data cleaning, fraud ngân hàng, Power Query retail, SQL & Pandas)	Blog	https://aioconquer.aivietnam.edu.vn/posts/churn-alert-xay-dung-mo-hinh-du-doan-churn-khach-hang-trong-e-commerce
+594	14.9	Cùng chủ đề	Tổng quan project 6.2: Phân khúc khách hàng cho marketing (Unsupervised)	Project	
+119	14.9	Cùng chủ đề	VinDatathon 2026: Retail Analytics & Forecasting (Dashboard Tableau, dự báo chuỗi thời gian)	Project	Comment không chứa link – cần hỏi page
+120	15.3	Nguồn chính	Streamlit cho ứng dụng Machine Learning	Bài đọc	https://drive.google.com/file/d/1-fHX8hjjGYoxgyjCDPbPZYTsiiJOXm4M/view
+562	15.3	Nguồn chính	Project + bài giải Forecasting Challenge (time-series; dự báo giá cổ phiếu FPT)	Bài tập	https://drive.google.com/file/d/10JTP7F1XU2Jrado6lrokZ-Y0iOq6aLFn/view
+565	15.3	Nguồn chính	5 nguồn tài liệu (pdf, blog) dự án Chẩn đoán bệnh tim mạch	Project	https://drive.google.com/file/d/1mdN44ZxUTUZdXp6O8thLmPjae9aF2K_d/view
+567	15.3	Nguồn chính	Bài viết + project (283 trang) ML cơ bản module 3&4 AIO2025	Project	https://drive.google.com/file/d/1qDvLOt1L8oZLWIgjOzxZ20PIavY5fpXr/view
+566	15.3	Nguồn chính	Bài đọc: Dùng Claude Code hỗ trợ cài đặt dự án ML (pipeline Cleveland Heart Disease)	Project	https://drive.google.com/file/d/1uSXskTXRtoY7Xfqv_ntoBWTz8_7PWSIf/view
+571	15.3	Nguồn chính	Kho 920 project ML Python (best-of-ml-python)	Project	https://github.com/ml-tooling/best-of-ml-python
+573	15.3	Nguồn chính	Project 29 trang: Phân loại tin nhắn/email và tin rác (spam)	Project	https://drive.google.com/file/d/1Te1NYo4LETwAdgKTOXsNe-v7yF8N1z11/view
+116	15.3	Nguồn chính	Project 3.2: Sales Forecasting and Demand Prediction (LightGBM, SHAP, Optuna)	Project	https://drive.google.com/file/d/1143S2erqy_G23AvGRhy7kpF-r4oBeBds/view
+575	15.3	Nguồn chính	Project 79 trang: Nhóm giải thuật cây cho dữ liệu bảng và text	Project	https://drive.google.com/file/d/1sfd7ZabNVPyOEtM1MM07YyFv05FKDrQ_/view
+581	15.3	Nguồn chính	Project: Chẩn đoán bệnh tim dùng ML cơ bản	Project	https://youtu.be/Z89vTBR6E2Y
+584	15.3	Nguồn chính	Project: Dự báo time-series dùng NLinear và DLinear	Project	https://drive.google.com/file/d/16KFeWi0ONqV3ZJYAgC_20y7bxUNGd9hU/view
+115	15.3	Nguồn chính	Project: Heart Disease Diagnosis with Tree-based Algorithms	Project	https://drive.google.com/file/d/1eJkiqCV8542oIuvl0iwV-GKGboBwMAD1/view
+587	15.3	Nguồn chính	Project: Phân loại chủ đề bài báo (KNN, K-Means, Decision Tree)	Project	
+593	15.3	Nguồn chính	Tài liệu 127 trang: dự án Phân loại khả năng mắc bệnh tim (lâm sàng)	Project	https://drive.google.com/file/d/1r9SKAzLJi_Q7v2V6ae986gG8DJzTLMlI/view
+557	15.3	Cùng chủ đề	Video project (~3h40): Phân loại khả năng mắc bệnh tim dựa vào triệu chứng	Video	https://youtu.be/hYZuRgZioyc
+570	15.3	Cùng chủ đề	Dùng Claude Code để cài đặt (lại) project machine learning	Project	
+109	16.2	Nguồn chính	Slide: Kafka và Spark	Slide	https://tutorial.aivietnam.edu.vn/pdf/45
+533	16.2	Cùng chủ đề	Slide: Triển khai ứng dụng VAE dùng Kafka	Slide	
+497	16.3	Cùng chủ đề	Xây dựng data pipeline theo kiến trúc Medallion trên AWS	Bài đọc	
+598	16.4	Nguồn chính	Bài đọc lớp AIO tuần tới (189 trang): 6 buổi về DE/MLOps, Machine Learning, Olympic AI (có mục Data Ingestion / Data Pipeline)	Bài đọc	https://drive.google.com/file/d/1C8tvf2NJlX8jtwgaKnOmLxaFhHKAhruy/view
+492	16.4	Nguồn chính	Khóa học 9 tuần free về Data Engineering (DE Zoomcamp) – link dưới comment	Khóa học	https://github.com/DataTalksClub/data-engineering-zoomcamp
+579	16.5	Nguồn chính	Project tổng kết kiến thức cơ bản: Phân tích Log + Tìm kiếm ảnh	Project	https://drive.google.com/file/d/1hESxhvhMpAjsGgFiAktKIbfxyLSvjQRP/view
+493	16.5	Nguồn chính	Project: Xây dựng data pipeline (tập trung data ingestion; DE/DS/DA)	Project	https://drive.google.com/file/d/1Zr0K-IcMB_xwpzVJijKgJ96mJWDJVAxf/view
+576	16.5	Cùng chủ đề	Project AIoT – phần 1: thu thập data	Project	
+596	16.5	Cùng chủ đề	Project AIoT – phần 2: demo	Repo / Công cụ	
+604	17.2	Nguồn chính	~1000 câu hỏi ôn thi AWS Cloud Practitioner (nhóm AIO soạn)	Bài đọc	https://drive.google.com/file/d/1dH7w9qQ_goDd6lzbqWBQSZJ1onr1ECZY/view
+498	17.2	Nguồn chính	Bài giảng AWS Compute và Serverless (~4 tiếng, TA Nguyễn Thuận)	Slide	https://youtu.be/_RgU3wj3lBY
+499	17.2	Nguồn chính	Bài giảng AWS Cloud Concept (video dưới comment)	Video	https://youtu.be/-ryzrwx0Yig
+112	17.2	Cùng chủ đề	Bộ quiz AWS Cloud Practitioner: Cloud Concepts, Global Infrastructure, Compute & Serverless, Storage, Networking, Pricing & Billing	Video + bài tập	Video trên page (chưa lấy link)
+500	17.2	Cùng chủ đề	Bài tập AWS Global Infrastructure (video)	Bài tập	
+501	17.2	Cùng chủ đề	Bài tập AWS Storage (video)	Bài tập	
+502	17.2	Cùng chủ đề	Bài tập AWS: Cloud Concept (TA Dương Thuận, TA Anh Dương)	Bài tập	
+504	17.2	Cùng chủ đề	AWS Networking (quiz)	Đề thi / Quiz	
+505	17.2	Cùng chủ đề	AWS Security (quiz)	Đề thi / Quiz	
+506	17.2	Cùng chủ đề	AWS – Pricing and Billing (quiz)	Đề thi / Quiz	
+503	17.2	Cùng chủ đề	[Quiz Solution] AWS Compute & Serverless	Đề thi / Quiz	
+639	17.2	Cùng chủ đề	MLOps toàn diện trên AWS: xây dựng pipeline với EC2, S3, ECR và ECS	Blog	https://aioconquer.aivietnam.edu.vn/posts/mlops-toan-dien-tren-aws-xay-dung-pipeline-voi-ec2-s3-ecr-va-ecs
+520	17.3	Cùng chủ đề	Slide MLOps: Docker Swarm và Kubernetes triển khai ML/DL	Slide	
+507	17.4	Cùng chủ đề	Slide LLMOps: LangSmith và vLLM	Slide	
+110	17.5	Nguồn chính	MLOps Tutorial: Hệ thống dự đoán khách hàng rời bỏ dịch vụ	Sách	https://tutorial.aivietnam.edu.vn/pdf/55
+519	17.5	Nguồn chính	Project MLOps: Hệ thống dự đoán khách hàng ngừng sử dụng dịch vụ (slide + code)	Slide	https://drive.google.com/file/d/1W717xFc8W1vSoRn0fGrj5ZiXcqwdUBHo/view
+509	17.5	Nguồn chính	Video: LLMOps cho dự án PEFT for Multiple-choice QA	Video	https://youtu.be/OOpNVZiUpx0
+523	17.5	Nguồn chính	Project MLOps: Tối ưu phát hiện vật thể (Knowledge Distillation + Quantization + ONNX + TensorRT)	Project	https://drive.google.com/file/d/1R7ew5qqhob30gN5eC2WbCBbkuIs3BGac/view
+534	17.5	Nguồn chính	Project ứng dụng Streamlit	Project	https://drive.google.com/file/d/1ZiypH1HMH8cxTJeaBqryV_MpSHl6WEBq/view
+535	17.5	Nguồn chính	Project: Triển khai ứng dụng NLP dùng Streamlit	Project	https://drive.google.com/file/d/1l-5Bju5bao4e3EofLOP2mQsQlEm5lVq_/view
+638	17.5	Cùng chủ đề	MLOps: Kết hợp DVC cho quản lý dữ liệu và Feast cho Feature Store	Blog	https://aioconquer.aivietnam.edu.vn/posts/mlops-ket-hop-dvc-cho-quan-ly-du-lieu-va-feast-cho-feature-store
+536	17.5	Cùng chủ đề	Cách chạy Streamlit từ Colab và GitHub	Repo / Công cụ	
+525	17.5	Cùng chủ đề	MLOps project: Demo	Repo / Công cụ	
+526	17.5	Cùng chủ đề	MLOps: CI/CD Playground	Repo / Công cụ	
+359	18.3	Nguồn chính	Bài đọc AI+IoT: Điều khiển relay qua Modbus dùng Hand Gesture Recognition	Bài đọc	https://drive.google.com/file/d/1_iQtW8TMVZqxOvM8zNJt1Pql14mbL3pF/view
+554	18.3	Nguồn chính	Project 7.1: Video Action Recognition	Video	https://drive.google.com/file/d/1XHzpEQb_lcKVrmFV3ZUwBjMAHyy2gszP/view
+558	18.3	Nguồn chính	Bài tập (project): Hệ thống hỏi đáp (Question Answering)	Bài tập	
+559	18.3	Nguồn chính	Bài tập (project): Phân tích cảm xúc mức khía cạnh (ABSA)	Bài tập	Comment chứa link không đúng chủ đề – cần hỏi page
+66	18.3	Nguồn chính	Background Subtraction	Project	https://tutorial.aivietnam.edu.vn/pdf/20
+67	18.3	Nguồn chính	Hệ thống điều khiển relay qua Modbus dùng Hand Gesture Recognition	Project	https://tutorial.aivietnam.edu.vn/pdf/19
+580	18.3	Nguồn chính	Project Visual Question Answering (VQA)	Project	
+578	18.3	Nguồn chính	Project chuyên đề Visual Question Answering (VQA)	Project	https://drive.google.com/file/d/1_-nQ4jIkXYxJlKVqzcOgLRrBQbtHwwdL/view
+583	18.3	Nguồn chính	Project: Dịch đa ngôn ngữ dùng mBART50 và OPUS-100	Project	https://drive.google.com/file/d/1Sf9wA_B8Ds_QTnZoA9CxwlXcE5lTNf8y/view
+585	18.3	Nguồn chính	Project: Hệ thống nhận diện khuôn mặt (nhóm TA Đình Tiềm)	Project	https://drive.google.com/file/d/11DIrRp-a_iAbfrwfZGiF0U3f7822nttb/view
+74	18.3	Nguồn chính	Project: Simple Word Suggestion	Project	https://tutorial.aivietnam.edu.vn/pdf/32
+591	18.3	Nguồn chính	Project: Visual Grounding	Project	https://drive.google.com/file/d/14ePSjaji69XyodGx1ZmnM-9PMWdHiN78/view
+592	18.3	Nguồn chính	Project: Xây dựng hệ thống OCR	Project	https://drive.google.com/file/d/14b423IF3TWUsTxyDrDPEVs5JOrwsSBbX/view
+555	18.3	Cùng chủ đề	Project Multilingual Machine Translation (video)	Video	
+556	18.3	Cùng chủ đề	Project: Hệ thống nhận diện khuôn mặt (video)	Video	
+561	18.3	Cùng chủ đề	Bài tập project Face Recognition (video, TA Đình Tiềm)	Bài tập	
+97	19.2	Nguồn chính	How to Use AI in Your Daily Tasks	Bài đọc	https://drive.google.com/file/d/1eqrxTLjG-dMJatgk-YLKxk3_DMukCuy1/view
+95	19.2	Nguồn chính	OpenClaw (cài đặt & dùng trên Windows)	Bài đọc	https://tutorial.aivietnam.edu.vn/pdf/67
+96	19.2	Nguồn chính	Slide seminar: AI-Powered Testing	Slide	https://drive.google.com/file/d/1sM7Oy-Ssx6aDmScU7CrLc2bnL6jIyKST/view
+128	19.2	Cùng chủ đề	Slide thảo luận kỹ năng dùng AI trong công việc và cá nhân	Slide	
+461	19.2	Cùng chủ đề	Demo: Xây dựng agent điều khiển máy tính (~OpenClaw)	Repo / Công cụ	
+595	19.3	Nguồn chính	Project: Xây dựng NotebookLM đơn giản (PDF dưới comment)	Sách	https://drive.google.com/file/d/1QpgvmGsZnFRnauZTnp5ZHTVHx3LjV8f_/view
+597	19.3	Nguồn chính	Xây dựng chatbot nội bộ (tra cứu thông tin công ty) – tài liệu + code	Bài đọc	https://drive.google.com/drive/folders/1Spp20A5r4oZauBalFhpID2xoCe5CoZ89
+410	19.3	Nguồn chính	Xây dựng hệ thống AI giải câu hỏi trắc nghiệm (PEFT for MCQA) – PDF dưới comment	Bài đọc	https://drive.google.com/file/d/1Xak7WBiZaj8iiuL-MhMLOaK-VfsR2uWm/view
+560	19.3	Nguồn chính	Bài tập (project): Sinh nhạc dùng VAE	Bài tập	
+85	19.3	Nguồn chính	Hệ thống trả lời câu hỏi trắc nghiệm dùng LLMs	Project	https://tutorial.aivietnam.edu.vn/pdf/51
+572	19.3	Nguồn chính	Project 25 trang: Phân loại tin dùng XSTK và Vector database	Project	
+574	19.3	Nguồn chính	Project 41 trang: Vector database và ứng dụng trong AI	Project	https://drive.google.com/file/d/1ZZmitv2dt9S9cpBe77sePP8KntwoTAin/view
+582	19.3	Nguồn chính	Project: Chatbot tiếng Việt giao tiếp thường nhật dựa trên LLM	Project	https://drive.google.com/file/d/1ZB-JJ30hDj0WZKA2aix49io7YhQOZRG2/view
+586	19.3	Nguồn chính	Project: PEFT for Multiple-choice QA (pdf + code dưới comment)	Project	https://drive.google.com/file/d/1eEWlYeKYWDMvWQzdZopA4WRoPHOQctFw/view
+588	19.3	Nguồn chính	Project: Sinh ảnh Emoji dùng Diffusion Model	Project	https://drive.google.com/file/d/15SzJz5HnBF3abgUt5RQ_Q9xNJajEv_8a/view
+589	19.3	Nguồn chính	Project: Text-Guided Image Generation (Conditional Flow Matching)	Project	https://drive.google.com/file/d/13oUIkFoz0YxI86lomu9UACrm-NfTD8Ra/view
+86	19.3	Nguồn chính	Project: Xây dựng mô hình sinh truyện tranh (Comic Generation)	Project	Video chỉ phát trên Facebook (mở link bài post)
+590	19.3	Nguồn chính	Project: Ứng dụng tạo truyện tranh tự động (module NLP)	Project	https://drive.google.com/file/d/1rFA2mWxsvM6qFM_TQQ1fEwmpM_J7EyyM/view
+552	20.2	Nguồn chính	Best Paper NeurIPS-2025: Artificial Hivemind	Bài đọc	https://arxiv.org/pdf/2510.22954v1
+553	20.2	Nguồn chính	Paper AAAI-W-2026 của nhóm sinh viên (tham khảo nghiên cứu)	Bài đọc	https://drive.google.com/file/d/1ZiSANDg9-I9A2tA6IL8INdAILilwRLmL/view
+539	20.2	Nguồn chính	Tìm hiểu nghiên cứu: Dự đoán tuổi thọ pin Lithium-ion	Bài đọc	https://drive.google.com/file/d/1LKoT3276W-gUrENLP7Kr7V3elcPO1HwJ/view
+544	20.3	Cùng chủ đề	Tutorial (~160 trang) Meta-Reinforcement Learning	Bài đọc	
+546	20.3	Cùng chủ đề	Quiz – Advanced Reinforcement Learning	Đề thi / Quiz	
+538	20.4	Nguồn chính	Sách (2025): Ứng dụng giải thuật tiến hóa (EAs) trong deep learning	Sách	https://neuroevolutionbook.com/ne_book.html
+122	21.1	Nguồn chính	Sách bài tập Lớp AIO	Sách	https://tutorial.aivietnam.edu.vn/pdf/43
+123	21.1	Nguồn chính	Sách đề thi và bài tập (Sổ tay AIO)	Sách	https://tutorial.aivietnam.edu.vn/pdf/58
+627	21.1	Nguồn chính	Sách đề thi cuối khóa AIO-2025 (285 trang): DS, ML&DL, CV&NLP, GenAI&LLMs	Đề thi / Quiz	https://drive.google.com/file/d/1LuWW6CHbgLb7Mq2UQBxu-gqvaxrv7_2C/view
+606	21.2	Nguồn chính	Bài thi GenAI/LLM: Style Transfer, GAN, DCGAN, VAE, Diffusion, Flow Matching, GPT, PEFT, Prompting, Reasoning, RAG, Agent, VLM	Bài đọc	https://aivietnam.edu.vn/blog/genai-llms-exam
+127	21.2	Nguồn chính	Đề thi Module 2 – AIO-2026 (Toán và ứng dụng cho DS & AI)	Đề thi	https://tutorial.aivietnam.edu.vn/pdf/86
+610	21.2	Nguồn chính	Đề thi + bài giải (47 trang): ML cơ bản (cây quyết định…)	Đề thi / Quiz	https://drive.google.com/file/d/10HjnisMLOPaIbFf7KsIHj52TxbL4zNiT/view
+611	21.2	Nguồn chính	Đề thi + bài giải (76 trang): Beyond Simple Classification (ConvNeXt, Swin, Object Localization, POS Tagging, Visual Grounding)	Đề thi / Quiz	https://drive.google.com/file/d/1lBbUnswXGvcMuyRCk4-Sm4RiX5nj_w2x/view
+612	21.2	Nguồn chính	Đề thi + bài giải: Deep Learning Foundation (Logistic/Softmax Regression, MLP…)	Đề thi / Quiz	https://drive.google.com/file/d/1mHkl4zNEIdp4e242yGq8uoQ4VWbvciVa/view
+616	21.2	Nguồn chính	Đề thi + đáp án Data Analysis (DA/DE, module 3 AIO2025, 54 câu)	Đề thi / Quiz	https://aivietnam.edu.vn/blog/blog
+139	21.3	Nguồn chính	Sách 278 câu hỏi + đáp án phỏng vấn ML/DL	Sách	https://arxiv.org/pdf/2201.00650
+602	21.3	Nguồn chính	Sách bài tập (có lời giải) Machine Learning	Bài tập	https://arxiv.org/pdf/2206.13446
+601	21.3	Nguồn chính	Hướng dẫn làm bài thi Olympic AI (~170 trang; 2 project + code)	Project	https://drive.google.com/file/d/1CvbFrgJ35T5jy59NI1DGL4SKr0jAd4Rs/view
+124	21.4	Nguồn chính	Sách đề thi AIO2025	Sách	https://tutorial.aivietnam.edu.vn/pdf/50
+390	21.4	Nguồn chính	50 câu ôn tập mô hình DL phổ biến (CNN, RNN, LSTM, GRU, Transformer)	Bài đọc	https://drive.google.com/file/d/1_M11Z2JjlvhMCyRP8LRgRoTvhvnS4Smm/view
+371	21.4	Nguồn chính	Các câu hỏi ngữ cảnh về Computer Vision & NLP	Bài đọc	
+599	21.4	Nguồn chính	Giải 2 đề Olympic AI năm 2025 (78 trang, dữ liệu PTIT)	Bài đọc	https://drive.google.com/file/d/1XcaFOMz744asAcJQLNfytoErKj93qCUp/view
+603	21.4	Nguồn chính	Tài liệu ôn tập AWS Cloud Practitioner (câu hỏi do nhóm AIO soạn)	Bài đọc	https://drive.google.com/file/d/1y77yW1xK9BbQwbM81Hdmxfqw0r3ImI3y/view
+607	21.4	Nguồn chính	Đề 35 câu ôn tập Python cơ bản (if-else, for, list)	Bài đọc	https://drive.google.com/file/d/1IGsNZbh-NrdOFj3d8u_va1iu3YvRiybR/view
+600	21.4	Nguồn chính	Slide training cuộc thi Olympic AI	Slide	
+605	21.4	Nguồn chính	391 câu hỏi ôn tập AWS Cloud Concept	Video	https://www.youtube.com/@AIOConquer
+631	21.4	Nguồn chính	Buổi ôn tập cho Olympic AI (buổi 2) — dữ liệu bài toán lấy từ PTIT	Video + bài tập	
+126	21.4	Nguồn chính	Đề thi Module 12 – AIO 2025 (LLMs)	Đề thi	https://tutorial.aivietnam.edu.vn/pdf/68
+125	21.4	Nguồn chính	Đề thi cuối khoá AIO-2025: Machine Learning và Deep Learning	Đề thi	https://tutorial.aivietnam.edu.vn/pdf/76
+163	21.4	Nguồn chính	33 câu trắc nghiệm đọc hiểu code Python	Đề thi / Quiz	https://drive.google.com/file/d/1C9NKiWvA06RWRyKoiqyvSILP0jxLPK3Y/view
+625	21.4	Nguồn chính	Hướng dẫn giải đề thi ôn luyện Olympic AI 2026 – đề số 1 (PTIT), TA Quang Minh	Đề thi / Quiz	https://drive.google.com/file/d/1r8kFzMla81yvlibK1xM06xy4VttS1EI0/view
+626	21.4	Nguồn chính	Mock Test: Topic Label Powerset (code dưới comment)	Đề thi / Quiz	https://drive.google.com/file/d/1u1Cox2c9DMok1qPrPg3B1A2E6sZe5oot/view
+564	21.4	Nguồn chính	Quiz về project lớp WarmUp AIO-2026	Đề thi / Quiz	
+563	21.4	Nguồn chính	[Quiz] Project PEFT for MCQA	Đề thi / Quiz	
+608	21.4	Nguồn chính	Đề thi (+solution) Computer Vision: UNet, object detection, …	Đề thi / Quiz	https://drive.google.com/file/d/1LHZguduACjuwV2a_kUYQpygWcsA0L1Zx/view
+609	21.4	Nguồn chính	Đề thi + bài giải (37 trang): Deep Learning Architectures (CNN, RNN, LSTM…)	Đề thi / Quiz	https://drive.google.com/file/d/1SvyM3SaGcREZdUsC00FxqM6J_m3Xccwb/view
+617	21.4	Nguồn chính	Đề thi + đáp án Máy học cơ bản (module 3 AIO2025)	Đề thi / Quiz	
+613	21.4	Nguồn chính	Đề thi + đáp án cuối khóa AIO2024 – phần 1 (Machine Learning)	Đề thi / Quiz	https://aivietnam.edu.vn/blog/machine-learning-exam
+614	21.4	Nguồn chính	Đề thi + đáp án cuối khóa AIO2024 – phần 2 (Deep Learning)	Đề thi / Quiz	https://aivietnam.edu.vn/blog/deep-learning-exam
+615	21.4	Nguồn chính	Đề thi + đáp án cuối khóa AIO2024 – phần 3 (Computer Vision & NLP)	Đề thi / Quiz	https://aivietnam.edu.vn/blog/cv-nlp-exam
+620	21.4	Nguồn chính	Đề thi Data Analysis & Data Science (SQL, dashboard, …) – PDF dưới comment	Đề thi / Quiz	https://drive.google.com/file/d/1xVWFiU7x_KXE56Sti1iJ8OlCcimqCdt8/view
+623	21.4	Nguồn chính	Đề thi Xác suất thống kê AIO2025 (53 câu)	Đề thi / Quiz	https://drive.google.com/file/d/1zB10Y9mXRK0AVlGIK1ahaxVAelgI8hEY/view
+618	21.4	Nguồn chính	Đề thi cuối module 2 lớp AIO (có phần DA)	Đề thi / Quiz	https://drive.google.com/file/d/1ksSvlotDN16rnQzcWuoyMx16iIZU6fMF/view
+619	21.4	Nguồn chính	Đề thi cuối module 6: các mô hình học sâu (CNN, RNN…)	Đề thi / Quiz	
+621	21.4	Nguồn chính	Đề thi và bài giải về NLP	Đề thi / Quiz	
+633	21.4	Nguồn chính	Đề thi và bài giải: các giải thuật tree trong machine learning	Đề thi / Quiz	https://drive.google.com/file/d/1r0qd8VPWbtLfh97SJVbx_nriFIkggBY3/view
+622	21.4	Nguồn chính	Đề thi về toán và machine learning (siêu) cơ bản	Đề thi / Quiz	https://drive.google.com/file/d/1jlbe0egOztBLSEF2JHskXAZJWGd_wZvG/view
+624	21.4	Nguồn chính	Đề thi: Python cơ bản cho DS&AI (câu hỏi ngữ cảnh cuối module 1 AIO-2026)	Đề thi / Quiz	https://drive.google.com/file/d/1suCL0I8FzEHWnkMDFOXbA84w46k_cyXc/view

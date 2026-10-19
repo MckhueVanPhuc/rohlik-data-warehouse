@@ -24,6 +24,8 @@ Không dùng tài liệu kế hoạch làm bằng chứng code đã chạy.
 10. [Troubleshooting](#phan-10)
 11. [Current Implementation Status](#phan-11)
 12. [Future Implementation & Handover](#phan-12)
+    - [Task 06: source profiling và readiness](#task-06)
+    - [Task 07: Source Registry và validation](#task-07)
 13. [Documentation Maintenance Policy](#maintenance)
 14. [Changelog](#changelog)
 
@@ -42,20 +44,34 @@ hiện có hạ tầng SQLite và file DuckDB rỗng cùng module đọc/ghi/tra
 Streamlit được chọn theo kế hoạch để cung cấp giao diện
 Python nội bộ, giảm phần việc web cho nhóm; chưa có ứng dụng hoặc cơ chế phân quyền.
 
+**Quyết định nhập liệu mới:** CSV upload là phương thức chính, không bắt buộc nhập
+từng record bằng form. Streamlit chọn phòng ban/bảng theo quyền, tải template,
+upload/preview; backend kiểm tra schema, business keys, types và DQ. Nhân viên
+xác nhận trước khi backend lưu records hợp lệ cùng audit và metadata batch vào
+SQLite trong một transaction, theo INSERT/UPSERT đã duyệt. Sau lưu là `PENDING_SYNC`;
+DE chủ động đồng bộ sang DuckDB, chỉ công bố Parquet snapshot mới sau kiểm định.
+Toàn bộ chức năng này **PLANNED**, chưa có UI/API/schema/sync/publisher.
+Xem [CSV Upload Contract](csv_upload_contract.md) cho chính sách chống trùng và điểm cần chốt.
+
 ```mermaid
 flowchart LR
-    User[Nhân viên qua LAN - dự kiến] -.-> UI[Streamlit - dự kiến]
-    UI -.-> DB[SQLite input.db - hạ tầng đã có]
+    User[Nhân viên qua LAN - dự kiến] -.-> UI[Streamlit chọn bảng / template / CSV upload - PLANNED]
+    UI -.-> Validate[Backend validation / preview / nhân viên xác nhận - PLANNED]
+    Validate -.-> DB[SQLite records / audit / metadata batch - PLANNED]
     Raw[CSV nguồn - có file, chưa chốt bộ dữ liệu] -.-> ETL[Python ETL và DQ - dự kiến]
-    DB -.-> ETL
+    DB -. PENDING_SYNC / DE chạy batch .-> ETL
     ETL -.-> DW[DuckDB file rỗng đã có / Bronze Silver Gold Mart dự kiến]
+    DW -.-> Out[Kiểm định rồi publish Parquet snapshots - PLANNED]
     DW -.-> ML[BT1–BT8 - chưa tích hợp]
-    ML -.-> Out[Prediction và publish snapshots - dự kiến]
+    ML -.-> Out
     Out -.-> UI
 ```
 
 Các mũi tên nét đứt là luồng dự kiến. Người dùng LAN truy cập ứng dụng trên máy chủ;
-file SQLite đặt trên ổ cục bộ máy chủ, không mở chung qua network share với WAL.
+node SQLite mô tả chức năng nghiệp vụ dự kiến; file và connection infrastructure
+đã có nhưng chưa có records/audit/batch schema. Giữ nguyên sáu CSV Kaggle, không ghi
+đè nguồn; Finance/HR chỉ có CSV riêng sau khi schema và giá trị được duyệt.
+File SQLite đặt trên ổ cục bộ máy chủ, không mở chung qua network share với WAL.
 Hạn chế cùng máy của WAL được nêu trong [tài liệu SQLite](https://sqlite.org/wal.html).
 Pipeline dự kiến chạy batch thủ công bởi DE, chưa có scheduler hay lệnh pipeline.
 
@@ -63,7 +79,7 @@ Pipeline dự kiến chạy batch thủ công bởi DE, chưa có scheduler hay 
 | --- | --- |
 | E1 / Data Engineer | Môi trường, SQLite và DuckDB infrastructure, test, tài liệu; SQLite backup utility và hướng dẫn DuckDB offline backup. Sau này nguồn/ETL/DQ/Warehouse. Chưa ghi nhận tên người tiếp nhận. |
 | Thành viên ML BT1–BT8 | Xác nhận input, target, grain, preprocessing, output và cách chạy qua Data Contract; tự phát triển mô hình. |
-| Thành viên Streamlit | Sau khi chốt schema/quyền, dùng module SQLite và dữ liệu xuất đã thống nhất để xây UI. |
+| Thành viên Streamlit | Xây chọn bảng theo quyền, tải template/upload CSV, preview/xác nhận và đọc Parquet đã publish; phối hợp backend theo CSV Upload Contract. Tất cả PLANNED. |
 | Trưởng nhóm / chủ dự án | Chốt phạm vi, phân công, quyền truy cập và nghiệm thu các giai đoạn. |
 
 Định hướng BT từ tài liệu Rohlik v3: BT1 dự báo đơn; BT2 nhân sự/tài xế; BT3 nhu cầu
@@ -73,7 +89,8 @@ Xem [kế hoạch v3](../Rohlik_Decision_Hub_Huong_dan_thuc_hien_v3.md) và
 [mẫu Data Contract](data_contract_template.md). Tài liệu v3 nhắc bộ mã chạy thật và 14
 bảng nguồn, nhưng không chứng minh repository hiện tại chứa những thành phần đó.
 
-Gói bàn giao hiện có gồm source SQLite/DuckDB, 28 ca kiểm thử (14 mỗi engine), hướng dẫn này,
+Gói bàn giao hiện có gồm source SQLite/DuckDB, profiler và Source Registry/validator,
+77 ca kiểm thử (14 SQLite + 14 DuckDB + 10 profiling + 39 registry), hướng dẫn này,
 [SQLite Setup](sqlite_setup.md), [DuckDB Setup](duckdb_setup.md), template và tám contract đang chờ xác nhận.
 CSV/database/backup phải bàn giao riêng qua kênh được nhóm phê duyệt, không qua Git.
 
@@ -305,7 +322,9 @@ Cây rút gọn từ workspace ngày 18/10/2026, bỏ cache và không liệt k�
 rohlik-data-warehouse/
 ├── .git/                         # repository hiện tại; ZIP có thể không có
 ├── .venv/                        # môi trường cục bộ, không bàn giao nguyên thư mục
-├── config/                       # đang trống
+├── config/
+│   ├── sources.yaml              # 14 bảng logic; chưa có business schema thật
+│   └── README.md
 ├── data/
 │   ├── input.db                  # SQLite đã khởi tạo, chưa có bảng
 │   ├── raw/
@@ -320,6 +339,11 @@ rohlik-data-warehouse/
 │   ├── __init__.py
 │   ├── init_sqlite.py
 │   ├── init_duckdb.py
+│   ├── profile_sources.py        # Task 06: read-only nguồn; DuckDB :memory:
+│   ├── validate_source_registry.py # Task 07: chỉ validate metadata/hash
+│   ├── config/
+│   │   ├── __init__.py
+│   │   └── source_registry.py
 │   ├── db/
 │   │   ├── __init__.py
 │   │   ├── sqlite.py
@@ -329,11 +353,18 @@ rohlik-data-warehouse/
 │   └── services/                 # trống
 ├── tests/
 │   ├── test_sqlite.py
-│   └── test_duckdb.py
+│   ├── test_duckdb.py
+│   ├── test_profile_sources.py    # 10 ca, chỉ dùng CSV tạm
+│   └── test_source_registry.py    # 39 ca, config/files tạm
 ├── docs/
 │   ├── setup_tutorial.md
 │   ├── sqlite_setup.md
 │   ├── duckdb_setup.md
+│   ├── data_dictionary.md
+│   ├── data_profiling_report.md
+│   ├── source_mapping.md
+│   ├── data_quality_rules.md
+│   ├── source_registry.md
 │   ├── data_contract_template.md
 │   └── contracts/                # BT1.md … BT8.md
 ├── logs/                         # trống
@@ -347,14 +378,14 @@ chốt làm nguồn chính thức. Không chỉnh sửa CSV gốc trong quá tr�
 
 | Thư mục | Mục đích / tình trạng |
 | --- | --- |
-| `config/` | Dự kiến cấu hình; chưa có Data Source Registry hoặc cấu hình pipeline. |
+| `config/` | Đã có sources.yaml/README cho 14 logical Source Tables; chưa là cấu hình pipeline thực thi. |
 | `data/raw/` | CSV nguồn cục bộ; bảo toàn bản gốc. |
 | `data/warehouse/` | Đã có `rohlik.duckdb` rỗng; chưa triển khai Warehouse nghiệp vụ. |
 | `data/published/` | Dự kiến snapshot cho bên tiêu thụ, chưa có output. |
 | `data/backups/` | Snapshot SQLite bằng Backup API, không ghi đè bản cũ. |
-| `src/`, `src/db/` | SQLite và DuckDB infrastructure cùng CLI; chưa có ETL. |
+| `src/`, `src/db/` | SQLite/DuckDB infrastructure, profiler :memory:, registry loader/CLI tại src/config; chưa có ETL. |
 | `src/models/`, `src/services/` | Chưa có implementation; không có model runner hay Data Entry API. |
-| `tests/` | 14 ca SQLite + 14 ca DuckDB; mọi ghi test đều vào đường dẫn tạm. |
+| `tests/` | 14 SQLite + 14 DuckDB + 10 profiling + 39 registry = 77; mọi ghi test dùng đường dẫn tạm. |
 | `docs/` | Setup, contract và bàn giao. |
 | `logs/` | Dự kiến log vận hành; chưa có logging pipeline. |
 
@@ -519,7 +550,9 @@ with connection() as conn:
 
 Sau khi schema được duyệt, đặt các câu ghi có tham số trong `with transaction() as conn:`.
 Không gọi commit/rollback hoặc `executescript` bên trong context transaction vì có thể
-phá phạm vi atomic. Hiện chưa có `save_record`, form, Data Entry API hay phân quyền.
+phá phạm vi atomic. Hiện chưa có CSV upload, Data Entry API, audit/batch schema hay
+phân quyền. CSV upload là phương thức chính dự kiến, không bắt buộc form từng record;
+module transaction hiện có chỉ là nền tảng cho luồng ghi được duyệt sau này.
 Test kiểm chứng commit/rollback dùng bảng kỹ thuật trên **database tạm**, không DB thật.
 
 ### 7.3 Tests, backup và integrity
@@ -529,7 +562,7 @@ Test kiểm chứng commit/rollback dùng bảng kỹ thuật trên **database t
 .\.venv\Scripts\python.exe -m src.db.backup
 ```
 
-Kỳ vọng toàn bộ 28 passed (14 SQLite + 14 DuckDB); backup SQLite in `SUCCESS`, đường dẫn mới trong `data/backups/` và
+Kỳ vọng toàn bộ 77 passed (14 SQLite + 14 DuckDB + 10 profiling + 39 registry); backup SQLite in `SUCCESS`, đường dẫn mới trong `data/backups/` và
 `integrity_check=ok`. Backup dùng `sqlite3.Connection.backup`, bao gồm dữ liệu đã
 commit trong WAL, tên có timestamp UTC và UUID; không ghi đè backup trước.
 Chọn backup cụ thể để kiểm tra (nhập đường dẫn thực tế vừa được in):
@@ -707,6 +740,17 @@ init lặp giữ dữ liệu và bytes, chuỗi thao tác tuần tự, nguồn t
 file hỏng không bị thay thế, đường dẫn độc lập cwd, backup offline và CLI.
 Tổng 14 ca DuckDB, chỉ dùng database tạm; không nạp CSV hoặc ghi bảng vào file dự án.
 
+Task 06 bổ sung [test_profile_sources.py](../tests/test_profile_sources.py): 10 ca
+trên CSV tạm kiểm chứng null/ranges/kiểu, full-row/key duplicates, JOIN multiplicities,
+ngày không parse được, calendar null-safe, median order_index, hash nguồn, nguồn thiếu,
+giới hạn report directory, encoding và quote identifiers. Lần chạy toàn bộ mới nhất
+ở cuối Task 06 ngày 18/10/2026: **38 PASS, 0 FAIL** (5,11 giây); snapshot 28 tests phía trên là mốc
+trước Task 06, không phải số rules DQ pipeline đã được thực thi.
+
+Task 07 bổ sung [test_source_registry.py](../tests/test_source_registry.py): 39 ca
+registry/config/files tạm. Sau Task 07, tổng thực tế là **77 PASS, 0 FAIL**, không
+skip. Các snapshot 28/38 phía trên là lịch sử kiểm tra, không số tests hiện tại.
+
 ### 9.2 Checklist trên máy nhận
 
 Thực hiện theo thứ tự phần 3 → 4 → 6 → 7 → 8, lưu output và thời điểm xác minh:
@@ -768,12 +812,14 @@ của thành viên khác. “COMPLETED” mô tả phạm vi hạ tầng đã c�
 | DuckDB Infrastructure | COMPLETED | File rỗng, module đọc/ghi/transaction, CLI idempotent; 14 ca PASS. |
 | DBeaver Connection | VERIFIED | Người dùng xác nhận kết nối/integrity và các kiểm tra thành công. |
 | Data Contracts | WAITING FOR TEAM INPUT | Template và BT1–BT8 đều PENDING_CONFIRMATION; định hướng là REFERENCE_ONLY. |
-| Data Source Registry | NOT IMPLEMENTED | Không tìm thấy file registry; `config/` trống. Metadata nguồn trong contract vẫn chờ xác nhận. |
+| Data Source Registry (Task 07) | IMPLEMENTED / VERIFIED cho cấu hình | sources.yaml đủ 14 bảng, loader/CLI hoạt động, sáu file/hash đúng; schema/mapping nghiệp vụ vẫn pending, Finance/HR MISSING. Xem [hướng dẫn](source_registry.md). |
+| Source Profiling / Dictionary / V3 Gap (Task 06) | VERIFIED cho phân tích nguồn | CLI đủ sáu CSV, dictionary 64 cột, mapping thiết kế 14 bảng, 10 ca test mới PASS; chưa tạo schema hoặc xử lý nghiệp vụ. |
 | SQLite Business Schema | NOT IMPLEMENTED | `sqlite_master` không có bảng. |
 | DuckDB Warehouse nghiệp vụ | NOT IMPLEMENTED | Có file DuckDB rỗng; chưa có schema/bảng hoặc dữ liệu nghiệp vụ. |
 | Bronze / Silver / Gold / Mart | NOT IMPLEMENTED | Không có source pipeline hoặc output. |
 | Model Integration | PLANNED — NOT IMPLEMENTED | Đã có [thiết kế contract](model_integration_contract.md) và [checklist bàn giao](model_handover_checklist.md) ở mức DRAFT; chưa duyệt theo từng BT, chưa có Model Runner hoặc code tích hợp. |
-| Streamlit Integration | NOT IMPLEMENTED | Chưa có app/form/auth; module DB mới sẵn sàng để tái sử dụng. |
+| CSV Upload / backend validation / audit / sync / Parquet publish | PLANNED — NOT IMPLEMENTED | Đã thống nhất kiến trúc ở [CSV Upload Contract](csv_upload_contract.md); chưa có code/schema hoặc test luồng. |
+| Streamlit Integration | PLANNED — NOT IMPLEMENTED | CSV upload/preview/xác nhận là phương thức nhập chính; đọc Parquet đã publish, chưa có app/auth. |
 
 <a id="phan-12"></a>
 ## PHẦN 12 – Future Implementation & Handover
@@ -781,19 +827,101 @@ của thành viên khác. “COMPLETED” mô tả phạm vi hạ tầng đã c�
 **Roadmap, không phải lệnh triển khai ngay.** Chờ nghiệm thu trước giai đoạn tiếp theo.
 Mỗi bước phải có người nhận trách nhiệm, đầu vào được duyệt và bằng chứng kiểm thử.
 
+<a id="task-06"></a>
+### Task 06 — Source Profiling, Dictionary và V3 Gap (đã thực hiện)
+
+Đọc đúng sáu CSV lịch sử bằng DuckDB `:memory:`; không dùng Pandas cho Sales lớn,
+không đọc `test.csv`, `test_calendar.csv`, `sales_test.csv`. Không mở file database
+nghiệp vụ, không ghi SQLite/DuckDB hoặc tạo JOIN tables vật lý. Dữ liệu tạm có thể
+spill vào thư mục báo cáo đã ignore; nguồn chỉ mở đọc.
+
+```powershell
+.\.venv\Scripts\python.exe -m src.profile_sources
+.\.venv\Scripts\python.exe -m pytest tests/test_profile_sources.py -q
+.\.venv\Scripts\python.exe -m pytest -q
+```
+
+Expected: CLI SUCCESS và `data/exports/source_profiling/profile.json`, 10 profiling
+tests PASS; toàn bộ hiện là 77 PASS sau Task 07 (baseline Task 06 là 38). Chạy lại có thể ghi đè summary JSON, không sửa
+CSV nguồn; `--report-dir` nếu dùng phải nằm trong `data/exports/`. Thư mục output được
+ignore sẵn, không commit JSON chi tiết hoặc spill files. CLI strict parsing/full-file
+type inference có thể cần thời gian cho Sales ~308 MB; giới hạn DuckDB 1GB/2 threads.
+
+Nếu FAILED: xem read_issues/errors, kiểm tra file/path/UTF-8/header và vùng trống
+cho spill; không sửa CSV gốc để làm hết lỗi. File không đọc được được báo rõ, không
+coi là nguồn 0 dòng. Correlation không xác định được ghi JSON null. Lỗi/thay đổi
+nguồn phải được xử lý bởi chủ dữ liệu trước khi dùng kết quả. Đối chiếu timestamp
+của summary với lần chạy, không dùng summary cũ sau lượt CLI thất bại.
+
+Kết quả: [Data Dictionary](data_dictionary.md), [Profiling Report](data_profiling_report.md),
+[Source Mapping](source_mapping.md), [DQ Rules](data_quality_rules.md).
+Sales raw có 4.007.419 dòng, 52 null ở sales và total_orders; inventory có 5.432 SKU,
+trong khi Sales/Weights có 5.390 SKU. Bảy kho đều có lúc total_orders không đồng nhất
+trong ngày; orders không tương đương median(total_orders). Hai lịch chung 13.307 keys,
+không conflict năm cột giá trị chung; warehouse_limited còn cần xác nhận.
+Nguồn kế hoạch `Rohlik_Plan_Data_Warehouse_Streamlit_Step_by_Step.docx`: NOT_AVAILABLE.
+
+- [x] CLI hoàn chỉnh SUCCESS, summary đọc từ dữ liệu thật, dictionary đủ 64 cột.
+- [x] Mapping đủ 14 bảng; Finance/HR MISSING, không có dữ liệu giả định được insert.
+- [x] SHA-256 sáu CSV/database trước/sau khớp; Data Contracts pending giữ nguyên.
+- [x] 38 tests PASS, git diff --check đạt; không stage/commit/push.
+- [ ] Nghiệm thu Task 06; Task 07 registry chỉ READY có điều kiện để soạn nháp.
+- [ ] Task 08 bootstrap đủ 14 bảng NOT READY: còn chính sách/nguồn/schema cần duyệt.
+
+<a id="task-07"></a>
+### Task 07 — Source Registry & Configuration (đã thực hiện)
+
+Registry metadata quản lý 14 bảng logic/9 phòng ban, không tạo Source Tables thật.
+[sources.yaml](../config/sources.yaml) tách catalog sáu file VERIFIED theo Task 06
+khỏi schema/mapping/key/type/required/grain nghiệp vụ PENDING_CONFIRMATION; hai bảng
+Finance/HR MISSING, consumers REFERENCE_ONLY, upload disabled. Calendar có shared
+mappings và tám deferred fields riêng của Orders Calendar; không tự chọn precedence.
+order_index là analysis-only derived field, không phải CSV column.
+
+```powershell
+.\.venv\Scripts\python.exe -m src.validate_source_registry
+.\.venv\Scripts\python.exe -m src.validate_source_registry --metadata-only --json
+.\.venv\Scripts\python.exe -m pytest tests/test_source_registry.py -q
+.\.venv\Scripts\python.exe -m pytest -q
+```
+
+Expected: config VALID, mặc định file_check VERIFIED cho sáu CSV/hash; metadata-only
+in NOT_CHECKED và không yêu cầu source files. Hai Finance/HR MISSING không làm YAML
+invalid; CLI vẫn báo **Task 08 NOT_READY**. Registry unit tests 39 PASS, toàn bộ
+77 PASS. Không kết nối SQLite/DuckDB; file checks chỉ đọc bytes/hash, không parse
+hoặc ingest CSV. `src/config/` là Python package, root `config/` chứa YAML/README.
+
+Exit 1 là cấu hình/YAML/cross-ref/path sai; exit 2 là source lịch sử thiếu/hash đổi;
+exit 0 chỉ nói config valid và các checks đã yêu cầu đạt, không cấp quyền ingestion.
+Nếu nguồn thay đổi, profile/review lại rồi mới duyệt cập nhật catalog/evidence;
+không thay hash để vượt lỗi. Trên source-free checkout dùng metadata-only và nhận
+dữ liệu qua kênh đã duyệt. Cấu hình thiếu phê duyệt không được biến thành READY.
+
+Xem [Source Registry Guide](source_registry.md) và [config README](../config/README.md)
+cho API, cách sửa mapping/thêm source, status và bàn giao ETL/Streamlit.
+
+- [x] 14 tên không trùng; keys/target/source refs/status/paths hợp lệ.
+- [x] Sáu verified file metadata đủ 64 cột, hash thực tế khớp.
+- [x] Finance/HR MISSING, mọi pending được báo rõ, CSV upload chưa enabled.
+- [x] 39 registry tests và 77 toàn bộ PASS; CSV/database và kết quả Task 06 giữ nguyên.
+- [ ] Phê duyệt schema, mapping và các policy trước Task 08.
+- [ ] Finance/HR, effective keys và model contracts vẫn cần nhóm xác nhận.
+
+### Roadmap tiếp theo — chờ nghiệm thu
+
 | Thứ tự dự kiến | Công việc | Điều kiện / đầu ra cần bàn giao |
 | --- | --- | --- |
-| 1 | Xác minh bộ dataset cuối cùng, Data Source Registry | Tên/nguồn/phiên bản/quyền truy cập, thời gian và chủ dữ liệu; không mặc định chỉ 6 CSV. |
+| 1 | Phê duyệt dữ liệu/Source Registry | Task 07 đã có metadata/loader/CLI; còn schema/mapping/policy, nguồn Finance/HR và dữ liệu model cần xác nhận. Chưa bootstrap Source Tables. |
 | 2 | Data Dictionary và Data Contracts | BT1–BT8 xác nhận cột/target/key/grain/JOIN/preprocessing/output, người duyệt và bằng chứng. |
-| 3 | SQLite Business Schema và Data Entry API | Schema, validation, transaction và quyền nghiệp vụ đã thống nhất; không tự thiết kế 14 bảng từ kế hoạch cũ. |
-| 4 | DuckDB Source/Bronze | Nạp nguồn theo snapshot, có lineage và cách chạy batch tái lập. |
+| 3 | SQLite Business Schema và CSV Upload API (PLANNED) | Chốt schema/keys/types/DQ/quyền, INSERT/UPSERT, chống trùng, metadata và audit cùng transaction theo [contract](csv_upload_contract.md). Chưa tạo schema/API; Finance/HR chờ phê duyệt. |
+| 4 | DuckDB Source/Bronze và sync (PLANNED) | DE chạy batch SQLite PENDING_SYNC → DuckDB, chốt version/watermark/retry; giữ nguyên sáu CSV gốc, có lineage và cách chạy tái lập. |
 | 5 | Silver Data Cleaning | Quy tắc null/duplicate/type/JOIN đã duyệt, giữ khả năng truy vết nguồn. |
 | 6 | Gold Data Warehouse | Mô hình dữ liệu và chỉ số thống nhất, kiểm tra tính đúng. |
 | 7 | Data Mart BT1–BT8 | Input theo grain/key và lịch dữ liệu được từng thành viên xác nhận. |
 | 8 | Data Quality | Quy tắc, ngưỡng, báo lỗi/quarantine; kiểm tra xuyên các tầng khi xây dựng. |
 | 9 | Model Integration Contract (PLANNED) | Đã soạn [thiết kế DRAFT](model_integration_contract.md) và [checklist](model_handover_checklist.md); chờ notebook/dữ liệu/dependencies và xác nhận input/output, phụ thuộc, cách chạy, metric/dung sai. Chưa tích hợp model. |
-| 10 | Prediction outputs và publish snapshots | Schema/phiên bản, kiểm tra output, quy tắc công bố và snapshot nhất quán. |
-| 11 | Streamlit Integration | UI, phân quyền, nhập liệu, đọc output theo contract, không chia sẻ connection toàn cục. |
+| 10 | Outputs và publish Parquet snapshots (PLANNED) | Chỉ công bố snapshot hoàn chỉnh sau kiểm định thành công; schema/phiên bản và xử lý lỗi cần chốt. |
+| 11 | Streamlit Integration (PLANNED) | Chọn phòng ban/bảng theo quyền, template CSV/upload/preview/xác nhận, hiển thị PENDING_SYNC và đọc Parquet đã publish; không chia sẻ writer DuckDB. |
 | 12 | End-to-end tests | Nhập liệu → lưu → pipeline → mô hình → xuất → UI, chỉ kiểm thử khi luồng tồn tại. |
 | 13 | Deployment LAN | Máy chủ/đường dẫn/quyền truy cập, cách khởi động, vận hành batch, backup ngoài máy và diễn tập restore. |
 
@@ -841,6 +969,9 @@ roadmap hoặc tự commit/push chỉ vì cập nhật tài liệu.
 
 | Ngày | Thay đổi | File/code liên quan | Xác minh |
 | --- | --- | --- | --- |
+| 18/10/2026 | Task 07: Source Registry cho 14 bảng/9 phòng ban, verified catalog tách approvals; loader strict YAML/Pydantic, path/key/mapping/status validation và CLI read-only. | config/sources.yaml, config/README.md, src/config/source_registry.py, src/config/__init__.py, src/validate_source_registry.py, tests/test_source_registry.py, docs/source_registry.md, README/tutorial. | CLI VALID, sáu hash VERIFIED; hai nguồn MISSING, toàn bộ nghiệp vụ pending; 39 registry tests / 77 toàn bộ PASS. Task 08 NOT_READY; chưa ingestion, DB schema, upload/sync hoặc commit/push. |
+| 18/10/2026 | Task 06: profile sáu CSV, dictionary 64 cột, mapping 14 bảng và DQ rule specs, kiểm tra gap v3 Orders/Sales/calendar. | `src/profile_sources.py`, `tests/test_profile_sources.py`, bốn tài liệu profiling/dictionary/mapping/DQ, README và tutorial. | CLI SUCCESS; 10 test mới, 38 toàn bộ PASS; hash nguồn/database và Data Contracts không đổi; Source Registry/Source Tables/ETL chưa triển khai. |
+| 18/10/2026 | Cập nhật CSV upload làm phương thức nhập chính; bổ sung contract về validation, batch metadata, audit/transaction, chống trùng, PENDING_SYNC và DE sync/publish Parquet. | `docs/csv_upload_contract.md`, README, tutorial và SQLite/DuckDB setup. | Chỉ rà tài liệu; toàn bộ chức năng CSV upload/sync/publish PLANNED. Không đổi source/schema/dữ liệu hoặc Data Contracts; chưa kiểm thử luồng. |
 | 18/10/2026 | TASK 04: thêm thiết kế Model Integration Contract A–G và checklist BT1–BT8; liên kết roadmap và README. | `docs/model_integration_contract.md`, `docs/model_handover_checklist.md`, tutorial, README; đối chiếu baseline `be20f7c`, Data Contracts, Rohlik v3 DOCX và Cẩm nang chương 16. | Kiểm tra tài liệu/link; mọi bàn giao vẫn PENDING và tích hợp PLANNED. Không chạy model, đổi source/database, commit hoặc push. |
 | 18/10/2026 | Tạo tutorial 12 phần, policy, quy trình bàn giao và phân biệt hiện trạng/roadmap; thêm link README. | `docs/setup_tutorial.md`, `README.md`; đối chiếu `src/db/sqlite.py`, `src/db/backup.py`, `src/init_sqlite.py`, `tests/test_sqlite.py`, requirements/ignore, docs/contracts và kế hoạch v3. | VERIFIED cho kiểm tra môi trường hiện tại và SQLite: 14 PASS, integrity nguồn/backup ok, settings đúng, schema rỗng. DBeaver VERIFIED theo người dùng. Cài sạch/GitHub/restore thật/LAN chưa thử. |
 | 18/10/2026 | Bổ sung DuckDB Infrastructure: CLI, kết nối đọc/ghi, transaction, test và hướng dẫn backup offline; sửa cây thư mục, trạng thái và checklist, giữ lịch sử SQLite. | `src/db/duckdb.py`, `src/init_duckdb.py`, `tests/test_duckdb.py`, `docs/duckdb_setup.md`, tutorial và README. | VERIFIED: init mới và chạy lại SUCCESS với v1.5.6; file thật không có bảng; toàn bộ 28 PASS (14 SQLite + 14 DuckDB). Git ignore đúng. Chưa có backup CLI DuckDB, restore thật, Warehouse/ETL hoặc published snapshots. |

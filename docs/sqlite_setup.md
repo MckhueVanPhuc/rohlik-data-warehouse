@@ -7,6 +7,14 @@ SQLite là nơi lưu dữ liệu nhân viên nhập qua Streamlit trong tương 
 Không có bảng nghiệp vụ hoặc dữ liệu mẫu; schema và phân quyền chờ Data Contract BT1–BT8.
 Không tạo DuckDB, ETL hay giao diện ở giai đoạn này.
 
+Phương thức nhập chính đã thống nhất là **CSV upload**, không bắt buộc form từng
+record: chọn bảng theo quyền → template/upload/preview → backend validation → nhân
+viên xác nhận → records hợp lệ + audit + metadata batch cùng transaction SQLite.
+INSERT/UPSERT và chống trùng phải theo chính sách đã duyệt; sau lưu là `PENDING_SYNC`
+để DE chủ động đồng bộ. Toàn bộ luồng **PLANNED**, chưa có schema/API triển khai.
+Xem [CSV Upload Contract](csv_upload_contract.md). Không đổi sáu CSV gốc;
+Finance/HR chỉ nhận CSV riêng sau phê duyệt schema và giá trị.
+
 Ứng dụng chạy trên máy chủ nội bộ; người dùng truy cập Streamlit qua LAN.
 Giữ file SQLite trên ổ đĩa cục bộ của máy chủ, không cho nhiều máy mở file qua
 SMB/network share: WAL cần các tiến trình chia sẻ bộ nhớ trên cùng máy.
@@ -125,4 +133,4 @@ git ls-files -- '*.db' '*.db-wal' '*.db-shm' 'data/backups/*'
 
 Lệnh thứ hai phải không có kết quả. Không sửa CSV, không tự commit/push.
 Giai đoạn này dừng tại hạ tầng SQLite. Chờ nghiệm thu và Data Contract trước schema,
-phân quyền nghiệp vụ, form nhập liệu, ETL, Warehouse hoặc tích hợp BT1–BT8.
+phân quyền nghiệp vụ, CSV upload/preview/xác nhận, ETL, Warehouse hoặc tích hợp BT1–BT8.

@@ -7,6 +7,12 @@ Chưa nạp CSV, tạo schema/bảng nghiệp vụ, ETL, Bronze/Silver/Gold/Mart
 DuckDB có catalog/schema hệ thống mặc định; điều này không có nghĩa đã tạo Warehouse nghiệp vụ.
 Không thay đổi SQLite Infrastructure tại `data/input.db`.
 
+Kiến trúc nhập liệu dự kiến: Streamlit CSV upload → backend kiểm tra/xác nhận →
+SQLite (`PENDING_SYNC`) → DE chạy batch DuckDB Bronze/Silver/Gold/Mart → kiểm định
+→ Parquet snapshots → Streamlit. Audit/metadata batch được lưu cùng records trong
+transaction SQLite, không ghi trực tiếp vào DuckDB từ upload. Tất cả chức năng
+upload/sync/publish **PLANNED**; xem [CSV Upload Contract](csv_upload_contract.md).
+
 Database mặc định: `data/warehouse/rohlik.duckdb`. Cấu hình tập trung tại
 `DEFAULT_DATABASE` trong [src/db/duckdb.py](../src/db/duckdb.py), dùng `pathlib` tính
 từ vị trí module. Đường dẫn tương đối truyền vào API/CLI cũng tính từ root dự án.
@@ -84,7 +90,7 @@ Module không cung cấp lock liên tiến trình, retry hay pooling.
 Xem [Python DB API](https://duckdb.org/docs/current/clients/python/dbapi) và
 [Concurrency](https://duckdb.org/docs/current/connect/concurrency) của DuckDB.
 
-Streamlit dự kiến đọc **published snapshots** ở `data/published/`, tránh giữ kết nối
+Streamlit dự kiến đọc **published Parquet snapshots** ở `data/published/`, tránh giữ kết nối
 vào file DuckDB đang được DE ghi. Chưa có exporter/publisher hoặc Streamlit integration.
 Không cache/chia sẻ writer toàn cục giữa nhiều phiên Streamlit. Giữ database trên
 ổ cục bộ máy chủ; không đặt lên thư mục đồng bộ hoặc chia sẻ file để né lock.

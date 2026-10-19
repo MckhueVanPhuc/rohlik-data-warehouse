@@ -4,9 +4,19 @@ Hướng dẫn setup và vận hành chính của Data Engineering:
 [Living Setup Tutorial & Technical Handover](docs/setup_tutorial.md).
 Tài liệu phân biệt hạ tầng đã kiểm chứng, xác nhận DBeaver của người dùng và roadmap chưa triển khai.
 
-Dự án chuẩn bị nền tảng cho công việc dữ liệu Rohlik Decision Hub. Hiện chỉ hoàn thành setup môi trường; dữ liệu nghiệp vụ chuẩn cuối cùng chưa được chốt. Pipeline, schema nghiệp vụ, Data Warehouse, giao diện và mô hình ML chưa được triển khai.
+Dự án chuẩn bị nền tảng cho công việc dữ liệu Rohlik Decision Hub. Đã có setup môi trường, SQLite/DuckDB infrastructure, profiling sáu CSV lịch sử và Source Registry/validator; dữ liệu nghiệp vụ chuẩn cuối cùng chưa được chốt. Pipeline, schema nghiệp vụ, Data Warehouse, giao diện và mô hình ML chưa được triển khai.
 
 ## Yêu cầu và tech stack
+
+Phương thức nhập liệu chính đã thống nhất: nhân viên **upload CSV qua Streamlit**,
+chọn phòng ban/bảng theo quyền, tải template, xem trước và xác nhận trước khi lưu.
+Luồng dự kiến: **Streamlit → SQLite → DuckDB (Bronze/Silver/Gold/Mart) → Parquet Snapshots → Streamlit**.
+Backend kiểm tra schema/keys/types/DQ; ghi records hợp lệ bằng INSERT/UPSERT theo
+chính sách đã duyệt, audit và metadata batch cùng transaction. Sau lưu là
+`PENDING_SYNC`; DE chủ động đồng bộ và chỉ publish snapshot sau kiểm định thành công.
+Không bắt buộc form từng record. Toàn bộ chức năng này **PLANNED, chưa triển khai**.
+Chi tiết và các chính sách còn chờ chốt: [CSV Upload Contract](docs/csv_upload_contract.md).
+Giữ nguyên sáu CSV Kaggle gốc; Finance/HR chỉ nhận CSV sau khi schema/giá trị được duyệt.
 
 - Windows 11, PowerShell, VS Code, Git.
 - Python **3.13** (môi trường hiện tại: **3.13.15**) và virtual environment `.venv`.
@@ -137,3 +147,50 @@ snapshots; exporter và Warehouse Bronze/Silver/Gold/Mart chưa triển khai.
 
 Đây là tài liệu thiết kế DRAFT; chưa có Model Runner, chuyển đổi notebook, training
 hoặc tích hợp Streamlit. Gold/Data Mart và dataset chính thức vẫn chờ xác nhận.
+
+## Task 06 — Source Profiling, Dictionary và V3 Gap Analysis
+
+Đã có CLI chỉ phân tích sáu CSV lịch sử bằng DuckDB `:memory:`, không mở SQLite
+hoặc DuckDB nghiệp vụ, không sửa nguồn và không đọc CSV test Kaggle:
+
+```powershell
+.\.venv\Scripts\python.exe -m src.profile_sources
+.\.venv\Scripts\python.exe -m pytest tests/test_profile_sources.py -q
+.\.venv\Scripts\python.exe -m pytest -q
+```
+
+Summary JSON được ghi vào `data/exports/source_profiling/profile.json` (được ignore);
+mọi đường dẫn nguồn tính từ vị trí project root. CLI báo SUCCESS sau kiểm tra hash
+nguồn trước/sau; thiếu/lỗi nguồn báo FAILED/exit 1, không âm thầm bỏ qua.
+Đã chạy đầy đủ trên dữ liệu hiện tại; 10 test profiling và 38 test toàn bộ PASS.
+
+- [Data Dictionary: 64 cột thực tế](docs/data_dictionary.md).
+- [Profiling Report và gap với v3](docs/data_profiling_report.md).
+- [Mapping 14 Source Tables](docs/source_mapping.md): 12 bảng có source fields,
+  Finance cost/HR workforce MISSING; tất cả schema nghiệp vụ còn cần xác nhận.
+- [Data Quality rule specifications](docs/data_quality_rules.md): thiết kế cho pipeline sau này.
+
+Ở mốc Task 06 chưa tạo Source Registry, Source Tables, ETL hoặc Warehouse nghiệp vụ.
+Giữ nguyên kiến trúc CSV Upload → SQLite → DE batch DuckDB → Parquet → Streamlit.
+
+## Task 07 — Source Registry & Configuration
+
+[config/sources.yaml](config/sources.yaml) mô tả 14 bảng logic thuộc 9 phòng ban,
+dựa trên metadata đã profile của sáu CSV. Loader PyYAML/Pydantic nằm tại `src/config/`.
+Chỉ validate cấu hình, paths, keys/mappings/status và kiểm tra hash file nếu yêu cầu;
+không nạp CSV, kết nối database hoặc tạo Source Tables.
+
+```powershell
+.\.venv\Scripts\python.exe -m src.validate_source_registry
+.\.venv\Scripts\python.exe -m src.validate_source_registry --metadata-only --json
+.\.venv\Scripts\python.exe -m pytest tests/test_source_registry.py -q
+.\.venv\Scripts\python.exe -m pytest -q
+```
+
+CLI mặc định kiểm sáu file tồn tại và hash khớp; `--metadata-only` không yêu cầu CSV
+trên máy nhận. Config VALID có thể vẫn có quyết định pending. Finance cost/HR workforce
+MISSING đúng thiết kế; mọi schema/mapping/upload approval vẫn PENDING_CONFIRMATION,
+upload disabled. **Task 08: NOT_READY**, không phải cho phép bootstrap/ingestion.
+Hướng dẫn cấu trúc, API, lỗi, phê duyệt và bàn giao: [Source Registry](docs/source_registry.md)
+và [config README](config/README.md). CSV Upload→SQLite audit→DE batch→DuckDB→Parquet
+vẫn PLANNED; YAML không phải hệ thống phân quyền hoặc implementation ETL.
