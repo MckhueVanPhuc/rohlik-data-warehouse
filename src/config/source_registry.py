@@ -1,355 +1,410 @@
-"""Read-only source registry, without CSV parsing, ingestion or database access."""
+"""V4 production source registry and read-only source/contract preflight."""
+
+from __future__ import annotations
 
 from collections import Counter
+import csv
 import hashlib
 from pathlib import Path, PurePosixPath, PureWindowsPath
-from typing import Annotated, Literal, Self
+from typing import Annotated, Any, Literal
 
+import duckdb
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 import yaml
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_REGISTRY = PROJECT_ROOT / "config" / "sources.yaml"
-Status = Literal["VERIFIED", "REFERENCE_ONLY", "PENDING_CONFIRMATION", "MISSING", "NOT_APPLICABLE"]
-Text = Annotated[str, Field(min_length=1)]
-Identifier = Annotated[str, Field(pattern=r"^[A-Za-z_][A-Za-z0-9_]*$")]
-ALLOWED_SOURCE_PATHS = frozenset({
-    "data/raw/orders/train.csv", "data/raw/orders/train_calendar.csv",
-    "data/raw/sales/sales_train.csv", "data/raw/sales/inventory.csv",
-    "data/raw/sales/calendar.csv", "data/raw/sales/test_weights.csv",
+DEFAULT_CONTRACT = PROJECT_ROOT / "config" / "contract.yaml"
+
+ACTIVE_SOURCE_PATHS = frozenset({
+    "data/raw/orders/train.csv",
+    "data/raw/sales/sales_train.csv",
+    "data/raw/sales/inventory.csv",
+    "data/raw/sales/calendar.csv",
+    "data/raw/sales/test_weights.csv",
+    "data/raw/assumptions/cost_params.csv",
+    "data/raw/assumptions/workforce_params.csv",
 })
+ACTIVE_SOURCE_IDS = frozenset({
+    "orders", "sales", "inventory", "calendar", "weights", "cost_params", "workforce_params"
+})
+HISTORICAL_SOURCE_PATH = "data/raw/orders/train_calendar.csv"
 EXPECTED_TABLES = frozenset({
-    "sales_ecommerce.orders_daily", "sales_ecommerce.sku_sales_daily",
-    "marketing_pricing.prices", "marketing_pricing.promotions",
-    "marketing_pricing.min_order_value_changes", "warehouse_ops.availability",
-    "warehouse_ops.ops_events", "category.product_master", "planning.calendar",
-    "digital_product.user_activity", "external.weather", "finance.sku_weights",
-    "finance.cost_params", "hr.workforce_params",
+    "src_sales.orders_daily", "src_sales.sku_sales_daily",
+    "src_marketing.prices", "src_marketing.promotions", "src_marketing.mov_changes",
+    "src_ops.availability", "src_ops.ops_events", "src_category.product_master",
+    "src_planning.calendar", "src_digital.user_activity", "src_external.weather",
+    "src_finance.sku_weights", "src_finance.cost_params", "src_hr.workforce_params",
 })
-MISSING_TABLES = frozenset({"finance.cost_params", "hr.workforce_params"})
-TYPES = {"VARCHAR", "TEXT", "DATE", "BIGINT", "INTEGER", "DOUBLE", "REAL", "BOOLEAN"}
-RULES = frozenset(f"SRC-{i:02}" for i in range(1, 27))
-BATCH_METADATA = frozenset({
-    "batch_id", "source_table", "department", "uploaded_by", "uploaded_at",
-    "original_filename", "file_hash", "total_rows", "accepted_rows", "rejected_rows", "status",
+EXPECTED_SCHEMAS = frozenset({
+    "src_sales", "src_marketing", "src_ops", "src_category", "src_planning",
+    "src_digital", "src_external", "src_finance", "src_hr",
 })
+ASSUMED_SOURCES = frozenset({"cost_params", "workforce_params"})
+DUCKDB_TYPES = frozenset({"VARCHAR", "DATE", "BIGINT", "DOUBLE", "BOOLEAN"})
+Identifier = Annotated[str, Field(pattern=r"^[A-Za-z_][A-Za-z0-9_]*$")]
 
 
 class RegistryError(ValueError):
-    """Configuration errors, distinct from pending business decisions."""
+    """Invalid configuration or a blocking source preflight failure."""
 
 
 class StrictModel(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
 
 
-class Decision(StrictModel):
-    status: Status
-    detail: Text
-    evidence: Text
-    approved_by: str | None = None
-    approved_at: str | None = None
+class RangeCheck(StrictModel):
+    min: float | int | None = None
+    max: float | int | None = None
 
     @model_validator(mode="after")
-    def approval_evidence(self) -> Self:
-        if self.status == "VERIFIED" and not (self.approved_by and self.approved_at):
-            raise ValueError("VERIFIED decisions require approved_by and approved_at")
+    def valid_range(self) -> "RangeCheck":
+        if self.min is None and self.max is None:
+            raise ValueError("a value check needs min and/or max")
+        if self.min is not None and self.max is not None and self.min > self.max:
+            raise ValueError("value check min cannot exceed max")
         return self
 
 
-class ObservedColumn(StrictModel):
-    inferred_type: Text
-    null_count: Annotated[int, Field(ge=0)]
-
-
-class SourceFile(StrictModel):
-    path: Text
-    verification_status: Literal["VERIFIED"]
-    evidence: Text
+class ActiveSource(StrictModel):
+    path: str
+    status: Literal["ACTIVE"]
+    source_type: Literal["KAGGLE_ORIGINAL", "ASSUMED"]
     sha256: Annotated[str, Field(pattern=r"^[a-f0-9]{64}$")]
     row_count: Annotated[int, Field(ge=0)]
-    encoding: Text
-    delimiter: Text
-    header: Literal[True]
-    columns: dict[Identifier, ObservedColumn]
-
-    @model_validator(mode="after")
-    def observed_metadata(self) -> Self:
-        if not self.columns or any(c.null_count > self.row_count for c in self.columns.values()):
-            raise ValueError("Source columns required; null_count cannot exceed row_count")
-        return self
-
-
-class Column(StrictModel):
-    name: Identifier
-    proposed_duckdb_type: str | None
-    proposed_sqlite_type: str | None
-    nullable: bool | None
-    required: bool | None
-    definition: Text
-    status: Status
-
-    @model_validator(mode="after")
-    def proposed_types(self) -> Self:
-        for field in (self.proposed_duckdb_type, self.proposed_sqlite_type):
-            if field is not None and field not in TYPES:
-                raise ValueError(f"Unsupported proposed type: {field}; unresolved precision uses null")
-        if self.status == "VERIFIED" and (self.proposed_duckdb_type is None or self.required is None or self.nullable is None):
-            raise ValueError("VERIFIED column cannot have unresolved type/required/nullable")
-        return self
-
-
-class Mapping(StrictModel):
-    target: Identifier
-    file_id: Identifier
-    source_column: Identifier
-    kind: Literal["DIRECT"]
-    status: Status
-
-
-class DeferredMapping(StrictModel):
-    file_id: Identifier
-    source_column: Identifier
-    proposed_target: Identifier | None
-    decision: Decision
-
-
-class Upload(StrictModel):
-    eligibility: Decision
-    access: Literal["BLOCKED_PENDING_APPROVAL", "READ_ONLY", "UPDATABLE"]
-    enabled: Literal[False]  # Task 07 is design only; never an authorization service.
-    allowed_columns: list[Identifier]
-    required_columns: list[Identifier]
-    optional_columns: list[Identifier]
-    unresolved_columns: list[Identifier]
-    backend_authorization_required: Literal[True]
-    write_policy: Decision
-    duplicate_policy: Decision
-    batch_metadata_ref: Literal["upload_batch_metadata"]
-    validation_refs: list[Text]
-
-
-class SourceTable(StrictModel):
-    name: Annotated[str, Field(pattern=r"^[a-z_]+\.[a-z_]+$")]
-    department: Identifier
-    description: Text
-    source_type: Literal["HISTORICAL_CSV", "MISSING_EXTERNAL_CSV"]
-    source_files: list[Identifier]
-    source_availability: Literal["VERIFIED", "MISSING"]
-    grain: Decision
+    encoding: Literal["UTF-8"]
+    bom: bool
+    header: Annotated[list[Identifier], Field(min_length=1)]
+    column_types: dict[Identifier, str]
     business_keys: Annotated[list[Identifier], Field(min_length=1)]
-    key_status: Status
-    columns: Annotated[list[Column], Field(min_length=1)]
-    mappings: list[Mapping]
-    deferred_mappings: list[DeferredMapping]
-    transformations: list[Decision]
-    dq_rules: Annotated[list[Text], Field(min_length=1)]
-    consumers: list[Annotated[str, Field(pattern=r"^BT[1-8]$")]]
-    consumer_status: Status
-    schema_approval: Decision
-    mapping_approval: Decision
-    expected_rows: Decision
-    upload: Upload
-    provenance: Annotated[list[Text], Field(min_length=1)]
-    pending_decisions: list[Text]
+    checks: dict[Identifier, RangeCheck]
+    evidence: Annotated[str, Field(min_length=1)]
+
+    @model_validator(mode="after")
+    def consistent_columns(self) -> "ActiveSource":
+        header = set(self.header)
+        if len(header) != len(self.header):
+            raise ValueError("duplicate source header")
+        if set(self.column_types) != header:
+            raise ValueError("column_types must describe the exact source header")
+        if any(value not in DUCKDB_TYPES for value in self.column_types.values()):
+            raise ValueError("unsupported DuckDB type")
+        if len(set(self.business_keys)) != len(self.business_keys) or not set(self.business_keys) <= header:
+            raise ValueError("business_keys must be unique source columns")
+        if not set(self.checks) <= header:
+            raise ValueError("checks must reference source columns")
+        return self
+
+
+class HistoricalSource(StrictModel):
+    path: str
+    status: Literal["HISTORICAL_ONLY"]
+    reason: Annotated[str, Field(min_length=1)]
 
 
 class Registry(StrictModel):
-    registry_version: Literal[1]
-    scope: Text
-    source_files: dict[Identifier, SourceFile]
-    upload_batch_metadata: Annotated[list[Identifier], Field(min_length=1)]
-    global_decisions: dict[Identifier, Decision]
-    analysis_only_derived_fields: dict[Identifier, Decision]
-    tables: Annotated[list[SourceTable], Field(min_length=1)]
+    registry_version: Literal[4]
+    scope: Literal["V4_LOCAL_FIRST_SOURCE_CONTRACT"]
+    contract_file: Literal["config/contract.yaml"]
+    active_sources: dict[Identifier, ActiveSource]
+    historical_sources: dict[Identifier, HistoricalSource]
 
-    def get_table(self, name: str) -> SourceTable:
-        """Get validated metadata; returns a copy so a caller cannot mutate registry state."""
-        for table in self.tables:
-            if table.name == name:
-                return table.model_copy(deep=True)
-        raise KeyError(f"Unknown source table: {name}")
 
-    def list_tables(self, department: str | None = None) -> list[str]:
-        """List registered logical names, optionally scoped to the owning department."""
-        return [table.name for table in self.tables if department is None or table.department == department]
+class ContractColumn(StrictModel):
+    type: str
+    required: bool
+    nullable: bool
+
+
+class BusinessContract(StrictModel):
+    schema_name: Identifier = Field(alias="schema")
+    table: Identifier
+    raw_source: str
+    mapping: dict[Identifier, Identifier]
+    grain: Annotated[str, Field(min_length=1)]
+    business_keys: Annotated[list[Identifier], Field(min_length=1)]
+    columns: dict[Identifier, ContractColumn]
+    editable_fields: list[Identifier]
+    checks: dict[Identifier, RangeCheck]
+    schema_version: Annotated[int, Field(ge=1)]
+    source_type: Literal["KAGGLE_ORIGINAL", "ASSUMED"]
+    update_policy: Literal["PENDING_CONFIRMATION"]
+
+
+class ContractCatalog(StrictModel):
+    contract_version: Literal[4]
+    status: Literal["IMPLEMENTED_FOUNDATION"]
+    tables: dict[str, BusinessContract]
 
 
 class UniqueKeyLoader(yaml.SafeLoader):
-    """Safe YAML loading that rejects silent overwrites by duplicate mapping keys."""
+    """Safe YAML loader which refuses silent duplicate-key overwrites."""
 
 
 def _unique_mapping(loader: UniqueKeyLoader, node: yaml.MappingNode, deep: bool = False) -> dict:
     loader.flatten_mapping(node)
-    mapping = {}
+    result: dict[str, Any] = {}
     for key_node, value_node in node.value:
         key = loader.construct_object(key_node, deep=deep)
         if not isinstance(key, str):
             raise RegistryError("YAML mapping keys must be strings")
-        if key in mapping:
+        if key in result:
             raise RegistryError(f"Duplicate YAML key: {key}")
-        mapping[key] = loader.construct_object(value_node, deep=deep)
-    return mapping
+        result[key] = loader.construct_object(value_node, deep=deep)
+    return result
 
 
 UniqueKeyLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, _unique_mapping)
 
 
-def source_path(path: str, root: Path = PROJECT_ROOT) -> Path:
-    """Resolve only the six approved local CSV paths, rejecting traversal and symlink escape."""
+def _load_yaml(path: Path) -> object:
+    try:
+        return yaml.load(path.read_text(encoding="utf-8"), Loader=UniqueKeyLoader)
+    except (OSError, UnicodeError, yaml.YAMLError) as exc:
+        raise RegistryError(f"Cannot load YAML {path}: {exc}") from exc
+
+
+def _safe_relative_path(path: str, allowed: frozenset[str], root: Path) -> Path:
     relative = PurePosixPath(path)
-    if (path not in ALLOWED_SOURCE_PATHS or "\\" in path or relative.is_absolute()
+    if (path not in allowed or "\\" in path or relative.is_absolute()
             or PureWindowsPath(path).drive or ".." in relative.parts):
-        raise RegistryError(f"Source path outside approved six-file allowlist: {path}")
+        raise RegistryError(f"Source path outside V4 allowlist: {path}")
     resolved = (root / path).resolve()
-    if not resolved.is_relative_to((root / "data" / "raw").resolve()) or not resolved.is_relative_to(root.resolve()):
+    raw = (root / "data" / "raw").resolve()
+    if not resolved.is_relative_to(raw) or not resolved.is_relative_to(root.resolve()):
         raise RegistryError(f"Source path escapes project raw directory: {path}")
     return resolved
 
 
-def validate_registry(data: object, *, root: Path = PROJECT_ROOT,
-                      expected_tables: frozenset[str] = EXPECTED_TABLES) -> Registry:
-    """Validate structure, paths and cross-references without requiring CSV files to exist.
+def source_path(path: str, root: Path = PROJECT_ROOT) -> Path:
+    """Resolve one of the seven active V4 source paths."""
+    return _safe_relative_path(path, ACTIVE_SOURCE_PATHS, root)
 
-    expected_tables can narrow scope for tests; the CLI always requires all 14.
-    VERIFIED file metadata documents Task 06 evidence, not schema approval.
-    """
+
+def validate_registry(data: object, *, root: Path = PROJECT_ROOT) -> Registry:
     try:
         registry = Registry.model_validate(data)
     except ValidationError as exc:
-        raise RegistryError(f"Invalid registry metadata: {exc}") from exc
-    names = [table.name for table in registry.tables]
-    duplicates = [name for name, count in Counter(names).items() if count > 1]
-    if duplicates:
-        raise RegistryError(f"Duplicate source table names: {duplicates}")
-    if set(names) != expected_tables:
-        raise RegistryError(f"Expected source tables mismatch; missing={sorted(expected_tables-set(names))}; extra={sorted(set(names)-expected_tables)}")
-    if not BATCH_METADATA.issubset(registry.upload_batch_metadata) or len(set(registry.upload_batch_metadata)) != len(registry.upload_batch_metadata):
-        raise RegistryError("Upload batch metadata must contain all required fields without duplicates")
-    if not registry.global_decisions:
-        raise RegistryError("Global business decisions are required")
-    paths = []
-    for source in registry.source_files.values():
+        raise RegistryError(f"Invalid V4 registry metadata: {exc}") from exc
+    if set(registry.active_sources) != ACTIVE_SOURCE_IDS:
+        raise RegistryError("V4 registry must contain exactly the seven approved active source IDs")
+    paths = [source.path for source in registry.active_sources.values()]
+    if len(set(paths)) != 7 or set(paths) != ACTIVE_SOURCE_PATHS:
+        raise RegistryError("V4 registry must contain exactly seven unique active source paths")
+    for source_id, source in registry.active_sources.items():
         source_path(source.path, root)
-        paths.append(source.path)
-    if len(set(paths)) != len(paths):
-        raise RegistryError("Source catalog has duplicate file paths")
-    if expected_tables == EXPECTED_TABLES and set(paths) != ALLOWED_SOURCE_PATHS:
-        raise RegistryError("Production registry must describe the six verified source files")
-    for table in registry.tables:
-        prefix = table.name + ": "
-        if table.department != table.name.split(".")[0]:
-            raise RegistryError(prefix + "department does not match table namespace")
-        cols = {column.name: column for column in table.columns}
-        if len(cols) != len(table.columns) or len(set(table.business_keys)) != len(table.business_keys):
-            raise RegistryError(prefix + "duplicate columns or business keys")
-        if not set(table.business_keys).issubset(cols):
-            raise RegistryError(prefix + "business keys must exist in target schema")
-        if any(cols[key].nullable is True or cols[key].required is False for key in table.business_keys):
-            raise RegistryError(prefix + "business key cannot be nullable/optional in a proposed schema")
-        if len(set(table.source_files)) != len(table.source_files) or not set(table.source_files).issubset(registry.source_files):
-            raise RegistryError(prefix + "unknown/duplicate source file reference")
-        missing = table.name in MISSING_TABLES
-        if missing:
-            if (table.source_availability != "MISSING" or table.source_type != "MISSING_EXTERNAL_CSV"
-                    or table.source_files or table.mappings):
-                raise RegistryError(prefix + "Finance/HR must remain MISSING without fabricated paths/mappings")
-        elif table.source_availability != "VERIFIED" or table.source_type != "HISTORICAL_CSV" or not table.source_files:
-            raise RegistryError(prefix + "historical sources need VERIFIED file evidence; use file checks for unexpected absence")
-        mapped = set()
-        mapping_keys = set()
-        for mapping in table.mappings:
-            if mapping.file_id not in table.source_files or mapping.target not in cols:
-                raise RegistryError(prefix + "mapping references undeclared file or target column")
-            source = registry.source_files[mapping.file_id]
-            if mapping.source_column not in source.columns:
-                raise RegistryError(prefix + f"source column not in verified metadata: {mapping.source_column}")
-            key = (mapping.target, mapping.file_id, mapping.source_column)
-            if key in mapping_keys:
-                raise RegistryError(prefix + "duplicate mapping")
-            mapping_keys.add(key)
-            mapped.add(mapping.target)
-            if mapping.target == "order_index":
-                raise RegistryError(prefix + "order_index belongs to analysis, not a CSV source column")
-        if not missing and mapped != set(cols):
-            raise RegistryError(prefix + "all proposed source targets require explicit direct mappings")
-        for deferred in table.deferred_mappings:
-            if (deferred.file_id not in table.source_files
-                    or deferred.source_column not in registry.source_files[deferred.file_id].columns):
-                raise RegistryError(prefix + "deferred source column missing from verified metadata")
-            if deferred.decision.status != "PENDING_CONFIRMATION":
-                raise RegistryError(prefix + "deferred mappings must remain pending until explicitly mapped")
-        if not set(table.dq_rules).issubset(RULES):
-            raise RegistryError(prefix + "unknown Data Quality rule reference")
-        upload = table.upload
-        if not set(upload.validation_refs).issubset(RULES | {"docs/csv_upload_contract.md"}):
-            raise RegistryError(prefix + "unknown upload validation reference")
-        groups = [set(upload.required_columns), set(upload.optional_columns), set(upload.unresolved_columns)]
-        if (set(upload.allowed_columns) != set(cols) or len(upload.allowed_columns) != len(cols)
-                or set().union(*groups) != set(cols) or any(groups[i] & groups[j] for i in range(3) for j in range(i+1,3))
-                or sum(len(x) for x in [upload.required_columns, upload.optional_columns, upload.unresolved_columns]) != len(cols)):
-            raise RegistryError(prefix + "upload allowed/required/optional/unresolved columns must form a partition of target schema")
-        for name, column in cols.items():
-            expected_group = upload.required_columns if column.required is True else upload.optional_columns if column.required is False else upload.unresolved_columns
-            if name not in expected_group:
-                raise RegistryError(prefix + "upload requirement lists disagree with column metadata")
-        if (upload.access == "UPDATABLE" and upload.eligibility.status != "VERIFIED"):
-            raise RegistryError(prefix + "UPDATABLE needs verified eligibility, not a department supplied by the client")
-        decisions = [table.schema_approval, table.mapping_approval, table.grain, upload.eligibility,
-                     upload.write_policy, upload.duplicate_policy, *table.transformations]
-        if any(d.status == "PENDING_CONFIRMATION" for d in decisions) and not table.pending_decisions:
-            raise RegistryError(prefix + "pending policies need explicit pending_decisions")
-        if missing and any(d.status == "VERIFIED" for d in [table.schema_approval, table.mapping_approval]):
-            raise RegistryError(prefix + "missing Finance/HR schema/mapping cannot be reported approved")
-        if table.schema_approval.status == "VERIFIED" and (table.key_status != "VERIFIED" or any(c.status != "VERIFIED" for c in table.columns)):
-            raise RegistryError(prefix + "approved schema requires verified keys and columns")
-        if table.mapping_approval.status == "VERIFIED" and any(m.status != "VERIFIED" for m in table.mappings):
-            raise RegistryError(prefix + "approved mapping requires verified field mappings")
+        expected_type = "ASSUMED" if source_id in ASSUMED_SOURCES else "KAGGLE_ORIGINAL"
+        if source.source_type != expected_type:
+            raise RegistryError(f"{source_id}: source_type must be {expected_type}")
+    if set(registry.historical_sources) != {"orders_calendar"}:
+        raise RegistryError("Only orders_calendar may be retained as historical-only")
+    historical = registry.historical_sources["orders_calendar"]
+    _safe_relative_path(historical.path, frozenset({HISTORICAL_SOURCE_PATH}), root)
+    if historical.path in paths:
+        raise RegistryError("train_calendar cannot be active in V4")
     return registry
 
 
-def load_registry(path: str | Path = DEFAULT_REGISTRY, *, root: Path = PROJECT_ROOT,
-                  expected_tables: frozenset[str] = EXPECTED_TABLES) -> Registry:
-    """Load YAML safely; relative config paths resolve against root, never cwd."""
+def validate_contract(data: object, registry: Registry) -> ContractCatalog:
+    try:
+        catalog = ContractCatalog.model_validate(data)
+    except ValidationError as exc:
+        raise RegistryError(f"Invalid V4 business contract: {exc}") from exc
+    if set(catalog.tables) != EXPECTED_TABLES:
+        raise RegistryError(
+            f"Expected 14 business contracts; missing={sorted(EXPECTED_TABLES-set(catalog.tables))}; "
+            f"extra={sorted(set(catalog.tables)-EXPECTED_TABLES)}"
+        )
+    if {table.schema_name for table in catalog.tables.values()} != EXPECTED_SCHEMAS:
+        raise RegistryError("V4 contracts must use exactly the nine approved src_* schemas")
+    sources_by_path = {source.path: source for source in registry.active_sources.values()}
+    for qualified, table in catalog.tables.items():
+        if qualified != f"{table.schema_name}.{table.table}":
+            raise RegistryError(f"{qualified}: schema/table fields disagree with qualified name")
+        source = sources_by_path.get(table.raw_source)
+        if source is None:
+            raise RegistryError(f"{qualified}: raw_source is not one of the seven active sources")
+        if table.source_type != source.source_type:
+            raise RegistryError(f"{qualified}: source_type disagrees with source registry")
+        if not table.mapping or not set(table.mapping) <= set(source.header):
+            raise RegistryError(f"{qualified}: mapping references an unknown raw column")
+        if set(table.mapping.values()) != set(table.columns):
+            raise RegistryError(f"{qualified}: mapping must cover the exact canonical columns")
+        if len(set(table.business_keys)) != len(table.business_keys) or not set(table.business_keys) <= set(table.columns):
+            raise RegistryError(f"{qualified}: invalid business keys")
+        if any(table.columns[key].nullable for key in table.business_keys):
+            raise RegistryError(f"{qualified}: business keys cannot be nullable")
+        if not set(table.editable_fields) <= set(table.columns) or not set(table.checks) <= set(table.columns):
+            raise RegistryError(f"{qualified}: editable/check fields must be canonical columns")
+        if any(column.type not in DUCKDB_TYPES for column in table.columns.values()):
+            raise RegistryError(f"{qualified}: unsupported canonical DuckDB type")
+    return catalog
+
+
+def load_registry(path: str | Path = DEFAULT_REGISTRY, *, root: Path = PROJECT_ROOT) -> Registry:
     candidate = Path(path)
     candidate = candidate if candidate.is_absolute() else root / candidate
+    return validate_registry(_load_yaml(candidate), root=root)
+
+
+def load_contract(path: str | Path = DEFAULT_CONTRACT, *, registry: Registry | None = None,
+                  root: Path = PROJECT_ROOT) -> ContractCatalog:
+    active_registry = registry or load_registry(root=root)
+    candidate = Path(path)
+    candidate = candidate if candidate.is_absolute() else root / candidate
+    resolved = candidate.resolve()
+    if not resolved.is_relative_to(root.resolve()) or resolved != (root / "config" / "contract.yaml").resolve():
+        raise RegistryError("Contract path must be config/contract.yaml inside the project")
+    return validate_contract(_load_yaml(resolved), active_registry)
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _reader_sql(source: ActiveSource) -> str:
+    fields = ", ".join(f"'{name}': '{kind}'" for name, kind in source.column_types.items())
+    return "read_csv(?, header=true, columns={" + fields + "}, strict_mode=true, ignore_errors=false, encoding='utf-8')"
+
+
+def _preflight_one(conn: duckdb.DuckDBPyConnection, source_id: str, source: ActiveSource,
+                   root: Path) -> dict[str, Any]:
+    path = source_path(source.path, root)
+    if not path.is_file():
+        raise RegistryError(f"{source_id}: MISSING source file: {path}")
+    with path.open("rb") as stream:
+        prefix = stream.read(3)
+    actual_bom = prefix == b"\xef\xbb\xbf"
     try:
-        data = yaml.load(candidate.read_text(encoding="utf-8"), Loader=UniqueKeyLoader)
-    except (OSError, UnicodeError, yaml.YAMLError) as exc:
-        raise RegistryError(f"Cannot load registry {candidate}: {exc}") from exc
-    return validate_registry(data, root=root, expected_tables=expected_tables)
+        with path.open("r", encoding="utf-8-sig", newline="") as stream:
+            actual_header = next(csv.reader(stream))
+    except (OSError, UnicodeError, StopIteration, csv.Error) as exc:
+        raise RegistryError(f"{source_id}: cannot read UTF-8 CSV header: {exc}") from exc
+    if actual_bom != source.bom:
+        raise RegistryError(f"{source_id}: BOM mismatch; expected={source.bom}, actual={actual_bom}")
+    if actual_header != source.header:
+        raise RegistryError(f"{source_id}: wrong header; expected={source.header}, actual={actual_header}")
+    actual_hash = _sha256(path)
+    if actual_hash != source.sha256:
+        raise RegistryError(f"{source_id}: SHA-256 mismatch; source changed")
+    reader = _reader_sql(source)
+    keys = ", ".join(f'"{key}"' for key in source.business_keys)
+    null_key_filter = " OR ".join(f'"{key}" IS NULL' for key in source.business_keys)
+    check_exprs: list[str] = []
+    null_exprs = [
+        f'count(*) FILTER (WHERE "{name}" IS NULL) AS "null__{name}"'
+        for name in source.header
+    ]
+    for name, limits in source.checks.items():
+        conditions = []
+        if limits.min is not None:
+            conditions.append(f'"{name}" < {float(limits.min)}')
+        if limits.max is not None:
+            conditions.append(f'"{name}" > {float(limits.max)}')
+        check_exprs.append(
+            f"count(*) FILTER (WHERE {' OR '.join(conditions)}) AS \"check__{name}\""
+        )
+    select_checks = ", " + ", ".join([*null_exprs, *check_exprs])
+    try:
+        result = conn.execute(
+            f"SELECT count(*) AS row_count{select_checks} FROM {reader}", [str(path)]
+        )
+        row = result.fetchone()
+        stats = dict(zip([column[0] for column in result.description], row))
+        duplicate_groups, duplicate_rows, null_key_rows = conn.execute(
+            f"""WITH source AS (SELECT * FROM {reader}), grouped AS (
+                    SELECT {keys}, count(*) AS n FROM source GROUP BY {keys})
+                SELECT count(*) FILTER (WHERE n > 1),
+                       coalesce(sum(n - 1) FILTER (WHERE n > 1), 0),
+                       (SELECT count(*) FROM source WHERE {null_key_filter})
+                FROM grouped""",
+            [str(path)],
+        ).fetchone()
+    except duckdb.Error as exc:
+        raise RegistryError(f"{source_id}: data type/CSV parse failed: {exc}") from exc
+    if stats["row_count"] != source.row_count:
+        raise RegistryError(
+            f"{source_id}: row count mismatch; expected={source.row_count}, actual={stats['row_count']}"
+        )
+    if duplicate_groups or null_key_rows:
+        raise RegistryError(
+            f"{source_id}: business key failed; duplicate_groups={duplicate_groups}, "
+            f"duplicate_rows={duplicate_rows}, null_key_rows={null_key_rows}"
+        )
+    violations = {name.removeprefix("check__"): count for name, count in stats.items()
+                  if name.startswith("check__") and count}
+    null_counts = {name.removeprefix("null__"): count for name, count in stats.items()
+                   if name.startswith("null__")}
+    return {
+        "path": source.path,
+        "status": "VERIFIED_WITH_WARNINGS" if violations else "VERIFIED",
+        "source_type": source.source_type,
+        "sha256": actual_hash,
+        "encoding": source.encoding,
+        "bom": actual_bom,
+        "header": actual_header,
+        "required_columns": source.header,
+        "row_count": stats["row_count"],
+        "column_types": source.column_types,
+        "null_counts": null_counts,
+        "business_keys": source.business_keys,
+        "duplicate_key_groups": duplicate_groups,
+        "null_key_rows": null_key_rows,
+        "constraint_violations": violations,
+    }
+
+
+def preflight_sources(registry: Registry, *, root: Path = PROJECT_ROOT) -> dict[str, Any]:
+    """Read all seven active CSVs without writing raw files or opening a warehouse."""
+    conn = duckdb.connect(":memory:")
+    try:
+        conn.execute("SET threads=2")
+        conn.execute("SET memory_limit='1GB'")
+        sources = {
+            source_id: _preflight_one(conn, source_id, source, root)
+            for source_id, source in registry.active_sources.items()
+        }
+    finally:
+        conn.close()
+    return {
+        "status": "VERIFIED_WITH_WARNINGS" if any(s["constraint_violations"] for s in sources.values()) else "VERIFIED",
+        "active_source_count": len(sources),
+        "sources": sources,
+        "historical_only": {
+            name: {"path": item.path, "status": item.status, "exists": (root / item.path).is_file()}
+            for name, item in registry.historical_sources.items()
+        },
+    }
 
 
 def check_source_files(registry: Registry, root: Path = PROJECT_ROOT) -> list[str]:
-    """Read-only existence/hash verification, no CSV parser or database connection."""
-    errors = []
-    for file_id, source in registry.source_files.items():
-        path = source_path(source.path, root)
-        try:
-            digest = hashlib.sha256()
-            with path.open("rb") as stream:
-                for chunk in iter(lambda: stream.read(1024*1024), b""):
-                    digest.update(chunk)
-            if digest.hexdigest() != source.sha256:
-                errors.append(f"{file_id}: source hash changed; rerun profiling and review metadata")
-        except OSError as exc:
-            errors.append(f"{file_id}: unexpected source absence/unreadable file: {path}: {exc}")
-    return errors
+    """Compatibility API: return blocking full-preflight errors as a list."""
+    try:
+        preflight_sources(registry, root=root)
+    except RegistryError as exc:
+        return [str(exc)]
+    return []
 
 
-def registry_report(registry: Registry) -> dict:
-    """Summarize valid configuration separately from source existence and business readiness."""
-    pending = {t.name: t.pending_decisions for t in registry.tables if t.pending_decisions}
+def registry_report(registry: Registry, contract: ContractCatalog | None = None) -> dict[str, Any]:
+    catalog = contract or load_contract(registry=registry)
     return {
-        "configuration": "VALID", "source_count": len(registry.tables),
-        "verified_source_files": len(registry.source_files),
-        "missing_by_design": [t.name for t in registry.tables if t.source_availability == "MISSING"],
-        "table_status": {t.name: {"source": t.source_availability, "schema": t.schema_approval.status,
-                                  "mapping": t.mapping_approval.status, "upload": t.upload.eligibility.status} for t in registry.tables},
-        "pending_decisions": pending,
-        "global_pending": {k: v.detail for k, v in registry.global_decisions.items() if v.status == "PENDING_CONFIRMATION"},
-        "task08": "NOT_READY" if pending or any(t.source_availability == "MISSING" for t in registry.tables)
-                  or any(t.schema_approval.status != "VERIFIED" or t.mapping_approval.status != "VERIFIED" for t in registry.tables)
-                  or any(d.status == "PENDING_CONFIRMATION" for d in registry.global_decisions.values()) else "PARTIALLY_READY",
-        "execution": "NOT_IMPLEMENTED: configuration only; no ingestion or upload authorized",
+        "configuration": "VALID",
+        "registry_version": registry.registry_version,
+        "active_source_count": len(registry.active_sources),
+        "active_source_paths": [source.path for source in registry.active_sources.values()],
+        "historical_only": [source.path for source in registry.historical_sources.values()],
+        "contract_count": len(catalog.tables),
+        "schemas": sorted({table.schema_name for table in catalog.tables.values()}),
+        "assumed_sources": sorted(
+            source_id for source_id, source in registry.active_sources.items() if source.source_type == "ASSUMED"
+        ),
+        "pending_update_policies": sorted(
+            name for name, table in catalog.tables.items() if table.update_policy == "PENDING_CONFIRMATION"
+        ),
+        "execution": "NOT_IMPLEMENTED: contract/preflight only; no ingestion or database writes",
     }

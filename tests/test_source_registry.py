@@ -1,259 +1,193 @@
-"""Registry metadata fixtures only; source existence tests use temporary files."""
+"""V4 registry, contract and read-only source preflight tests."""
 
-from copy import deepcopy
+import csv
 import hashlib
-import json
 from pathlib import Path
-import subprocess
-import sys
 
 import pytest
 import yaml
 
-from src.config.source_registry import (DEFAULT_REGISTRY, EXPECTED_TABLES, RegistryError,
-                                        check_source_files, load_registry, registry_report,
-                                        source_path, validate_registry)
-
-ORDERS = "sales_ecommerce.orders_daily"
-
-
-@pytest.fixture
-def small():
-    """Use one complete table definition, never require CSVs to exist for loading."""
-    data = yaml.safe_load(DEFAULT_REGISTRY.read_text(encoding="utf-8"))
-    data["tables"] = [data["tables"][0]]
-    data["source_files"] = {"orders": data["source_files"]["orders"]}
-    return data
-
-
-def validate(data, tmp_path):
-    return validate_registry(data, root=tmp_path, expected_tables=frozenset({ORDERS}))
+from src.config.source_registry import (
+    ACTIVE_SOURCE_PATHS,
+    DEFAULT_CONTRACT,
+    DEFAULT_REGISTRY,
+    EXPECTED_SCHEMAS,
+    EXPECTED_TABLES,
+    RegistryError,
+    load_contract,
+    load_registry,
+    preflight_sources,
+    validate_contract,
+    validate_registry,
+)
 
 
-def write_config(path, data):
-    path.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding="utf-8")
+def registry_data() -> dict:
+    return yaml.safe_load(DEFAULT_REGISTRY.read_text(encoding="utf-8"))
 
 
-def test_load_valid_yaml_without_source_files(small, tmp_path):
+def contract_data() -> dict:
+    return yaml.safe_load(DEFAULT_CONTRACT.read_text(encoding="utf-8"))
+
+
+def make_source_fixture(tmp_path: Path, data: dict) -> None:
+    """Replace production evidence with one valid row per active source."""
+    for source_id, source in data["active_sources"].items():
+        target = tmp_path / source["path"]
+        target.parent.mkdir(parents=True, exist_ok=True)
+        row = []
+        for column in source["header"]:
+            kind = source["column_types"][column]
+            if column == "date":
+                value = "2026-01-01"
+            elif kind in {"BIGINT", "DOUBLE"}:
+                value = "1"
+            else:
+                value = f"{source_id}_{column}"
+            row.append(value)
+        with target.open("w", encoding="utf-8", newline="") as stream:
+            writer = csv.writer(stream, lineterminator="\n")
+            writer.writerow(source["header"])
+            writer.writerow(row)
+        source["sha256"] = hashlib.sha256(target.read_bytes()).hexdigest()
+        source["row_count"] = 1
+
+
+def test_production_registry_has_exactly_seven_active_sources_and_historical_calendar():
+    registry = load_registry()
+    assert len(registry.active_sources) == 7
+    assert {source.path for source in registry.active_sources.values()} == ACTIVE_SOURCE_PATHS
+    assert all(source.status == "ACTIVE" for source in registry.active_sources.values())
+    historical = registry.historical_sources["orders_calendar"]
+    assert historical.status == "HISTORICAL_ONLY"
+    assert historical.path == "data/raw/orders/train_calendar.csv"
+    assert historical.path not in ACTIVE_SOURCE_PATHS
+
+
+def test_contract_has_exactly_fourteen_tables_and_nine_schemas():
+    catalog = load_contract()
+    assert set(catalog.tables) == EXPECTED_TABLES
+    assert len(catalog.tables) == 14
+    assert {table.schema_name for table in catalog.tables.values()} == EXPECTED_SCHEMAS
+
+
+def test_cost_and_hr_headers_and_assumed_status():
+    registry = load_registry()
+    assert registry.active_sources["cost_params"].header == [
+        "L1_category_name_en", "cost_ratio", "shelf_life_days", "waste_handling_cost_ratio"
+    ]
+    assert registry.active_sources["workforce_params"].header == [
+        "warehouse", "wage_eur_per_hour", "items_per_order", "picks_per_hour",
+        "shift_hours", "morning_share", "overtime_multiplier", "overtime_cap",
+        "shortage_penalty", "rule_buffer", "orders_per_driver_shift",
+    ]
+    assert registry.active_sources["cost_params"].source_type == "ASSUMED"
+    assert registry.active_sources["workforce_params"].source_type == "ASSUMED"
+    catalog = load_contract(registry=registry)
+    assert catalog.tables["src_finance.cost_params"].source_type == "ASSUMED"
+    assert catalog.tables["src_hr.workforce_params"].source_type == "ASSUMED"
+
+
+def test_hr_mapping_has_five_renames_and_all_eleven_canonical_columns():
+    table = load_contract().tables["src_hr.workforce_params"]
+    renames = {raw: canonical for raw, canonical in table.mapping.items() if raw != canonical}
+    assert renames == {
+        "wage_eur_per_hour": "hourly_wage_eur",
+        "morning_share": "morning_shift_ratio",
+        "overtime_cap": "overtime_cap_ratio",
+        "shortage_penalty": "shortage_penalty_multiplier",
+        "rule_buffer": "legacy_rule_buffer_ratio",
+    }
+    assert len(table.columns) == len(table.mapping) == 11
+
+
+def test_hr_source_has_seven_unique_warehouse_keys(tmp_path):
+    data = registry_data()
+    make_source_fixture(tmp_path, data)
+    source = data["active_sources"]["workforce_params"]
+    target = tmp_path / source["path"]
+    with target.open("w", encoding="utf-8", newline="") as stream:
+        writer = csv.writer(stream, lineterminator="\n")
+        writer.writerow(source["header"])
+        for number in range(7):
+            writer.writerow([f"warehouse_{number}", *([1] * 10)])
+    source["sha256"] = hashlib.sha256(target.read_bytes()).hexdigest()
+    source["row_count"] = 7
+    report = preflight_sources(validate_registry(data, root=tmp_path), root=tmp_path)
+    hr = report["sources"]["workforce_params"]
+    assert hr["row_count"] == 7
+    assert hr["business_keys"] == ["warehouse"]
+    assert hr["duplicate_key_groups"] == hr["null_key_rows"] == 0
+
+
+def test_tmp_path_preflight_is_read_only_and_valid(tmp_path):
+    data = registry_data()
+    make_source_fixture(tmp_path, data)
+    registry = validate_registry(data, root=tmp_path)
+    before = {source.path: (tmp_path / source.path).read_bytes() for source in registry.active_sources.values()}
+    report = preflight_sources(registry, root=tmp_path)
+    after = {source.path: (tmp_path / source.path).read_bytes() for source in registry.active_sources.values()}
+    assert report["active_source_count"] == 7
+    assert before == after
+    assert not (tmp_path / "data/warehouse").exists()
+
+
+def test_missing_source_is_blocked(tmp_path):
+    data = registry_data()
+    make_source_fixture(tmp_path, data)
+    missing = tmp_path / data["active_sources"]["cost_params"]["path"]
+    missing.unlink()
+    with pytest.raises(RegistryError, match="MISSING"):
+        preflight_sources(validate_registry(data, root=tmp_path), root=tmp_path)
+
+
+def test_wrong_header_is_blocked(tmp_path):
+    data = registry_data()
+    make_source_fixture(tmp_path, data)
+    target = tmp_path / data["active_sources"]["workforce_params"]["path"]
+    text = target.read_text(encoding="utf-8").replace("wage_eur_per_hour", "wrong_wage", 1)
+    target.write_text(text, encoding="utf-8")
+    data["active_sources"]["workforce_params"]["sha256"] = hashlib.sha256(target.read_bytes()).hexdigest()
+    with pytest.raises(RegistryError, match="wrong header"):
+        preflight_sources(validate_registry(data, root=tmp_path), root=tmp_path)
+
+
+def test_duplicate_business_key_is_blocked(tmp_path):
+    data = registry_data()
+    make_source_fixture(tmp_path, data)
+    target = tmp_path / data["active_sources"]["cost_params"]["path"]
+    lines = target.read_text(encoding="utf-8").splitlines()
+    target.write_text("\n".join([lines[0], lines[1], lines[1]]) + "\n", encoding="utf-8")
+    source = data["active_sources"]["cost_params"]
+    source["sha256"] = hashlib.sha256(target.read_bytes()).hexdigest()
+    source["row_count"] = 2
+    with pytest.raises(RegistryError, match="duplicate_groups=1"):
+        preflight_sources(validate_registry(data, root=tmp_path), root=tmp_path)
+
+
+def test_duplicate_yaml_keys_are_blocked(tmp_path):
     path = tmp_path / "sources.yaml"
-    write_config(path, small)
-    registry = load_registry(path, root=tmp_path, expected_tables=frozenset({ORDERS}))
-    assert registry.list_tables() == [ORDERS]
-    assert not (tmp_path / "data").exists()
-
-
-def test_yaml_syntax_error(tmp_path):
-    path = tmp_path / "bad.yaml"
-    path.write_text("tables: [\n", encoding="utf-8")
-    with pytest.raises(RegistryError, match="Cannot load registry"):
-        load_registry(path, root=tmp_path)
-
-
-def test_yaml_duplicate_keys_rejected(tmp_path):
-    path = tmp_path / "bad.yaml"
-    path.write_text("registry_version: 1\nregistry_version: 2\n", encoding="utf-8")
+    path.write_text("registry_version: 4\nregistry_version: 4\n", encoding="utf-8")
     with pytest.raises(RegistryError, match="Duplicate YAML key"):
         load_registry(path, root=tmp_path)
 
 
-def test_unsafe_yaml_tags_rejected(tmp_path):
-    path = tmp_path / "bad.yaml"
-    path.write_text("!!python/object/apply:os.system ['echo should-not-run']", encoding="utf-8")
-    with pytest.raises(RegistryError, match="Cannot load registry"):
-        load_registry(path, root=tmp_path)
-
-
-@pytest.mark.parametrize("field", ["department", "grain", "columns", "upload", "schema_approval"])
-def test_required_metadata_missing(small, tmp_path, field):
-    del small["tables"][0][field]
-    with pytest.raises(RegistryError, match="Invalid registry metadata"):
-        validate(small, tmp_path)
-
-
-def test_duplicate_table_name(small, tmp_path):
-    small["tables"].append(deepcopy(small["tables"][0]))
-    with pytest.raises(RegistryError, match="Duplicate source table"):
-        validate(small, tmp_path)
-
-
-def test_production_requires_all_fourteen(small, tmp_path):
-    with pytest.raises(RegistryError, match="Expected source tables mismatch"):
-        validate_registry(small, root=tmp_path)
-
-
-@pytest.mark.parametrize("keys", [[], ["not_in_schema"], ["warehouse", "warehouse"]])
-def test_invalid_business_keys(small, tmp_path, keys):
-    small["tables"][0]["business_keys"] = keys
-    with pytest.raises(RegistryError):
-        validate(small, tmp_path)
-
-
-@pytest.mark.parametrize("path", ["../outside.csv", "C:/private/file.csv", "/tmp/file.csv",
-                                  "data/raw/orders/../train.csv", "data/raw/orders/test.csv",
-                                  "https://example.com/file.csv", "data\\raw\\orders\\train.csv"])
-def test_invalid_source_path(small, tmp_path, path):
-    small["source_files"]["orders"]["path"] = path
-    with pytest.raises(RegistryError, match="Source path outside"):
-        validate(small, tmp_path)
-
-
-def test_resolved_source_escape_blocked(tmp_path, monkeypatch):
-    # Simulate symlink resolution without requiring Windows administrator privileges.
-    target = tmp_path / "data/raw/orders/train.csv"
-    external = tmp_path / "outside.csv"
-    original = Path.resolve
-    def resolve(path, *args, **kwargs):
-        return original(external) if path == target else original(path, *args, **kwargs)
-    monkeypatch.setattr(Path, "resolve", resolve)
-    with pytest.raises(RegistryError, match="escapes"):
-        source_path("data/raw/orders/train.csv", tmp_path)
-
-
-def test_mapping_source_column_must_exist(small, tmp_path):
-    small["tables"][0]["mappings"][0]["source_column"] = "unknown_column"
-    with pytest.raises(RegistryError, match="source column not in verified metadata"):
-        validate(small, tmp_path)
-
-
-def test_mapping_unknown_file_or_target(small, tmp_path):
-    small["tables"][0]["mappings"][0]["target"] = "unknown_target"
-    with pytest.raises(RegistryError, match="undeclared file or target"):
-        validate(small, tmp_path)
-
-
-def test_target_cannot_be_unmapped(small, tmp_path):
-    small["tables"][0]["mappings"].pop()
-    with pytest.raises(RegistryError, match="require explicit direct mappings"):
-        validate(small, tmp_path)
-
-
-def test_unexpected_source_absence(small, tmp_path):
-    registry = validate(small, tmp_path)
-    errors = check_source_files(registry, tmp_path)
-    assert len(errors) == 1 and "unexpected source absence" in errors[0]
-    assert not (tmp_path / "data").exists()
-
-
-def test_source_hash_check_detects_changes(small, tmp_path):
-    path = tmp_path / "data/raw/orders/train.csv"
-    path.parent.mkdir(parents=True)
-    path.write_bytes(b"fixture-only\n")
-    small["source_files"]["orders"]["sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
-    registry = validate(small, tmp_path)
-    assert check_source_files(registry, tmp_path) == []
-    path.write_bytes(b"changed-fixture\n")
-    assert "source hash changed" in check_source_files(registry, tmp_path)[0]
-
-
-def test_expected_finance_hr_missing_is_valid(tmp_path):
-    data = yaml.safe_load(DEFAULT_REGISTRY.read_text(encoding="utf-8"))
-    registry = validate_registry(data, root=tmp_path)
-    report = registry_report(registry)
-    assert report["configuration"] == "VALID"
-    assert report["missing_by_design"] == ["finance.cost_params", "hr.workforce_params"]
-    assert report["task08"] == "NOT_READY"
-    assert len(report["pending_decisions"]) == 14
-
-
-def test_finance_hr_cannot_claim_real_data(tmp_path):
-    data = yaml.safe_load(DEFAULT_REGISTRY.read_text(encoding="utf-8"))
-    data["tables"][-1]["source_availability"] = "VERIFIED"
-    with pytest.raises(RegistryError, match="must remain MISSING"):
+@pytest.mark.parametrize("unsafe", ["../outside.csv", "C:/private.csv", "/tmp/file.csv",
+                                     "data/raw/orders/../train.csv", "data\\raw\\orders\\train.csv"])
+def test_unsafe_source_paths_are_blocked(tmp_path, unsafe):
+    data = registry_data()
+    data["active_sources"]["orders"]["path"] = unsafe
+    with pytest.raises(RegistryError, match="allowlist|seven unique"):
         validate_registry(data, root=tmp_path)
 
 
-def test_pending_retained_and_get_api_returns_copy(small, tmp_path):
-    registry = validate(small, tmp_path)
-    table = registry.get_table(ORDERS)
-    assert table.schema_approval.status == "PENDING_CONFIRMATION"
-    assert table.upload.access == "BLOCKED_PENDING_APPROVAL"
-    table.pending_decisions.clear()
-    assert registry.get_table(ORDERS).pending_decisions
-    assert registry.list_tables("sales_ecommerce") == [ORDERS]
-    assert registry.list_tables("hr") == []
-    with pytest.raises(KeyError):
-        registry.get_table("unknown.table")
-
-
-def test_cannot_approve_without_evidence(small, tmp_path):
-    small["tables"][0]["schema_approval"]["status"] = "VERIFIED"
-    with pytest.raises(RegistryError, match="approved_by and approved_at"):
-        validate(small, tmp_path)
-
-
-def test_approval_cannot_contradict_pending_columns(small, tmp_path):
-    approval = small["tables"][0]["schema_approval"]
-    approval.update(status="VERIFIED", approved_by="fixture-reviewer", approved_at="2026-10-18")
-    with pytest.raises(RegistryError, match="verified keys and columns"):
-        validate(small, tmp_path)
-
-
-def test_upload_disabled_and_policy_pending(small, tmp_path):
-    small["tables"][0]["upload"]["enabled"] = True
-    with pytest.raises(RegistryError):
-        validate(small, tmp_path)
-
-
-def test_upload_columns_partition_checked(small, tmp_path):
-    small["tables"][0]["upload"]["optional_columns"].append("warehouse")
-    with pytest.raises(RegistryError, match="partition"):
-        validate(small, tmp_path)
-
-
-def test_no_database_connections_or_writes(small, tmp_path, monkeypatch):
-    import duckdb
-    import sqlite3
-    def forbidden(*args, **kwargs):
-        raise AssertionError("Registry must not connect to any database")
-    monkeypatch.setattr(duckdb, "connect", forbidden)
-    monkeypatch.setattr(sqlite3, "connect", forbidden)
-    path = tmp_path / "registry.yaml"
-    write_config(path, small)
-    before = path.read_bytes()
-    load_registry(path, root=tmp_path, expected_tables=frozenset({ORDERS}))
-    assert path.read_bytes() == before
-    assert list(tmp_path.iterdir()) == [path]
-
-
-def test_production_metadata_preserves_task06_evidence():
-    # No CSV existence needed; verified snapshot metadata is part of configuration.
+def test_contract_mapping_must_cover_canonical_columns():
     registry = load_registry()
-    assert len(registry.tables) == len(EXPECTED_TABLES) == 14
-    assert sum(len(source.columns) for source in registry.source_files.values()) == 64
-    assert registry.get_table("sales_ecommerce.sku_sales_daily").columns[3].nullable is True
-    assert "order_index" not in {c.name for t in registry.tables for c in t.columns}
-    calendar = registry.get_table("planning.calendar")
-    assert len(calendar.deferred_mappings) == 8
-    assert "warehouse_limited" in {m.source_column for m in calendar.deferred_mappings}
-    assert all(t.schema_approval.status == "PENDING_CONFIRMATION" for t in registry.tables)
+    data = contract_data()
+    del data["tables"]["src_hr.workforce_params"]["mapping"]["rule_buffer"]
+    with pytest.raises(RegistryError, match="exact canonical columns"):
+        validate_contract(data, registry)
 
 
-def test_cli_metadata_only_json_with_temporary_config(tmp_path):
-    path = tmp_path / "registry.yaml"
-    path.write_bytes(DEFAULT_REGISTRY.read_bytes())
-    result = subprocess.run([sys.executable, "-m", "src.validate_source_registry", "--config", str(path), "--metadata-only", "--json"],
-                            capture_output=True, text=True, encoding="utf-8")
-    assert result.returncode == 0, result.stdout + result.stderr
-    report = json.loads(result.stdout)
-    assert report["source_count"] == 14
-    assert report["file_check"] == "NOT_CHECKED"
-    assert report["task08"] == "NOT_READY"
-
-
-def test_cli_bad_config_has_nonzero_exit(tmp_path):
-    path = tmp_path / "bad.yaml"
-    path.write_text("registry_version: [", encoding="utf-8")
-    result = subprocess.run([sys.executable, "-m", "src.validate_source_registry", "--config", str(path)],
-                            capture_output=True, text=True, encoding="utf-8")
-    assert result.returncode == 1
-    assert "FAILED_CONFIGURATION" in result.stdout
-
-
-def test_cli_missing_source_is_distinct_from_pending(small, tmp_path, monkeypatch, capsys):
-    import src.validate_source_registry as cli
-    registry = validate(small, tmp_path)
-    monkeypatch.setattr(cli, "load_registry", lambda *a, **k: registry)
-    monkeypatch.setattr(cli, "check_source_files", lambda *a, **k: check_source_files(registry, tmp_path))
-    monkeypatch.setattr(sys, "argv", ["validate_source_registry"])
-    assert cli.main() == 2
-    assert "FAILED_SOURCE_FILES" in capsys.readouterr().out
+def test_update_policies_are_explicitly_pending_not_invented():
+    assert all(table.update_policy == "PENDING_CONFIRMATION" for table in load_contract().tables.values())

@@ -1,5 +1,9 @@
 # Task 08A — Historical Source Bootstrap & Bronze Layer
 
+> **LEGACY/HISTORICAL:** V4 production uses `config/sources.yaml` registry v4 and
+> `config/contract.yaml`. This Task08A bootstrap intentionally uses the versioned
+> `config/sources_task08a.yaml` adapter and never migrates an existing database.
+
 Ngày xác minh: **19/10/2026**. Task 08A nạp sáu CSV Kaggle read-only vào một
 DuckDB thử nghiệm riêng, giữ Bronze nguyên trạng và materialize 12 projection lịch
 sử đúng direct mappings của Source Registry. Đây là **provisional bootstrap**, không
@@ -22,7 +26,7 @@ sync hay Parquet snapshot. Không sửa `src/db/duckdb.py`, `data/input.db` ho�
 
 ## Phụ thuộc Source Registry và chốt an toàn
 
-- `config/sources.yaml` phải load qua validator Task 07 và đủ đúng 14 logical tables.
+- `config/sources_task08a.yaml` phải load qua adapter Task 07/08A và đủ đúng 14 logical tables cũ.
 - Sáu path phải thuộc allowlist `data/raw/`; SHA-256, header, strict types, row count,
   observed null counts và source/business keys phải khớp evidence Task 06.
 - Output chỉ được là `.duckdb` trong `data/warehouse/`, không được resolve về

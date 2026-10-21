@@ -19,7 +19,7 @@ from uuid import uuid4
 
 import duckdb
 
-from src.config.source_registry import (
+from src.config.source_registry_task08a import (
     DEFAULT_REGISTRY,
     EXPECTED_TABLES,
     MISSING_TABLES,

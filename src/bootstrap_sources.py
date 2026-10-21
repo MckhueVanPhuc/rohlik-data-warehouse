@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import sys
 
-from src.config.source_registry import DEFAULT_REGISTRY, PROJECT_ROOT
+from src.config.source_registry_task08a import DEFAULT_REGISTRY, PROJECT_ROOT
 from src.ingestion.source_bootstrap import (
     BootstrapError,
     DEFAULT_BOOTSTRAP_DATABASE,

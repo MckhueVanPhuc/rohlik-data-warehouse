@@ -1,15 +1,21 @@
-"""Validate configuration and optionally verify source file hashes, without ingestion."""
+"""Validate the V4 registry/contract and optionally run a read-only CSV preflight."""
 
 import argparse
 import json
 import sys
 
-from src.config.source_registry import (DEFAULT_REGISTRY, RegistryError, check_source_files,
-                                        load_registry, registry_report)
+from src.config.source_registry import (
+    DEFAULT_REGISTRY,
+    RegistryError,
+    load_contract,
+    load_registry,
+    preflight_sources,
+    registry_report,
+)
 
 
 def main() -> int:
-    """Exit 0 for valid pending config, 1 for invalid config, 2 for unexpected source issues."""
+    """Exit 0 for valid config/sources, 1 for config failure, 2 for source failure."""
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(description=__doc__)
@@ -19,30 +25,36 @@ def main() -> int:
     args = parser.parse_args()
     try:
         registry = load_registry(args.config)
-        report = registry_report(registry)
-        report["source_file_errors"] = [] if args.metadata_only else check_source_files(registry)
-        report["file_check"] = "NOT_CHECKED" if args.metadata_only else "FAILED" if report["source_file_errors"] else "VERIFIED"
+        contract = load_contract(registry=registry)
+        report = registry_report(registry, contract)
     except RegistryError as exc:
         print(f"FAILED_CONFIGURATION: {exc}")
         return 1
-    if report["source_file_errors"]:
-        report["task08"] = "NOT_READY"
+    if args.metadata_only:
+        report["file_check"] = "NOT_CHECKED"
+    else:
+        try:
+            report["preflight"] = preflight_sources(registry)
+            report["file_check"] = report["preflight"]["status"]
+        except RegistryError as exc:
+            report["file_check"] = "FAILED"
+            report["source_file_errors"] = [str(exc)]
+            if args.json:
+                print(json.dumps(report, ensure_ascii=True, indent=2))
+            else:
+                print(f"FAILED_SOURCE_FILES: {exc}")
+            return 2
     if args.json:
         print(json.dumps(report, ensure_ascii=True, indent=2))
     else:
-        print(f"{'FAILED_SOURCE_FILES' if report['source_file_errors'] else 'SUCCESS'}: configuration VALID; files={report['file_check']}")
-        print(f"Tables: {report['source_count']}; catalog files: {report['verified_source_files']}; source paths/keys/schema references: VALID")
-        for name, status in report["table_status"].items():
-            print(f"{name}: source={status['source']}; schema={status['schema']}; mapping={status['mapping']}; upload={status['upload']}")
-        print("MISSING by design: " + ", ".join(report["missing_by_design"]))
-        for name, decisions in report["pending_decisions"].items():
-            print(f"PENDING {name}: " + "; ".join(decisions))
-        for name, detail in report["global_pending"].items():
-            print(f"PENDING global.{name}: {detail}")
-        for error in report["source_file_errors"]:
-            print(error)
-        print(f"Task 08: {report['task08']}; configuration only, no ingestion")
-    return 2 if report["source_file_errors"] else 0
+        print(f"SUCCESS: V4 configuration VALID; files={report['file_check']}")
+        print(
+            f"Active sources: {report['active_source_count']}; contracts: {report['contract_count']}; "
+            f"schemas: {len(report['schemas'])}"
+        )
+        print("ASSUMED sources: " + ", ".join(report["assumed_sources"]))
+        print(report["execution"])
+    return 0
 
 
 if __name__ == "__main__":

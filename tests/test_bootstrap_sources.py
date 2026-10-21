@@ -11,7 +11,7 @@ import duckdb
 import pytest
 import yaml
 
-from src.config.source_registry import DEFAULT_REGISTRY, load_registry
+from src.config.source_registry_task08a import DEFAULT_REGISTRY, load_registry
 from src.ingestion import source_bootstrap as bootstrap
 
 

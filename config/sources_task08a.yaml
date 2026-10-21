@@ -1,0 +1,2516 @@
+# Task 07/08A legacy registry. Retained only for the historical bootstrap adapter.
+registry_version: 1
+scope: 'TASK 07: configuration only; no ingestion, business schema, upload or transformations.'
+source_files:
+  orders:
+    path: data/raw/orders/train.csv
+    verification_status: VERIFIED
+    evidence: 'Task 06: docs/data_profiling_report.md, dictionary section orders; full-file profiling/hash 2026-10-18'
+    sha256: 1d0e15de6f8edceb501bfc2c4007cc595781494c8c9c86954584c86e4710be67
+    row_count: 7340
+    encoding: UTF-8 compatible (Task 06 full byte scan)
+    delimiter: ','
+    header: true
+    columns:
+      warehouse:
+        inferred_type: VARCHAR
+        null_count: 0
+      date:
+        inferred_type: DATE
+        null_count: 0
+      orders:
+        inferred_type: DOUBLE
+        null_count: 0
+      holiday_name:
+        inferred_type: VARCHAR
+        null_count: 7122
+      holiday:
+        inferred_type: BIGINT
+        null_count: 0
+      shutdown:
+        inferred_type: BIGINT
+        null_count: 0
+      mini_shutdown:
+        inferred_type: BIGINT
+        null_count: 0
+      shops_closed:
+        inferred_type: BIGINT
+        null_count: 0
+      winter_school_holidays:
+        inferred_type: BIGINT
+        null_count: 0
+      school_holidays:
+        inferred_type: BIGINT
+        null_count: 0
+      blackout:
+        inferred_type: BIGINT
+        null_count: 0
+      mov_change:
+        inferred_type: DOUBLE
+        null_count: 0
+      frankfurt_shutdown:
+        inferred_type: BIGINT
+        null_count: 0
+      precipitation:
+        inferred_type: DOUBLE
+        null_count: 270
+      snow:
+        inferred_type: DOUBLE
+        null_count: 270
+      user_activity_1:
+        inferred_type: DOUBLE
+        null_count: 0
+      user_activity_2:
+        inferred_type: DOUBLE
+        null_count: 0
+      id:
+        inferred_type: VARCHAR
+        null_count: 0
+  orders_calendar:
+    path: data/raw/orders/train_calendar.csv
+    verification_status: VERIFIED
+    evidence: 'Task 06: docs/data_profiling_report.md, dictionary section orders_calendar; full-file profiling/hash 2026-10-18'
+    sha256: 502345a98099e9f9764226562da1ee2bda5cefe0f4fda1667d3ee32a5555eb18
+    row_count: 13307
+    encoding: UTF-8 compatible (Task 06 full byte scan)
+    delimiter: ','
+    header: true
+    columns:
+      date:
+        inferred_type: DATE
+        null_count: 0
+      holiday_name:
+        inferred_type: VARCHAR
+        null_count: 12744
+      holiday:
+        inferred_type: BIGINT
+        null_count: 0
+      shutdown:
+        inferred_type: BIGINT
+        null_count: 0
+      mini_shutdown:
+        inferred_type: BIGINT
+        null_count: 0
+      warehouse_limited:
+        inferred_type: BIGINT
+        null_count: 0
+      shops_closed:
+        inferred_type: BIGINT
+        null_count: 0
+      winter_school_holidays:
+        inferred_type: BIGINT
+        null_count: 0
+      school_holidays:
+        inferred_type: BIGINT
+        null_count: 0
+      blackout:
+        inferred_type: BIGINT
+        null_count: 0
+      mov_change:
+        inferred_type: DOUBLE
+        null_count: 0
+      frankfurt_shutdown:
+        inferred_type: BIGINT
+        null_count: 0
+      precipitation:
+        inferred_type: DOUBLE
+        null_count: 2108
+      snow:
+        inferred_type: DOUBLE
+        null_count: 2108
+      warehouse:
+        inferred_type: VARCHAR
+        null_count: 0
+  sales:
+    path: data/raw/sales/sales_train.csv
+    verification_status: VERIFIED
+    evidence: 'Task 06: docs/data_profiling_report.md, dictionary section sales; full-file profiling/hash 2026-10-18'
+    sha256: af45f951bd0e9f6132bc64fddca14b00829d260abca0591c9f637437833e0469
+    row_count: 4007419
+    encoding: UTF-8 compatible (Task 06 full byte scan)
+    delimiter: ','
+    header: true
+    columns:
+      unique_id:
+        inferred_type: BIGINT
+        null_count: 0
+      date:
+        inferred_type: DATE
+        null_count: 0
+      warehouse:
+        inferred_type: VARCHAR
+        null_count: 0
+      total_orders:
+        inferred_type: DOUBLE
+        null_count: 52
+      sales:
+        inferred_type: DOUBLE
+        null_count: 52
+      sell_price_main:
+        inferred_type: DOUBLE
+        null_count: 0
+      availability:
+        inferred_type: DOUBLE
+        null_count: 0
+      type_0_discount:
+        inferred_type: DOUBLE
+        null_count: 0
+      type_1_discount:
+        inferred_type: DOUBLE
+        null_count: 0
+      type_2_discount:
+        inferred_type: DOUBLE
+        null_count: 0
+      type_3_discount:
+        inferred_type: DOUBLE
+        null_count: 0
+      type_4_discount:
+        inferred_type: DOUBLE
+        null_count: 0
+      type_5_discount:
+        inferred_type: DOUBLE
+        null_count: 0
+      type_6_discount:
+        inferred_type: DOUBLE
+        null_count: 0
+  inventory:
+    path: data/raw/sales/inventory.csv
+    verification_status: VERIFIED
+    evidence: 'Task 06: docs/data_profiling_report.md, dictionary section inventory; full-file profiling/hash 2026-10-18'
+    sha256: e1ada9e6d5af544e1ccefd7e8ef2785a78ad7784e783c4b25811a909ca7e966b
+    row_count: 5432
+    encoding: UTF-8 compatible (Task 06 full byte scan)
+    delimiter: ','
+    header: true
+    columns:
+      unique_id:
+        inferred_type: BIGINT
+        null_count: 0
+      product_unique_id:
+        inferred_type: BIGINT
+        null_count: 0
+      name:
+        inferred_type: VARCHAR
+        null_count: 0
+      L1_category_name_en:
+        inferred_type: VARCHAR
+        null_count: 0
+      L2_category_name_en:
+        inferred_type: VARCHAR
+        null_count: 0
+      L3_category_name_en:
+        inferred_type: VARCHAR
+        null_count: 0
+      L4_category_name_en:
+        inferred_type: VARCHAR
+        null_count: 0
+      warehouse:
+        inferred_type: VARCHAR
+        null_count: 0
+  sales_calendar:
+    path: data/raw/sales/calendar.csv
+    verification_status: VERIFIED
+    evidence: 'Task 06: docs/data_profiling_report.md, dictionary section sales_calendar; full-file profiling/hash 2026-10-18'
+    sha256: 2633d53eecd494a49080c748b0e335574dc3706342723c85d9ee9636a2e36e84
+    row_count: 23016
+    encoding: UTF-8 compatible (Task 06 full byte scan)
+    delimiter: ','
+    header: true
+    columns:
+      date:
+        inferred_type: DATE
+        null_count: 0
+      holiday_name:
+        inferred_type: VARCHAR
+        null_count: 22086
+      holiday:
+        inferred_type: BIGINT
+        null_count: 0
+      shops_closed:
+        inferred_type: BIGINT
+        null_count: 0
+      winter_school_holidays:
+        inferred_type: BIGINT
+        null_count: 0
+      school_holidays:
+        inferred_type: BIGINT
+        null_count: 0
+      warehouse:
+        inferred_type: VARCHAR
+        null_count: 0
+  weights:
+    path: data/raw/sales/test_weights.csv
+    verification_status: VERIFIED
+    evidence: 'Task 06: docs/data_profiling_report.md, dictionary section weights; full-file profiling/hash 2026-10-18'
+    sha256: a3b33db34dbe0da26687496b6d98e8ec759a943f776e209a2573937406ccb783
+    row_count: 5390
+    encoding: UTF-8 compatible (Task 06 full byte scan)
+    delimiter: ','
+    header: true
+    columns:
+      unique_id:
+        inferred_type: BIGINT
+        null_count: 0
+      weight:
+        inferred_type: DOUBLE
+        null_count: 0
+upload_batch_metadata:
+- batch_id
+- source_table
+- department
+- uploaded_by
+- uploaded_at
+- original_filename
+- file_hash
+- total_rows
+- accepted_rows
+- rejected_rows
+- status
+global_decisions:
+  sales_nulls:
+    status: PENDING_CONFIRMATION
+    detail: '52 null mỗi cột sales/total_orders: giữ nguyên, chưa duyệt fill/drop/nullable.'
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  negative_discounts:
+    status: PENDING_CONFIRMATION
+    detail: 'Discount âm: chưa duyệt clip, drop hoặc giải thích khác nghĩa.'
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  warehouse_limited:
+    status: PENDING_CONFIRMATION
+    detail: Ý nghĩa và known-at-as_of chưa rõ; không tự gộp shutdown.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  currency_units:
+    status: PENDING_CONFIRMATION
+    detail: Currency/đơn vị và precision/scale phải được chủ dữ liệu xác nhận.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  calendar_precedence:
+    status: PENDING_CONFIRMATION
+    detail: Hai lịch khớp trường chung ở Task 06; không tự chọn source precedence khi có conflict.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  known_future:
+    status: PENDING_CONFIRMATION
+    detail: Xác nhận version công bố/as_of; không dùng future actuals làm feature.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  update_policy:
+    status: PENDING_CONFIRMATION
+    detail: Chưa chốt INSERT/UPSERT, conflict resolution, file-level/partial acceptance.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  duplicate_policy:
+    status: PENDING_CONFIRMATION
+    detail: Chưa chốt content hash/canonicalization/scope và retry/concurrency policy.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  finance_hr:
+    status: PENDING_CONFIRMATION
+    detail: Thiếu nguồn Finance/HR; schema và giá trị phải được phê duyệt trước upload/ingestion.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  effective_keys:
+    status: PENDING_CONFIRMATION
+    detail: Finance/HR đề xuất key cơ sở; hiệu lực/version của grain và composite key chưa chốt.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  authorization_audit:
+    status: PENDING_CONFIRMATION
+    detail: Phân công backend, kiểm quyền server-side, audit/retention và thông tin upload.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  model_integration_evidence:
+    status: PENDING_CONFIRMATION
+    detail: Notebook/source/input/output/artifact BT1–BT8 chưa được xác minh trực tiếp; consumers hiện REFERENCE_ONLY. Không phụ thuộc biểu mẫu Data Contract.
+    evidence: docs/model_integration_contract.md; docs/model_handover_checklist.md; Task 06
+analysis_only_derived_fields:
+  order_index:
+    status: REFERENCE_ONLY
+    detail: MEDIAN(total_orders) theo warehouse/date, bỏ null, chỉ ở tầng phân tích; không tương đương orders và không là cột CSV gốc.
+    evidence: Rohlik_Decision_Hub_Huong_dan_thuc_hien_v3.md C2/D1/E1
+  max_discount:
+    status: REFERENCE_ONLY
+    detail: Derived field tương lai, cần duyệt max/stacking và xử lý âm; không là cột CSV gốc.
+    evidence: Rohlik_Decision_Hub_Huong_dan_thuc_hien_v3.md C2/D1/E1
+  final_price:
+    status: REFERENCE_ONLY
+    detail: Derived field tương lai từ giá và discount policy đã duyệt; không tự tạo trong nguồn.
+    evidence: Rohlik_Decision_Hub_Huong_dan_thuc_hien_v3.md C2/D1/E1
+tables:
+- name: sales_ecommerce.orders_daily
+  department: sales_ecommerce
+  description: Số đơn thực tế của từng kho/ngày, chuỗi orders cho BT1 và kế hoạch vận hành; không đồng nhất với total_orders.
+  source_type: HISTORICAL_CSV
+  source_files:
+  - orders
+  source_availability: VERIFIED
+  grain:
+    status: PENDING_CONFIRMATION
+    detail: kho × ngày
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  business_keys:
+  - warehouse
+  - date
+  key_status: PENDING_CONFIRMATION
+  columns:
+  - name: warehouse
+    proposed_duckdb_type: VARCHAR
+    proposed_sqlite_type: TEXT
+    nullable: false
+    required: true
+    definition: 'Đối chiếu docs/data_dictionary.md: warehouse.'
+    status: PENDING_CONFIRMATION
+  - name: date
+    proposed_duckdb_type: DATE
+    proposed_sqlite_type: TEXT
+    nullable: false
+    required: true
+    definition: 'Đối chiếu docs/data_dictionary.md: date.'
+    status: PENDING_CONFIRMATION
+  - name: orders
+    proposed_duckdb_type: BIGINT
+    proposed_sqlite_type: INTEGER
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: orders.'
+    status: PENDING_CONFIRMATION
+  mappings:
+  - target: warehouse
+    file_id: orders
+    source_column: warehouse
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: date
+    file_id: orders
+    source_column: date
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: orders
+    file_id: orders
+    source_column: orders
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  deferred_mappings: []
+  transformations:
+  - status: PENDING_CONFIRMATION
+    detail: Chỉ đề xuất projection giữ nguyên giá trị nguồn; chưa thực hiện chuyển type/null/duplicate hoặc update policy.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  dq_rules:
+  - SRC-02
+  - SRC-03
+  - SRC-04
+  - SRC-20
+  - SRC-22
+  - SRC-07
+  - SRC-15
+  consumers:
+  - BT1
+  - BT2
+  - BT8
+  consumer_status: REFERENCE_ONLY
+  schema_approval:
+    status: PENDING_CONFIRMATION
+    detail: Schema chỉ là đề xuất; không READY_FOR_INGESTION.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  mapping_approval:
+    status: PENDING_CONFIRMATION
+    detail: Mapping/precedence chưa được chủ dữ liệu và model owner duyệt.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  expected_rows:
+    status: PENDING_CONFIRMATION
+    detail: 7340 = count(*) nguồn Task 06, không filter/dedup/drop.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  upload:
+    eligibility:
+      status: PENDING_CONFIRMATION
+      detail: Chỉ thiết kế CSV Upload tương lai; cần duyệt schema/quyền/chính sách và nguồn Finance/HR nếu áp dụng.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    access: BLOCKED_PENDING_APPROVAL
+    enabled: false
+    allowed_columns:
+    - warehouse
+    - date
+    - orders
+    required_columns:
+    - warehouse
+    - date
+    optional_columns: []
+    unresolved_columns:
+    - orders
+    backend_authorization_required: true
+    write_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt INSERT/UPSERT/ghi đè/cột được sửa.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    duplicate_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt phạm vi/content hash/retry/concurrency policy.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    batch_metadata_ref: upload_batch_metadata
+    validation_refs:
+    - docs/csv_upload_contract.md
+    - SRC-07
+    - SRC-15
+  provenance:
+  - source_file
+  - source_hash
+  - schema_version
+  - data_version
+  - as_of
+  - batch_id
+  - sync_run_id
+  pending_decisions:
+  - orders type/null/update và ngày không có dòng.
+  - Required/optional/nullability và proposed types cần phê duyệt.
+  - Quyền backend, INSERT/UPSERT, duplicate handling, audit và provenance.
+- name: sales_ecommerce.sku_sales_daily
+  department: sales_ecommerce
+  description: Số lượng bán và total_orders báo theo SKU cấp kho/ngày; giữ null quan sát, không tổng hợp số đơn lặp theo SKU.
+  source_type: HISTORICAL_CSV
+  source_files:
+  - sales
+  source_availability: VERIFIED
+  grain:
+    status: PENDING_CONFIRMATION
+    detail: SKU cấp kho × ngày
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  business_keys:
+  - unique_id
+  - date
+  key_status: PENDING_CONFIRMATION
+  columns:
+  - name: unique_id
+    proposed_duckdb_type: BIGINT
+    proposed_sqlite_type: INTEGER
+    nullable: false
+    required: true
+    definition: 'Đối chiếu docs/data_dictionary.md: unique_id.'
+    status: PENDING_CONFIRMATION
+  - name: date
+    proposed_duckdb_type: DATE
+    proposed_sqlite_type: TEXT
+    nullable: false
+    required: true
+    definition: 'Đối chiếu docs/data_dictionary.md: date.'
+    status: PENDING_CONFIRMATION
+  - name: warehouse
+    proposed_duckdb_type: VARCHAR
+    proposed_sqlite_type: TEXT
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: warehouse.'
+    status: PENDING_CONFIRMATION
+  - name: sales
+    proposed_duckdb_type: DOUBLE
+    proposed_sqlite_type: REAL
+    nullable: true
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: sales.'
+    status: PENDING_CONFIRMATION
+  - name: total_orders
+    proposed_duckdb_type: BIGINT
+    proposed_sqlite_type: INTEGER
+    nullable: true
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: total_orders.'
+    status: PENDING_CONFIRMATION
+  mappings:
+  - target: unique_id
+    file_id: sales
+    source_column: unique_id
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: date
+    file_id: sales
+    source_column: date
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: warehouse
+    file_id: sales
+    source_column: warehouse
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: sales
+    file_id: sales
+    source_column: sales
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: total_orders
+    file_id: sales
+    source_column: total_orders
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  deferred_mappings: []
+  transformations:
+  - status: PENDING_CONFIRMATION
+    detail: Chỉ đề xuất projection giữ nguyên giá trị nguồn; chưa thực hiện chuyển type/null/duplicate hoặc update policy.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  dq_rules:
+  - SRC-02
+  - SRC-03
+  - SRC-04
+  - SRC-20
+  - SRC-22
+  - SRC-07
+  - SRC-08
+  - SRC-13
+  - SRC-15
+  consumers:
+  - BT3
+  - BT4
+  - BT5
+  - BT6
+  - BT7
+  consumer_status: REFERENCE_ONLY
+  schema_approval:
+    status: PENDING_CONFIRMATION
+    detail: Schema chỉ là đề xuất; không READY_FOR_INGESTION.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  mapping_approval:
+    status: PENDING_CONFIRMATION
+    detail: Mapping/precedence chưa được chủ dữ liệu và model owner duyệt.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  expected_rows:
+    status: PENDING_CONFIRMATION
+    detail: 4007419 = count(*) nguồn Task 06, không filter/dedup/drop.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  upload:
+    eligibility:
+      status: PENDING_CONFIRMATION
+      detail: Chỉ thiết kế CSV Upload tương lai; cần duyệt schema/quyền/chính sách và nguồn Finance/HR nếu áp dụng.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    access: BLOCKED_PENDING_APPROVAL
+    enabled: false
+    allowed_columns:
+    - unique_id
+    - date
+    - warehouse
+    - sales
+    - total_orders
+    required_columns:
+    - unique_id
+    - date
+    optional_columns: []
+    unresolved_columns:
+    - warehouse
+    - sales
+    - total_orders
+    backend_authorization_required: true
+    write_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt INSERT/UPSERT/ghi đè/cột được sửa.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    duplicate_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt phạm vi/content hash/retry/concurrency policy.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    batch_metadata_ref: upload_batch_metadata
+    validation_refs:
+    - docs/csv_upload_contract.md
+    - SRC-07
+    - SRC-08
+    - SRC-13
+    - SRC-15
+  provenance:
+  - source_file
+  - source_hash
+  - schema_version
+  - data_version
+  - as_of
+  - batch_id
+  - sync_run_id
+  pending_decisions:
+  - 52 null sales/total_orders; đơn vị sales.
+  - Required/optional/nullability và proposed types cần phê duyệt.
+  - Quyền backend, INSERT/UPSERT, duplicate handling, audit và provenance.
+- name: marketing_pricing.prices
+  department: marketing_pricing
+  description: Giá bán chính chưa giảm theo SKU/ngày; đơn vị/currency và precision chưa xác nhận.
+  source_type: HISTORICAL_CSV
+  source_files:
+  - sales
+  source_availability: VERIFIED
+  grain:
+    status: PENDING_CONFIRMATION
+    detail: SKU cấp kho × ngày
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  business_keys:
+  - unique_id
+  - date
+  key_status: PENDING_CONFIRMATION
+  columns:
+  - name: unique_id
+    proposed_duckdb_type: BIGINT
+    proposed_sqlite_type: INTEGER
+    nullable: false
+    required: true
+    definition: 'Đối chiếu docs/data_dictionary.md: unique_id.'
+    status: PENDING_CONFIRMATION
+  - name: date
+    proposed_duckdb_type: DATE
+    proposed_sqlite_type: TEXT
+    nullable: false
+    required: true
+    definition: 'Đối chiếu docs/data_dictionary.md: date.'
+    status: PENDING_CONFIRMATION
+  - name: warehouse
+    proposed_duckdb_type: VARCHAR
+    proposed_sqlite_type: TEXT
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: warehouse.'
+    status: PENDING_CONFIRMATION
+  - name: sell_price_main
+    proposed_duckdb_type: DOUBLE
+    proposed_sqlite_type: REAL
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: sell_price_main.'
+    status: PENDING_CONFIRMATION
+  mappings:
+  - target: unique_id
+    file_id: sales
+    source_column: unique_id
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: date
+    file_id: sales
+    source_column: date
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: warehouse
+    file_id: sales
+    source_column: warehouse
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: sell_price_main
+    file_id: sales
+    source_column: sell_price_main
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  deferred_mappings: []
+  transformations:
+  - status: PENDING_CONFIRMATION
+    detail: Chỉ đề xuất projection giữ nguyên giá trị nguồn; chưa thực hiện chuyển type/null/duplicate hoặc update policy.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  dq_rules:
+  - SRC-02
+  - SRC-03
+  - SRC-04
+  - SRC-20
+  - SRC-22
+  - SRC-09
+  consumers:
+  - BT3
+  - BT5
+  - BT6
+  - BT7
+  consumer_status: REFERENCE_ONLY
+  schema_approval:
+    status: PENDING_CONFIRMATION
+    detail: Schema chỉ là đề xuất; không READY_FOR_INGESTION.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  mapping_approval:
+    status: PENDING_CONFIRMATION
+    detail: Mapping/precedence chưa được chủ dữ liệu và model owner duyệt.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  expected_rows:
+    status: PENDING_CONFIRMATION
+    detail: 4007419 = count(*) nguồn Task 06, không filter/dedup/drop.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  upload:
+    eligibility:
+      status: PENDING_CONFIRMATION
+      detail: Chỉ thiết kế CSV Upload tương lai; cần duyệt schema/quyền/chính sách và nguồn Finance/HR nếu áp dụng.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    access: BLOCKED_PENDING_APPROVAL
+    enabled: false
+    allowed_columns:
+    - unique_id
+    - date
+    - warehouse
+    - sell_price_main
+    required_columns:
+    - unique_id
+    - date
+    optional_columns: []
+    unresolved_columns:
+    - warehouse
+    - sell_price_main
+    backend_authorization_required: true
+    write_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt INSERT/UPSERT/ghi đè/cột được sửa.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    duplicate_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt phạm vi/content hash/retry/concurrency policy.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    batch_metadata_ref: upload_batch_metadata
+    validation_refs:
+    - docs/csv_upload_contract.md
+    - SRC-09
+  provenance:
+  - source_file
+  - source_hash
+  - schema_version
+  - data_version
+  - as_of
+  - batch_id
+  - sync_run_id
+  pending_decisions:
+  - Currency/precision và giá cực trị cần xác nhận.
+  - Required/optional/nullability và proposed types cần phê duyệt.
+  - Quyền backend, INSERT/UPSERT, duplicate handling, audit và provenance.
+- name: marketing_pricing.promotions
+  department: marketing_pricing
+  description: Bảy tỷ lệ giảm giá theo loại chương trình ở cấp SKU/ngày; chưa duyệt stacking/max hoặc xử lý âm.
+  source_type: HISTORICAL_CSV
+  source_files:
+  - sales
+  source_availability: VERIFIED
+  grain:
+    status: PENDING_CONFIRMATION
+    detail: SKU cấp kho × ngày
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  business_keys:
+  - unique_id
+  - date
+  key_status: PENDING_CONFIRMATION
+  columns:
+  - name: unique_id
+    proposed_duckdb_type: BIGINT
+    proposed_sqlite_type: INTEGER
+    nullable: false
+    required: true
+    definition: 'Đối chiếu docs/data_dictionary.md: unique_id.'
+    status: PENDING_CONFIRMATION
+  - name: date
+    proposed_duckdb_type: DATE
+    proposed_sqlite_type: TEXT
+    nullable: false
+    required: true
+    definition: 'Đối chiếu docs/data_dictionary.md: date.'
+    status: PENDING_CONFIRMATION
+  - name: warehouse
+    proposed_duckdb_type: VARCHAR
+    proposed_sqlite_type: TEXT
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: warehouse.'
+    status: PENDING_CONFIRMATION
+  - name: type_0_discount
+    proposed_duckdb_type: DOUBLE
+    proposed_sqlite_type: REAL
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: type_0_discount.'
+    status: PENDING_CONFIRMATION
+  - name: type_1_discount
+    proposed_duckdb_type: DOUBLE
+    proposed_sqlite_type: REAL
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: type_1_discount.'
+    status: PENDING_CONFIRMATION
+  - name: type_2_discount
+    proposed_duckdb_type: DOUBLE
+    proposed_sqlite_type: REAL
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: type_2_discount.'
+    status: PENDING_CONFIRMATION
+  - name: type_3_discount
+    proposed_duckdb_type: DOUBLE
+    proposed_sqlite_type: REAL
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: type_3_discount.'
+    status: PENDING_CONFIRMATION
+  - name: type_4_discount
+    proposed_duckdb_type: DOUBLE
+    proposed_sqlite_type: REAL
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: type_4_discount.'
+    status: PENDING_CONFIRMATION
+  - name: type_5_discount
+    proposed_duckdb_type: DOUBLE
+    proposed_sqlite_type: REAL
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: type_5_discount.'
+    status: PENDING_CONFIRMATION
+  - name: type_6_discount
+    proposed_duckdb_type: DOUBLE
+    proposed_sqlite_type: REAL
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: type_6_discount.'
+    status: PENDING_CONFIRMATION
+  mappings:
+  - target: unique_id
+    file_id: sales
+    source_column: unique_id
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: date
+    file_id: sales
+    source_column: date
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: warehouse
+    file_id: sales
+    source_column: warehouse
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: type_0_discount
+    file_id: sales
+    source_column: type_0_discount
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: type_1_discount
+    file_id: sales
+    source_column: type_1_discount
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: type_2_discount
+    file_id: sales
+    source_column: type_2_discount
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: type_3_discount
+    file_id: sales
+    source_column: type_3_discount
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: type_4_discount
+    file_id: sales
+    source_column: type_4_discount
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: type_5_discount
+    file_id: sales
+    source_column: type_5_discount
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: type_6_discount
+    file_id: sales
+    source_column: type_6_discount
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  deferred_mappings: []
+  transformations:
+  - status: PENDING_CONFIRMATION
+    detail: Chỉ đề xuất projection giữ nguyên giá trị nguồn; chưa thực hiện chuyển type/null/duplicate hoặc update policy.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  dq_rules:
+  - SRC-02
+  - SRC-03
+  - SRC-04
+  - SRC-20
+  - SRC-22
+  - SRC-11
+  consumers:
+  - BT5
+  - BT7
+  - BT4
+  consumer_status: REFERENCE_ONLY
+  schema_approval:
+    status: PENDING_CONFIRMATION
+    detail: Schema chỉ là đề xuất; không READY_FOR_INGESTION.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  mapping_approval:
+    status: PENDING_CONFIRMATION
+    detail: Mapping/precedence chưa được chủ dữ liệu và model owner duyệt.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  expected_rows:
+    status: PENDING_CONFIRMATION
+    detail: 4007419 = count(*) nguồn Task 06, không filter/dedup/drop.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  upload:
+    eligibility:
+      status: PENDING_CONFIRMATION
+      detail: Chỉ thiết kế CSV Upload tương lai; cần duyệt schema/quyền/chính sách và nguồn Finance/HR nếu áp dụng.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    access: BLOCKED_PENDING_APPROVAL
+    enabled: false
+    allowed_columns:
+    - unique_id
+    - date
+    - warehouse
+    - type_0_discount
+    - type_1_discount
+    - type_2_discount
+    - type_3_discount
+    - type_4_discount
+    - type_5_discount
+    - type_6_discount
+    required_columns:
+    - unique_id
+    - date
+    optional_columns: []
+    unresolved_columns:
+    - warehouse
+    - type_0_discount
+    - type_1_discount
+    - type_2_discount
+    - type_3_discount
+    - type_4_discount
+    - type_5_discount
+    - type_6_discount
+    backend_authorization_required: true
+    write_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt INSERT/UPSERT/ghi đè/cột được sửa.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    duplicate_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt phạm vi/content hash/retry/concurrency policy.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    batch_metadata_ref: upload_batch_metadata
+    validation_refs:
+    - docs/csv_upload_contract.md
+    - SRC-11
+  provenance:
+  - source_file
+  - source_hash
+  - schema_version
+  - data_version
+  - as_of
+  - batch_id
+  - sync_run_id
+  pending_decisions:
+  - 32 discount cells âm; max/stacking và hiệu lực cần duyệt.
+  - Required/optional/nullability và proposed types cần phê duyệt.
+  - Quyền backend, INSERT/UPSERT, duplicate handling, audit và provenance.
+- name: marketing_pricing.min_order_value_changes
+  department: marketing_pricing
+  description: Thay đổi minimum order value theo kho/ngày từ Orders; lịch hiệu lực tương lai cần xác nhận.
+  source_type: HISTORICAL_CSV
+  source_files:
+  - orders
+  source_availability: VERIFIED
+  grain:
+    status: PENDING_CONFIRMATION
+    detail: kho × ngày
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  business_keys:
+  - warehouse
+  - date
+  key_status: PENDING_CONFIRMATION
+  columns:
+  - name: warehouse
+    proposed_duckdb_type: VARCHAR
+    proposed_sqlite_type: TEXT
+    nullable: false
+    required: true
+    definition: 'Đối chiếu docs/data_dictionary.md: warehouse.'
+    status: PENDING_CONFIRMATION
+  - name: date
+    proposed_duckdb_type: DATE
+    proposed_sqlite_type: TEXT
+    nullable: false
+    required: true
+    definition: 'Đối chiếu docs/data_dictionary.md: date.'
+    status: PENDING_CONFIRMATION
+  - name: mov_change
+    proposed_duckdb_type: DOUBLE
+    proposed_sqlite_type: REAL
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: mov_change.'
+    status: PENDING_CONFIRMATION
+  mappings:
+  - target: warehouse
+    file_id: orders
+    source_column: warehouse
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: date
+    file_id: orders
+    source_column: date
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: mov_change
+    file_id: orders
+    source_column: mov_change
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  deferred_mappings: []
+  transformations:
+  - status: PENDING_CONFIRMATION
+    detail: Chỉ đề xuất projection giữ nguyên giá trị nguồn; chưa thực hiện chuyển type/null/duplicate hoặc update policy.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  dq_rules:
+  - SRC-02
+  - SRC-03
+  - SRC-04
+  - SRC-20
+  - SRC-22
+  - SRC-23
+  consumers:
+  - BT1
+  - BT8
+  consumer_status: REFERENCE_ONLY
+  schema_approval:
+    status: PENDING_CONFIRMATION
+    detail: Schema chỉ là đề xuất; không READY_FOR_INGESTION.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  mapping_approval:
+    status: PENDING_CONFIRMATION
+    detail: Mapping/precedence chưa được chủ dữ liệu và model owner duyệt.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  expected_rows:
+    status: PENDING_CONFIRMATION
+    detail: 7340 = count(*) nguồn Task 06, không filter/dedup/drop.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  upload:
+    eligibility:
+      status: PENDING_CONFIRMATION
+      detail: Chỉ thiết kế CSV Upload tương lai; cần duyệt schema/quyền/chính sách và nguồn Finance/HR nếu áp dụng.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    access: BLOCKED_PENDING_APPROVAL
+    enabled: false
+    allowed_columns:
+    - warehouse
+    - date
+    - mov_change
+    required_columns:
+    - warehouse
+    - date
+    optional_columns: []
+    unresolved_columns:
+    - mov_change
+    backend_authorization_required: true
+    write_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt INSERT/UPSERT/ghi đè/cột được sửa.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    duplicate_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt phạm vi/content hash/retry/concurrency policy.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    batch_metadata_ref: upload_batch_metadata
+    validation_refs:
+    - docs/csv_upload_contract.md
+    - SRC-23
+  provenance:
+  - source_file
+  - source_hash
+  - schema_version
+  - data_version
+  - as_of
+  - batch_id
+  - sync_run_id
+  pending_decisions:
+  - Coverage/precedence Orders vs Orders Calendar; known-future pricing.
+  - Required/optional/nullability và proposed types cần phê duyệt.
+  - Quyền backend, INSERT/UPSERT, duplicate handling, audit và provenance.
+- name: warehouse_ops.availability
+  department: warehouse_ops
+  description: Tỷ lệ thời gian SKU còn hàng trong ngày, phục vụ phân tích nhu cầu bị chặn; <1 không tự là lỗi.
+  source_type: HISTORICAL_CSV
+  source_files:
+  - sales
+  source_availability: VERIFIED
+  grain:
+    status: PENDING_CONFIRMATION
+    detail: SKU cấp kho × ngày
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  business_keys:
+  - unique_id
+  - date
+  key_status: PENDING_CONFIRMATION
+  columns:
+  - name: unique_id
+    proposed_duckdb_type: BIGINT
+    proposed_sqlite_type: INTEGER
+    nullable: false
+    required: true
+    definition: 'Đối chiếu docs/data_dictionary.md: unique_id.'
+    status: PENDING_CONFIRMATION
+  - name: date
+    proposed_duckdb_type: DATE
+    proposed_sqlite_type: TEXT
+    nullable: false
+    required: true
+    definition: 'Đối chiếu docs/data_dictionary.md: date.'
+    status: PENDING_CONFIRMATION
+  - name: warehouse
+    proposed_duckdb_type: VARCHAR
+    proposed_sqlite_type: TEXT
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: warehouse.'
+    status: PENDING_CONFIRMATION
+  - name: availability
+    proposed_duckdb_type: DOUBLE
+    proposed_sqlite_type: REAL
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: availability.'
+    status: PENDING_CONFIRMATION
+  mappings:
+  - target: unique_id
+    file_id: sales
+    source_column: unique_id
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: date
+    file_id: sales
+    source_column: date
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: warehouse
+    file_id: sales
+    source_column: warehouse
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: availability
+    file_id: sales
+    source_column: availability
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  deferred_mappings: []
+  transformations:
+  - status: PENDING_CONFIRMATION
+    detail: Chỉ đề xuất projection giữ nguyên giá trị nguồn; chưa thực hiện chuyển type/null/duplicate hoặc update policy.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  dq_rules:
+  - SRC-02
+  - SRC-03
+  - SRC-04
+  - SRC-20
+  - SRC-22
+  - SRC-10
+  consumers:
+  - BT3
+  - BT4
+  consumer_status: REFERENCE_ONLY
+  schema_approval:
+    status: PENDING_CONFIRMATION
+    detail: Schema chỉ là đề xuất; không READY_FOR_INGESTION.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  mapping_approval:
+    status: PENDING_CONFIRMATION
+    detail: Mapping/precedence chưa được chủ dữ liệu và model owner duyệt.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  expected_rows:
+    status: PENDING_CONFIRMATION
+    detail: 4007419 = count(*) nguồn Task 06, không filter/dedup/drop.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  upload:
+    eligibility:
+      status: PENDING_CONFIRMATION
+      detail: Chỉ thiết kế CSV Upload tương lai; cần duyệt schema/quyền/chính sách và nguồn Finance/HR nếu áp dụng.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    access: BLOCKED_PENDING_APPROVAL
+    enabled: false
+    allowed_columns:
+    - unique_id
+    - date
+    - warehouse
+    - availability
+    required_columns:
+    - unique_id
+    - date
+    optional_columns: []
+    unresolved_columns:
+    - warehouse
+    - availability
+    backend_authorization_required: true
+    write_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt INSERT/UPSERT/ghi đè/cột được sửa.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    duplicate_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt phạm vi/content hash/retry/concurrency policy.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    batch_metadata_ref: upload_batch_metadata
+    validation_refs:
+    - docs/csv_upload_contract.md
+    - SRC-10
+  provenance:
+  - source_file
+  - source_hash
+  - schema_version
+  - data_version
+  - as_of
+  - batch_id
+  - sync_run_id
+  pending_decisions:
+  - Ngưỡng và availability-at-as_of; <1 không tự là lỗi.
+  - Required/optional/nullability và proposed types cần phê duyệt.
+  - Quyền backend, INSERT/UPSERT, duplicate handling, audit và provenance.
+- name: warehouse_ops.ops_events
+  department: warehouse_ops
+  description: Cờ gián đoạn vận hành kho theo ngày; không dùng actuals tương lai làm predictor.
+  source_type: HISTORICAL_CSV
+  source_files:
+  - orders
+  source_availability: VERIFIED
+  grain:
+    status: PENDING_CONFIRMATION
+    detail: kho × ngày
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  business_keys:
+  - warehouse
+  - date
+  key_status: PENDING_CONFIRMATION
+  columns:
+  - name: warehouse
+    proposed_duckdb_type: VARCHAR
+    proposed_sqlite_type: TEXT
+    nullable: false
+    required: true
+    definition: 'Đối chiếu docs/data_dictionary.md: warehouse.'
+    status: PENDING_CONFIRMATION
+  - name: date
+    proposed_duckdb_type: DATE
+    proposed_sqlite_type: TEXT
+    nullable: false
+    required: true
+    definition: 'Đối chiếu docs/data_dictionary.md: date.'
+    status: PENDING_CONFIRMATION
+  - name: shutdown
+    proposed_duckdb_type: BIGINT
+    proposed_sqlite_type: INTEGER
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: shutdown.'
+    status: PENDING_CONFIRMATION
+  - name: mini_shutdown
+    proposed_duckdb_type: BIGINT
+    proposed_sqlite_type: INTEGER
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: mini_shutdown.'
+    status: PENDING_CONFIRMATION
+  - name: blackout
+    proposed_duckdb_type: BIGINT
+    proposed_sqlite_type: INTEGER
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: blackout.'
+    status: PENDING_CONFIRMATION
+  - name: frankfurt_shutdown
+    proposed_duckdb_type: BIGINT
+    proposed_sqlite_type: INTEGER
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: frankfurt_shutdown.'
+    status: PENDING_CONFIRMATION
+  mappings:
+  - target: warehouse
+    file_id: orders
+    source_column: warehouse
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: date
+    file_id: orders
+    source_column: date
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: shutdown
+    file_id: orders
+    source_column: shutdown
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: mini_shutdown
+    file_id: orders
+    source_column: mini_shutdown
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: blackout
+    file_id: orders
+    source_column: blackout
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: frankfurt_shutdown
+    file_id: orders
+    source_column: frankfurt_shutdown
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  deferred_mappings: []
+  transformations:
+  - status: PENDING_CONFIRMATION
+    detail: Chỉ đề xuất projection giữ nguyên giá trị nguồn; chưa thực hiện chuyển type/null/duplicate hoặc update policy.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  dq_rules:
+  - SRC-02
+  - SRC-03
+  - SRC-04
+  - SRC-20
+  - SRC-22
+  - SRC-17
+  - SRC-23
+  consumers:
+  - BT8
+  consumer_status: REFERENCE_ONLY
+  schema_approval:
+    status: PENDING_CONFIRMATION
+    detail: Schema chỉ là đề xuất; không READY_FOR_INGESTION.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  mapping_approval:
+    status: PENDING_CONFIRMATION
+    detail: Mapping/precedence chưa được chủ dữ liệu và model owner duyệt.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  expected_rows:
+    status: PENDING_CONFIRMATION
+    detail: 7340 = count(*) nguồn Task 06, không filter/dedup/drop.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  upload:
+    eligibility:
+      status: PENDING_CONFIRMATION
+      detail: Chỉ thiết kế CSV Upload tương lai; cần duyệt schema/quyền/chính sách và nguồn Finance/HR nếu áp dụng.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    access: BLOCKED_PENDING_APPROVAL
+    enabled: false
+    allowed_columns:
+    - warehouse
+    - date
+    - shutdown
+    - mini_shutdown
+    - blackout
+    - frankfurt_shutdown
+    required_columns:
+    - warehouse
+    - date
+    optional_columns: []
+    unresolved_columns:
+    - shutdown
+    - mini_shutdown
+    - blackout
+    - frankfurt_shutdown
+    backend_authorization_required: true
+    write_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt INSERT/UPSERT/ghi đè/cột được sửa.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    duplicate_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt phạm vi/content hash/retry/concurrency policy.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    batch_metadata_ref: upload_batch_metadata
+    validation_refs:
+    - docs/csv_upload_contract.md
+    - SRC-17
+    - SRC-23
+  provenance:
+  - source_file
+  - source_hash
+  - schema_version
+  - data_version
+  - as_of
+  - batch_id
+  - sync_run_id
+  pending_decisions:
+  - Scope/precedence với calendar; warehouse_limited không tự gộp.
+  - Required/optional/nullability và proposed types cần phê duyệt.
+  - Quyền backend, INSERT/UPSERT, duplicate handling, audit và provenance.
+- name: category.product_master
+  department: category
+  description: Danh mục SKU cấp kho và product_unique_id chung giữa kho, tên ẩn danh và cây ngành hàng; không phải số lượng tồn kho.
+  source_type: HISTORICAL_CSV
+  source_files:
+  - inventory
+  source_availability: VERIFIED
+  grain:
+    status: PENDING_CONFIRMATION
+    detail: SKU cấp kho
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  business_keys:
+  - unique_id
+  key_status: PENDING_CONFIRMATION
+  columns:
+  - name: unique_id
+    proposed_duckdb_type: BIGINT
+    proposed_sqlite_type: INTEGER
+    nullable: false
+    required: true
+    definition: 'Đối chiếu docs/data_dictionary.md: unique_id.'
+    status: PENDING_CONFIRMATION
+  - name: product_unique_id
+    proposed_duckdb_type: BIGINT
+    proposed_sqlite_type: INTEGER
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: product_unique_id.'
+    status: PENDING_CONFIRMATION
+  - name: name
+    proposed_duckdb_type: VARCHAR
+    proposed_sqlite_type: TEXT
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: name.'
+    status: PENDING_CONFIRMATION
+  - name: L1_category_name_en
+    proposed_duckdb_type: VARCHAR
+    proposed_sqlite_type: TEXT
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: L1_category_name_en.'
+    status: PENDING_CONFIRMATION
+  - name: L2_category_name_en
+    proposed_duckdb_type: VARCHAR
+    proposed_sqlite_type: TEXT
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: L2_category_name_en.'
+    status: PENDING_CONFIRMATION
+  - name: L3_category_name_en
+    proposed_duckdb_type: VARCHAR
+    proposed_sqlite_type: TEXT
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: L3_category_name_en.'
+    status: PENDING_CONFIRMATION
+  - name: L4_category_name_en
+    proposed_duckdb_type: VARCHAR
+    proposed_sqlite_type: TEXT
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: L4_category_name_en.'
+    status: PENDING_CONFIRMATION
+  - name: warehouse
+    proposed_duckdb_type: VARCHAR
+    proposed_sqlite_type: TEXT
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: warehouse.'
+    status: PENDING_CONFIRMATION
+  mappings:
+  - target: unique_id
+    file_id: inventory
+    source_column: unique_id
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: product_unique_id
+    file_id: inventory
+    source_column: product_unique_id
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: name
+    file_id: inventory
+    source_column: name
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: L1_category_name_en
+    file_id: inventory
+    source_column: L1_category_name_en
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: L2_category_name_en
+    file_id: inventory
+    source_column: L2_category_name_en
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: L3_category_name_en
+    file_id: inventory
+    source_column: L3_category_name_en
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: L4_category_name_en
+    file_id: inventory
+    source_column: L4_category_name_en
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: warehouse
+    file_id: inventory
+    source_column: warehouse
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  deferred_mappings: []
+  transformations:
+  - status: PENDING_CONFIRMATION
+    detail: Chỉ đề xuất projection giữ nguyên giá trị nguồn; chưa thực hiện chuyển type/null/duplicate hoặc update policy.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  dq_rules:
+  - SRC-02
+  - SRC-03
+  - SRC-04
+  - SRC-20
+  - SRC-22
+  - SRC-13
+  consumers:
+  - BT3
+  - BT4
+  - BT5
+  - BT6
+  - BT7
+  consumer_status: REFERENCE_ONLY
+  schema_approval:
+    status: PENDING_CONFIRMATION
+    detail: Schema chỉ là đề xuất; không READY_FOR_INGESTION.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  mapping_approval:
+    status: PENDING_CONFIRMATION
+    detail: Mapping/precedence chưa được chủ dữ liệu và model owner duyệt.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  expected_rows:
+    status: PENDING_CONFIRMATION
+    detail: 5432 = count(*) nguồn Task 06, không filter/dedup/drop.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  upload:
+    eligibility:
+      status: PENDING_CONFIRMATION
+      detail: Chỉ thiết kế CSV Upload tương lai; cần duyệt schema/quyền/chính sách và nguồn Finance/HR nếu áp dụng.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    access: BLOCKED_PENDING_APPROVAL
+    enabled: false
+    allowed_columns:
+    - unique_id
+    - product_unique_id
+    - name
+    - L1_category_name_en
+    - L2_category_name_en
+    - L3_category_name_en
+    - L4_category_name_en
+    - warehouse
+    required_columns:
+    - unique_id
+    optional_columns: []
+    unresolved_columns:
+    - product_unique_id
+    - name
+    - L1_category_name_en
+    - L2_category_name_en
+    - L3_category_name_en
+    - L4_category_name_en
+    - warehouse
+    backend_authorization_required: true
+    write_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt INSERT/UPSERT/ghi đè/cột được sửa.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    duplicate_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt phạm vi/content hash/retry/concurrency policy.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    batch_metadata_ref: upload_batch_metadata
+    validation_refs:
+    - docs/csv_upload_contract.md
+    - SRC-13
+  provenance:
+  - source_file
+  - source_hash
+  - schema_version
+  - data_version
+  - as_of
+  - batch_id
+  - sync_run_id
+  pending_decisions:
+  - 42 inventory-only SKU; SCD/update và quan hệ product giữa kho.
+  - Required/optional/nullability và proposed types cần phê duyệt.
+  - Quyền backend, INSERT/UPSERT, duplicate handling, audit và provenance.
+- name: planning.calendar
+  department: planning
+  description: Thông tin ngày lễ/nghỉ theo kho/ngày từ hai lịch; chỉ mapping thiết kế, chưa gộp hoặc chọn precedence.
+  source_type: HISTORICAL_CSV
+  source_files:
+  - orders_calendar
+  - sales_calendar
+  source_availability: VERIFIED
+  grain:
+    status: PENDING_CONFIRMATION
+    detail: kho × ngày
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  business_keys:
+  - warehouse
+  - date
+  key_status: PENDING_CONFIRMATION
+  columns:
+  - name: warehouse
+    proposed_duckdb_type: VARCHAR
+    proposed_sqlite_type: TEXT
+    nullable: false
+    required: true
+    definition: 'Đối chiếu docs/data_dictionary.md: warehouse.'
+    status: PENDING_CONFIRMATION
+  - name: date
+    proposed_duckdb_type: DATE
+    proposed_sqlite_type: TEXT
+    nullable: false
+    required: true
+    definition: 'Đối chiếu docs/data_dictionary.md: date.'
+    status: PENDING_CONFIRMATION
+  - name: holiday_name
+    proposed_duckdb_type: VARCHAR
+    proposed_sqlite_type: TEXT
+    nullable: true
+    required: false
+    definition: 'Đối chiếu docs/data_dictionary.md: holiday_name.'
+    status: PENDING_CONFIRMATION
+  - name: holiday
+    proposed_duckdb_type: BIGINT
+    proposed_sqlite_type: INTEGER
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: holiday.'
+    status: PENDING_CONFIRMATION
+  - name: shops_closed
+    proposed_duckdb_type: BIGINT
+    proposed_sqlite_type: INTEGER
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: shops_closed.'
+    status: PENDING_CONFIRMATION
+  - name: school_holidays
+    proposed_duckdb_type: BIGINT
+    proposed_sqlite_type: INTEGER
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: school_holidays.'
+    status: PENDING_CONFIRMATION
+  - name: winter_school_holidays
+    proposed_duckdb_type: BIGINT
+    proposed_sqlite_type: INTEGER
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: winter_school_holidays.'
+    status: PENDING_CONFIRMATION
+  mappings:
+  - target: warehouse
+    file_id: orders_calendar
+    source_column: warehouse
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: warehouse
+    file_id: sales_calendar
+    source_column: warehouse
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: date
+    file_id: orders_calendar
+    source_column: date
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: date
+    file_id: sales_calendar
+    source_column: date
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: holiday_name
+    file_id: orders_calendar
+    source_column: holiday_name
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: holiday_name
+    file_id: sales_calendar
+    source_column: holiday_name
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: holiday
+    file_id: orders_calendar
+    source_column: holiday
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: holiday
+    file_id: sales_calendar
+    source_column: holiday
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: shops_closed
+    file_id: orders_calendar
+    source_column: shops_closed
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: shops_closed
+    file_id: sales_calendar
+    source_column: shops_closed
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: school_holidays
+    file_id: orders_calendar
+    source_column: school_holidays
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: school_holidays
+    file_id: sales_calendar
+    source_column: school_holidays
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: winter_school_holidays
+    file_id: orders_calendar
+    source_column: winter_school_holidays
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: winter_school_holidays
+    file_id: sales_calendar
+    source_column: winter_school_holidays
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  deferred_mappings:
+  - file_id: orders_calendar
+    source_column: shutdown
+    proposed_target: null
+    decision:
+      status: PENDING_CONFIRMATION
+      detail: Giữ metadata nguồn shutdown; chưa duyệt đưa vào calendar target hay bảng khác.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  - file_id: orders_calendar
+    source_column: mini_shutdown
+    proposed_target: null
+    decision:
+      status: PENDING_CONFIRMATION
+      detail: Giữ metadata nguồn mini_shutdown; chưa duyệt đưa vào calendar target hay bảng khác.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  - file_id: orders_calendar
+    source_column: warehouse_limited
+    proposed_target: null
+    decision:
+      status: PENDING_CONFIRMATION
+      detail: Giữ metadata nguồn warehouse_limited; chưa duyệt đưa vào calendar target hay bảng khác.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  - file_id: orders_calendar
+    source_column: blackout
+    proposed_target: null
+    decision:
+      status: PENDING_CONFIRMATION
+      detail: Giữ metadata nguồn blackout; chưa duyệt đưa vào calendar target hay bảng khác.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  - file_id: orders_calendar
+    source_column: mov_change
+    proposed_target: null
+    decision:
+      status: PENDING_CONFIRMATION
+      detail: Giữ metadata nguồn mov_change; chưa duyệt đưa vào calendar target hay bảng khác.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  - file_id: orders_calendar
+    source_column: frankfurt_shutdown
+    proposed_target: null
+    decision:
+      status: PENDING_CONFIRMATION
+      detail: Giữ metadata nguồn frankfurt_shutdown; chưa duyệt đưa vào calendar target hay bảng khác.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  - file_id: orders_calendar
+    source_column: precipitation
+    proposed_target: null
+    decision:
+      status: PENDING_CONFIRMATION
+      detail: Giữ metadata nguồn precipitation; chưa duyệt đưa vào calendar target hay bảng khác.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  - file_id: orders_calendar
+    source_column: snow
+    proposed_target: null
+    decision:
+      status: PENDING_CONFIRMATION
+      detail: Giữ metadata nguồn snow; chưa duyệt đưa vào calendar target hay bảng khác.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  transformations:
+  - status: PENDING_CONFIRMATION
+    detail: Đề xuất outer union warehouse/date, so sánh 5 shared fields null-safe; không gộp hoặc chọn precedence tại Task 07.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  dq_rules:
+  - SRC-02
+  - SRC-03
+  - SRC-04
+  - SRC-20
+  - SRC-22
+  - SRC-14
+  - SRC-16
+  - SRC-17
+  - SRC-23
+  consumers:
+  - BT1
+  - BT4
+  - BT5
+  - BT8
+  consumer_status: REFERENCE_ONLY
+  schema_approval:
+    status: PENDING_CONFIRMATION
+    detail: Schema chỉ là đề xuất; không READY_FOR_INGESTION.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  mapping_approval:
+    status: PENDING_CONFIRMATION
+    detail: Mapping/precedence chưa được chủ dữ liệu và model owner duyệt.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  expected_rows:
+    status: PENDING_CONFIRMATION
+    detail: 23.016 distinct union keys theo Task 06; chỉ đề xuất, chưa gộp.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  upload:
+    eligibility:
+      status: PENDING_CONFIRMATION
+      detail: Chỉ thiết kế CSV Upload tương lai; cần duyệt schema/quyền/chính sách và nguồn Finance/HR nếu áp dụng.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    access: BLOCKED_PENDING_APPROVAL
+    enabled: false
+    allowed_columns:
+    - warehouse
+    - date
+    - holiday_name
+    - holiday
+    - shops_closed
+    - school_holidays
+    - winter_school_holidays
+    required_columns:
+    - warehouse
+    - date
+    optional_columns:
+    - holiday_name
+    unresolved_columns:
+    - holiday
+    - shops_closed
+    - school_holidays
+    - winter_school_holidays
+    backend_authorization_required: true
+    write_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt INSERT/UPSERT/ghi đè/cột được sửa.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    duplicate_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt phạm vi/content hash/retry/concurrency policy.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    batch_metadata_ref: upload_batch_metadata
+    validation_refs:
+    - docs/csv_upload_contract.md
+    - SRC-14
+    - SRC-16
+    - SRC-17
+    - SRC-23
+  provenance:
+  - source_file
+  - source_hash
+  - schema_version
+  - data_version
+  - as_of
+  - batch_id
+  - sync_run_id
+  pending_decisions:
+  - Source precedence, columns mở rộng và known-future chưa duyệt.
+  - Required/optional/nullability và proposed types cần phê duyệt.
+  - Quyền backend, INSERT/UPSERT, duplicate handling, audit và provenance.
+- name: digital_product.user_activity
+  department: digital_product
+  description: Hai chỉ số hoạt động người dùng app/web theo kho/ngày; ý nghĩa chi tiết và độ trễ còn chờ xác nhận.
+  source_type: HISTORICAL_CSV
+  source_files:
+  - orders
+  source_availability: VERIFIED
+  grain:
+    status: PENDING_CONFIRMATION
+    detail: kho × ngày
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  business_keys:
+  - warehouse
+  - date
+  key_status: PENDING_CONFIRMATION
+  columns:
+  - name: warehouse
+    proposed_duckdb_type: VARCHAR
+    proposed_sqlite_type: TEXT
+    nullable: false
+    required: true
+    definition: 'Đối chiếu docs/data_dictionary.md: warehouse.'
+    status: PENDING_CONFIRMATION
+  - name: date
+    proposed_duckdb_type: DATE
+    proposed_sqlite_type: TEXT
+    nullable: false
+    required: true
+    definition: 'Đối chiếu docs/data_dictionary.md: date.'
+    status: PENDING_CONFIRMATION
+  - name: user_activity_1
+    proposed_duckdb_type: BIGINT
+    proposed_sqlite_type: INTEGER
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: user_activity_1.'
+    status: PENDING_CONFIRMATION
+  - name: user_activity_2
+    proposed_duckdb_type: BIGINT
+    proposed_sqlite_type: INTEGER
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: user_activity_2.'
+    status: PENDING_CONFIRMATION
+  mappings:
+  - target: warehouse
+    file_id: orders
+    source_column: warehouse
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: date
+    file_id: orders
+    source_column: date
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: user_activity_1
+    file_id: orders
+    source_column: user_activity_1
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: user_activity_2
+    file_id: orders
+    source_column: user_activity_2
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  deferred_mappings: []
+  transformations:
+  - status: PENDING_CONFIRMATION
+    detail: Chỉ đề xuất projection giữ nguyên giá trị nguồn; chưa thực hiện chuyển type/null/duplicate hoặc update policy.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  dq_rules:
+  - SRC-02
+  - SRC-03
+  - SRC-04
+  - SRC-20
+  - SRC-22
+  - SRC-23
+  consumers:
+  - BT8
+  consumer_status: REFERENCE_ONLY
+  schema_approval:
+    status: PENDING_CONFIRMATION
+    detail: Schema chỉ là đề xuất; không READY_FOR_INGESTION.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  mapping_approval:
+    status: PENDING_CONFIRMATION
+    detail: Mapping/precedence chưa được chủ dữ liệu và model owner duyệt.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  expected_rows:
+    status: PENDING_CONFIRMATION
+    detail: 7340 = count(*) nguồn Task 06, không filter/dedup/drop.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  upload:
+    eligibility:
+      status: PENDING_CONFIRMATION
+      detail: Chỉ thiết kế CSV Upload tương lai; cần duyệt schema/quyền/chính sách và nguồn Finance/HR nếu áp dụng.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    access: BLOCKED_PENDING_APPROVAL
+    enabled: false
+    allowed_columns:
+    - warehouse
+    - date
+    - user_activity_1
+    - user_activity_2
+    required_columns:
+    - warehouse
+    - date
+    optional_columns: []
+    unresolved_columns:
+    - user_activity_1
+    - user_activity_2
+    backend_authorization_required: true
+    write_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt INSERT/UPSERT/ghi đè/cột được sửa.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    duplicate_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt phạm vi/content hash/retry/concurrency policy.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    batch_metadata_ref: upload_batch_metadata
+    validation_refs:
+    - docs/csv_upload_contract.md
+    - SRC-23
+  provenance:
+  - source_file
+  - source_hash
+  - schema_version
+  - data_version
+  - as_of
+  - batch_id
+  - sync_run_id
+  pending_decisions:
+  - Meaning/đơn vị, độ trễ công bố; không tự fill future.
+  - Required/optional/nullability và proposed types cần phê duyệt.
+  - Quyền backend, INSERT/UPSERT, duplicate handling, audit và provenance.
+- name: external.weather
+  department: external
+  description: Mưa/tuyết quan sát theo kho/ngày; không phải weather forecast, đơn vị và null policy chưa chốt.
+  source_type: HISTORICAL_CSV
+  source_files:
+  - orders
+  source_availability: VERIFIED
+  grain:
+    status: PENDING_CONFIRMATION
+    detail: kho × ngày
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  business_keys:
+  - warehouse
+  - date
+  key_status: PENDING_CONFIRMATION
+  columns:
+  - name: warehouse
+    proposed_duckdb_type: VARCHAR
+    proposed_sqlite_type: TEXT
+    nullable: false
+    required: true
+    definition: 'Đối chiếu docs/data_dictionary.md: warehouse.'
+    status: PENDING_CONFIRMATION
+  - name: date
+    proposed_duckdb_type: DATE
+    proposed_sqlite_type: TEXT
+    nullable: false
+    required: true
+    definition: 'Đối chiếu docs/data_dictionary.md: date.'
+    status: PENDING_CONFIRMATION
+  - name: precipitation
+    proposed_duckdb_type: DOUBLE
+    proposed_sqlite_type: REAL
+    nullable: true
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: precipitation.'
+    status: PENDING_CONFIRMATION
+  - name: snow
+    proposed_duckdb_type: DOUBLE
+    proposed_sqlite_type: REAL
+    nullable: true
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: snow.'
+    status: PENDING_CONFIRMATION
+  mappings:
+  - target: warehouse
+    file_id: orders
+    source_column: warehouse
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: date
+    file_id: orders
+    source_column: date
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: precipitation
+    file_id: orders
+    source_column: precipitation
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: snow
+    file_id: orders
+    source_column: snow
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  deferred_mappings: []
+  transformations:
+  - status: PENDING_CONFIRMATION
+    detail: Chỉ đề xuất projection giữ nguyên giá trị nguồn; chưa thực hiện chuyển type/null/duplicate hoặc update policy.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  dq_rules:
+  - SRC-02
+  - SRC-03
+  - SRC-04
+  - SRC-20
+  - SRC-22
+  - SRC-23
+  consumers:
+  - BT8
+  consumer_status: REFERENCE_ONLY
+  schema_approval:
+    status: PENDING_CONFIRMATION
+    detail: Schema chỉ là đề xuất; không READY_FOR_INGESTION.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  mapping_approval:
+    status: PENDING_CONFIRMATION
+    detail: Mapping/precedence chưa được chủ dữ liệu và model owner duyệt.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  expected_rows:
+    status: PENDING_CONFIRMATION
+    detail: 7340 = count(*) nguồn Task 06, không filter/dedup/drop.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  upload:
+    eligibility:
+      status: PENDING_CONFIRMATION
+      detail: Chỉ thiết kế CSV Upload tương lai; cần duyệt schema/quyền/chính sách và nguồn Finance/HR nếu áp dụng.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    access: BLOCKED_PENDING_APPROVAL
+    enabled: false
+    allowed_columns:
+    - warehouse
+    - date
+    - precipitation
+    - snow
+    required_columns:
+    - warehouse
+    - date
+    optional_columns: []
+    unresolved_columns:
+    - precipitation
+    - snow
+    backend_authorization_required: true
+    write_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt INSERT/UPSERT/ghi đè/cột được sửa.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    duplicate_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt phạm vi/content hash/retry/concurrency policy.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    batch_metadata_ref: upload_batch_metadata
+    validation_refs:
+    - docs/csv_upload_contract.md
+    - SRC-23
+  provenance:
+  - source_file
+  - source_hash
+  - schema_version
+  - data_version
+  - as_of
+  - batch_id
+  - sync_run_id
+  pending_decisions:
+  - 270 null mỗi field; đơn vị và nguồn actuals/forecast/precedence.
+  - Required/optional/nullability và proposed types cần phê duyệt.
+  - Quyền backend, INSERT/UPSERT, duplicate handling, audit và provenance.
+- name: finance.sku_weights
+  department: finance
+  description: Trọng số chấm WMAE của SKU, không phải khối lượng sản phẩm và không giới hạn <=1.
+  source_type: HISTORICAL_CSV
+  source_files:
+  - weights
+  source_availability: VERIFIED
+  grain:
+    status: PENDING_CONFIRMATION
+    detail: SKU cấp kho
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  business_keys:
+  - unique_id
+  key_status: PENDING_CONFIRMATION
+  columns:
+  - name: unique_id
+    proposed_duckdb_type: BIGINT
+    proposed_sqlite_type: INTEGER
+    nullable: false
+    required: true
+    definition: 'Đối chiếu docs/data_dictionary.md: unique_id.'
+    status: PENDING_CONFIRMATION
+  - name: weight
+    proposed_duckdb_type: DOUBLE
+    proposed_sqlite_type: REAL
+    nullable: null
+    required: null
+    definition: 'Đối chiếu docs/data_dictionary.md: weight.'
+    status: PENDING_CONFIRMATION
+  mappings:
+  - target: unique_id
+    file_id: weights
+    source_column: unique_id
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  - target: weight
+    file_id: weights
+    source_column: weight
+    kind: DIRECT
+    status: PENDING_CONFIRMATION
+  deferred_mappings: []
+  transformations:
+  - status: PENDING_CONFIRMATION
+    detail: Chỉ đề xuất projection giữ nguyên giá trị nguồn; chưa thực hiện chuyển type/null/duplicate hoặc update policy.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  dq_rules:
+  - SRC-02
+  - SRC-03
+  - SRC-04
+  - SRC-20
+  - SRC-22
+  - SRC-12
+  - SRC-13
+  consumers:
+  - BT3
+  - BT4
+  consumer_status: REFERENCE_ONLY
+  schema_approval:
+    status: PENDING_CONFIRMATION
+    detail: Schema chỉ là đề xuất; không READY_FOR_INGESTION.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  mapping_approval:
+    status: PENDING_CONFIRMATION
+    detail: Mapping/precedence chưa được chủ dữ liệu và model owner duyệt.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  expected_rows:
+    status: PENDING_CONFIRMATION
+    detail: 5390 = count(*) nguồn Task 06, không filter/dedup/drop.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  upload:
+    eligibility:
+      status: PENDING_CONFIRMATION
+      detail: Chỉ thiết kế CSV Upload tương lai; cần duyệt schema/quyền/chính sách và nguồn Finance/HR nếu áp dụng.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    access: BLOCKED_PENDING_APPROVAL
+    enabled: false
+    allowed_columns:
+    - unique_id
+    - weight
+    required_columns:
+    - unique_id
+    optional_columns: []
+    unresolved_columns:
+    - weight
+    backend_authorization_required: true
+    write_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt INSERT/UPSERT/ghi đè/cột được sửa.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    duplicate_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt phạm vi/content hash/retry/concurrency policy.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    batch_metadata_ref: upload_batch_metadata
+    validation_refs:
+    - docs/csv_upload_contract.md
+    - SRC-12
+    - SRC-13
+  provenance:
+  - source_file
+  - source_hash
+  - schema_version
+  - data_version
+  - as_of
+  - batch_id
+  - sync_run_id
+  pending_decisions:
+  - Weight cho SKU mới và hiệu lực; không phải khối lượng.
+  - Required/optional/nullability và proposed types cần phê duyệt.
+  - Quyền backend, INSERT/UPSERT, duplicate handling, audit và provenance.
+- name: finance.cost_params
+  department: finance
+  description: Tham số chi phí/hạn dùng theo ngành hàng cho đặt hàng và markdown; chưa có nguồn Finance thật.
+  source_type: MISSING_EXTERNAL_CSV
+  source_files: []
+  source_availability: MISSING
+  grain:
+    status: PENDING_CONFIRMATION
+    detail: L1 × version/hiệu lực (chưa chốt key mở rộng)
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  business_keys:
+  - L1_category_name_en
+  key_status: PENDING_CONFIRMATION
+  columns:
+  - name: L1_category_name_en
+    proposed_duckdb_type: VARCHAR
+    proposed_sqlite_type: TEXT
+    nullable: false
+    required: true
+    definition: 'Chỉ đề xuất từ docs/source_mapping.md: L1_category_name_en; chưa có dữ liệu thật.'
+    status: PENDING_CONFIRMATION
+  - name: cost_ratio
+    proposed_duckdb_type: null
+    proposed_sqlite_type: null
+    nullable: null
+    required: null
+    definition: 'Chỉ đề xuất từ docs/source_mapping.md: cost_ratio; chưa có dữ liệu thật.'
+    status: PENDING_CONFIRMATION
+  - name: shelf_life_days
+    proposed_duckdb_type: INTEGER
+    proposed_sqlite_type: INTEGER
+    nullable: null
+    required: null
+    definition: 'Chỉ đề xuất từ docs/source_mapping.md: shelf_life_days; chưa có dữ liệu thật.'
+    status: PENDING_CONFIRMATION
+  - name: disposal_cost_ratio
+    proposed_duckdb_type: null
+    proposed_sqlite_type: null
+    nullable: null
+    required: null
+    definition: 'Chỉ đề xuất từ docs/source_mapping.md: disposal_cost_ratio; chưa có dữ liệu thật.'
+    status: PENDING_CONFIRMATION
+  mappings: []
+  deferred_mappings: []
+  transformations:
+  - status: NOT_APPLICABLE
+    detail: Chưa có nguồn để biến đổi; không tạo dữ liệu giả định.
+    evidence: 'Task 06 source_mapping: MISSING'
+  dq_rules:
+  - SRC-02
+  - SRC-03
+  - SRC-04
+  - SRC-20
+  - SRC-22
+  - SRC-24
+  consumers:
+  - BT6
+  - BT7
+  consumer_status: REFERENCE_ONLY
+  schema_approval:
+    status: PENDING_CONFIRMATION
+    detail: Schema chỉ là đề xuất; không READY_FOR_INGESTION.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  mapping_approval:
+    status: PENDING_CONFIRMATION
+    detail: Mapping/precedence chưa được chủ dữ liệu và model owner duyệt.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  expected_rows:
+    status: MISSING
+    detail: 'MISSING: chưa nhận dữ liệu thật.'
+    evidence: 'Task 06 docs/source_mapping.md: no Finance/HR source files.'
+  upload:
+    eligibility:
+      status: PENDING_CONFIRMATION
+      detail: Chỉ thiết kế CSV Upload tương lai; cần duyệt schema/quyền/chính sách và nguồn Finance/HR nếu áp dụng.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    access: BLOCKED_PENDING_APPROVAL
+    enabled: false
+    allowed_columns:
+    - L1_category_name_en
+    - cost_ratio
+    - shelf_life_days
+    - disposal_cost_ratio
+    required_columns:
+    - L1_category_name_en
+    optional_columns: []
+    unresolved_columns:
+    - cost_ratio
+    - shelf_life_days
+    - disposal_cost_ratio
+    backend_authorization_required: true
+    write_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt INSERT/UPSERT/ghi đè/cột được sửa.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    duplicate_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt phạm vi/content hash/retry/concurrency policy.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    batch_metadata_ref: upload_batch_metadata
+    validation_refs:
+    - docs/csv_upload_contract.md
+    - SRC-24
+  provenance:
+  - source_file
+  - source_hash
+  - schema_version
+  - data_version
+  - as_of
+  - batch_id
+  - sync_run_id
+  pending_decisions:
+  - Nguồn Finance MISSING, schema/giá trị và key hiệu lực phải được duyệt.
+  - Required/optional/nullability và proposed types cần phê duyệt.
+  - Quyền backend, INSERT/UPSERT, duplicate handling, audit và provenance.
+- name: hr.workforce_params
+  department: hr
+  description: Tham số lương, năng suất và ca nhân viên/tài xế theo kho; chưa có nguồn HR thật.
+  source_type: MISSING_EXTERNAL_CSV
+  source_files: []
+  source_availability: MISSING
+  grain:
+    status: PENDING_CONFIRMATION
+    detail: kho × version/hiệu lực (chưa chốt key mở rộng)
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  business_keys:
+  - warehouse
+  key_status: PENDING_CONFIRMATION
+  columns:
+  - name: warehouse
+    proposed_duckdb_type: VARCHAR
+    proposed_sqlite_type: TEXT
+    nullable: false
+    required: true
+    definition: 'Chỉ đề xuất từ docs/source_mapping.md: warehouse; chưa có dữ liệu thật.'
+    status: PENDING_CONFIRMATION
+  - name: hourly_wage
+    proposed_duckdb_type: null
+    proposed_sqlite_type: null
+    nullable: null
+    required: null
+    definition: 'Chỉ đề xuất từ docs/source_mapping.md: hourly_wage; chưa có dữ liệu thật.'
+    status: PENDING_CONFIRMATION
+  - name: items_per_order
+    proposed_duckdb_type: DOUBLE
+    proposed_sqlite_type: REAL
+    nullable: null
+    required: null
+    definition: 'Chỉ đề xuất từ docs/source_mapping.md: items_per_order; chưa có dữ liệu thật.'
+    status: PENDING_CONFIRMATION
+  - name: items_per_hour
+    proposed_duckdb_type: DOUBLE
+    proposed_sqlite_type: REAL
+    nullable: null
+    required: null
+    definition: 'Chỉ đề xuất từ docs/source_mapping.md: items_per_hour; chưa có dữ liệu thật.'
+    status: PENDING_CONFIRMATION
+  - name: shift_hours
+    proposed_duckdb_type: DOUBLE
+    proposed_sqlite_type: REAL
+    nullable: null
+    required: null
+    definition: 'Chỉ đề xuất từ docs/source_mapping.md: shift_hours; chưa có dữ liệu thật.'
+    status: PENDING_CONFIRMATION
+  - name: overtime_multiplier
+    proposed_duckdb_type: DOUBLE
+    proposed_sqlite_type: REAL
+    nullable: null
+    required: null
+    definition: 'Chỉ đề xuất từ docs/source_mapping.md: overtime_multiplier; chưa có dữ liệu thật.'
+    status: PENDING_CONFIRMATION
+  - name: orders_per_driver_shift
+    proposed_duckdb_type: DOUBLE
+    proposed_sqlite_type: REAL
+    nullable: null
+    required: null
+    definition: 'Chỉ đề xuất từ docs/source_mapping.md: orders_per_driver_shift; chưa có dữ liệu thật.'
+    status: PENDING_CONFIRMATION
+  mappings: []
+  deferred_mappings: []
+  transformations:
+  - status: NOT_APPLICABLE
+    detail: Chưa có nguồn để biến đổi; không tạo dữ liệu giả định.
+    evidence: 'Task 06 source_mapping: MISSING'
+  dq_rules:
+  - SRC-02
+  - SRC-03
+  - SRC-04
+  - SRC-20
+  - SRC-22
+  - SRC-24
+  consumers:
+  - BT2
+  consumer_status: REFERENCE_ONLY
+  schema_approval:
+    status: PENDING_CONFIRMATION
+    detail: Schema chỉ là đề xuất; không READY_FOR_INGESTION.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  mapping_approval:
+    status: PENDING_CONFIRMATION
+    detail: Mapping/precedence chưa được chủ dữ liệu và model owner duyệt.
+    evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+  expected_rows:
+    status: MISSING
+    detail: 'MISSING: chưa nhận dữ liệu thật.'
+    evidence: 'Task 06 docs/source_mapping.md: no Finance/HR source files.'
+  upload:
+    eligibility:
+      status: PENDING_CONFIRMATION
+      detail: Chỉ thiết kế CSV Upload tương lai; cần duyệt schema/quyền/chính sách và nguồn Finance/HR nếu áp dụng.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    access: BLOCKED_PENDING_APPROVAL
+    enabled: false
+    allowed_columns:
+    - warehouse
+    - hourly_wage
+    - items_per_order
+    - items_per_hour
+    - shift_hours
+    - overtime_multiplier
+    - orders_per_driver_shift
+    required_columns:
+    - warehouse
+    optional_columns: []
+    unresolved_columns:
+    - hourly_wage
+    - items_per_order
+    - items_per_hour
+    - shift_hours
+    - overtime_multiplier
+    - orders_per_driver_shift
+    backend_authorization_required: true
+    write_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt INSERT/UPSERT/ghi đè/cột được sửa.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    duplicate_policy:
+      status: PENDING_CONFIRMATION
+      detail: Chưa phê duyệt phạm vi/content hash/retry/concurrency policy.
+      evidence: docs/source_mapping.md; docs/data_dictionary.md; Task 06
+    batch_metadata_ref: upload_batch_metadata
+    validation_refs:
+    - docs/csv_upload_contract.md
+    - SRC-24
+  provenance:
+  - source_file
+  - source_hash
+  - schema_version
+  - data_version
+  - as_of
+  - batch_id
+  - sync_run_id
+  pending_decisions:
+  - Nguồn HR MISSING, currency/đơn vị/giá trị và key hiệu lực phải được duyệt.
+  - Required/optional/nullability và proposed types cần phê duyệt.
+  - Quyền backend, INSERT/UPSERT, duplicate handling, audit và provenance.

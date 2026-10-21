@@ -1,5 +1,10 @@
 # Rohlik Decision Hub — Living Setup Tutorial & Technical Handover
 
+> **Lưu ý V4 (21/10/2026):** Source of truth hiện hành là
+> `Rohlik_DE_Local_First_V4_HR_Header_Dong_Bo.md` và `docs/source_registry.md`.
+> Các phần Task07/08A và SQLite bên dưới là lịch sử/legacy; V4 dùng 7 active sources,
+> 14 bảng `src_*` và direct DuckDB, không dùng SQLite trên critical path.
+
 Nguồn hướng dẫn setup và vận hành chính của Data Engineering. Ngày cập nhật:
 **19/10/2026 (Asia/Saigon)**. Đối tượng: thành viên mới dùng Windows 11 và PowerShell.
 Chạy các lệnh từ **thư mục gốc repository**, trừ khi bước đó ghi khác.
@@ -823,7 +828,7 @@ của thành viên khác. “COMPLETED” mô tả phạm vi hạ tầng đã c�
 | DuckDB Infrastructure | COMPLETED | File rỗng, module đọc/ghi/transaction, CLI idempotent; 14 ca PASS. |
 | DBeaver Connection | VERIFIED | Người dùng xác nhận kết nối/integrity và các kiểm tra thành công. |
 | Data Contract BT1–BT8 workflow | RETIRED | Template và tám biểu mẫu đã loại khỏi HEAD; không còn là điều kiện Source Bootstrap. |
-| Data Source Registry (Task 07) | IMPLEMENTED / VERIFIED cho cấu hình | sources.yaml đủ 14 bảng, loader/CLI hoạt động, sáu file/hash đúng; schema/mapping nghiệp vụ vẫn pending, Finance/HR MISSING. Xem [hướng dẫn](source_registry.md). |
+| Data Source Registry (Task 07, legacy) | IMPLEMENTED / VERIFIED cho cấu hình lịch sử | Registry v1 được giữ riêng cho Task08A. Xem [hướng dẫn legacy](source_registry_task08a.md); production xem [V4 registry](source_registry.md). |
 | Source Profiling / Dictionary / V3 Gap (Task 06) | VERIFIED cho phân tích nguồn | CLI đủ sáu CSV, dictionary 64 cột, mapping thiết kế 14 bảng, 10 ca test mới PASS; chưa tạo schema hoặc xử lý nghiệp vụ. |
 | Historical Source Bootstrap (Task 08A) | IMPLEMENTED / VERIFIED — PROVISIONAL | Database thử nghiệm riêng có 6 Bronze raw + 12 Source projections + lineage/DQ; rerun no-op; 21 ca mới PASS. Không phê duyệt business schema. Xem [hướng dẫn](bootstrap_sources.md). |
 | SQLite Business Schema | NOT IMPLEMENTED | `sqlite_master` không có bảng. |
@@ -933,7 +938,7 @@ Nếu nguồn thay đổi, profile/review lại rồi mới duyệt cập nhật
 không thay hash để vượt lỗi. Trên source-free checkout dùng metadata-only và nhận
 dữ liệu qua kênh đã duyệt. Cấu hình thiếu phê duyệt không được biến thành READY.
 
-Xem [Source Registry Guide](source_registry.md) và [config README](../config/README.md)
+Xem [Legacy Task08A Registry Guide](source_registry_task08a.md) và [config README lịch sử](../config/README_task08a.md)
 cho API, cách sửa mapping/thêm source, status và bàn giao ETL/Streamlit.
 
 - [x] 14 tên không trùng; keys/target/source refs/status/paths hợp lệ.

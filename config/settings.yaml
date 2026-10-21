@@ -1,0 +1,9 @@
+warehouse: data/warehouse/rohlik.duckdb
+raw_dir: data/raw
+horizon_days: 14
+sku_scope:
+  warehouses:
+    - Prague_1
+  train_from: '2022-06-01'
+runner: local
+source_mode: kaggle_original

@@ -1,27 +1,29 @@
-# Rohlik Decision Hub — setup môi trường (A1)
+# Rohlik Decision Hub — V4 Local-first
+
+Source of truth hiện hành: [Rohlik DE Local-first V4](Rohlik_DE_Local_First_V4_HR_Header_Dong_Bo.md).
+Task **V4-01 Source Registry & Business Contract Foundation** đã triển khai cấu hình,
+validation và read-only preflight; chưa tạo/nạp Warehouse. Xem
+[V4 Source Registry](docs/source_registry.md), [settings](config/settings.yaml),
+[7-source registry](config/sources.yaml) và [14-table contract](config/contract.yaml).
 
 Hướng dẫn setup và vận hành chính của Data Engineering:
 [Living Setup Tutorial & Technical Handover](docs/setup_tutorial.md).
 Tài liệu phân biệt hạ tầng đã kiểm chứng, xác nhận DBeaver của người dùng và roadmap chưa triển khai.
 
-Dự án chuẩn bị nền tảng cho công việc dữ liệu Rohlik Decision Hub. Đã có Python,
-SQLite/DuckDB infrastructure, Streamlit smoke test, profiling sáu CSV lịch sử và
-Source Registry/validator và Task 08A provisional historical bootstrap trong DuckDB
-thử nghiệm riêng. Warehouse chính thức, Silver/Gold/Mart, model integration, CSV
-Upload và dashboard nghiệp vụ chưa được triển khai. Repository chính thức:
+Dự án đã có Python, DuckDB infrastructure, V4 registry/contract/preflight và Task08A
+provisional historical bootstrap trong DuckDB thử nghiệm riêng. Warehouse chính thức,
+landing/stg/core/mart, model integration, direct-DuckDB CSV Upload và dashboard nghiệp
+vụ chưa được triển khai. SQLite code/docs/tests được giữ làm lịch sử nhưng không còn
+thuộc critical path V4. Repository chính thức:
 https://github.com/MckhueVanPhuc/rohlik-data-warehouse (`main`).
 
 ## Yêu cầu và tech stack
 
-Phương thức nhập liệu chính đã thống nhất: nhân viên **upload CSV qua Streamlit**,
-chọn phòng ban/bảng theo quyền, tải template, xem trước và xác nhận trước khi lưu.
-Luồng dự kiến: **Streamlit → SQLite → DuckDB (Bronze/Silver/Gold/Mart) → Parquet Snapshots → Streamlit**.
-Backend kiểm tra schema/keys/types/DQ; ghi records hợp lệ bằng INSERT/UPSERT theo
-chính sách đã duyệt, audit và metadata batch cùng transaction. Sau lưu là
-`PENDING_SYNC`; DE chủ động đồng bộ và chỉ publish snapshot sau kiểm định thành công.
-Không bắt buộc form từng record. Toàn bộ chức năng này **PLANNED, chưa triển khai**.
-Chi tiết và các chính sách còn chờ chốt: [CSV Upload Contract](docs/csv_upload_contract.md).
-Giữ nguyên sáu CSV Kaggle gốc; Finance/HR chỉ nhận CSV sau khi schema/giá trị được duyệt.
+Kiến trúc V4 đã chốt: **Streamlit upload/preview/validate/confirm → DuckDB landing +
+audit trong cùng transaction**. Backend phải kiểm quyền/schema/keys/types/DQ và giữ
+lịch sử batch/soft undo. Toàn bộ chức năng nhập liệu vẫn **PLANNED**; V4-01 chỉ chốt
+contract. [CSV Upload Contract cũ](docs/csv_upload_contract.md) đã được đánh dấu
+superseded/legacy. Raw gồm 5 Kaggle CSV + 2 assumptions CSV, đều read-only.
 
 - Windows 11, PowerShell, VS Code, Git.
 - Python **3.13** (môi trường hiện tại: **3.13.15**) và virtual environment `.venv`.
@@ -111,9 +113,10 @@ Phạm vi A1 kết thúc ở setup và kiểm tra môi trường. Chờ phê duy
 
 `.gitignore` bỏ qua môi trường, cache, CSV, database, đầu ra dữ liệu, log và các tên file secrets phổ biến. File nhạy cảm có tên khác cần được rà soát trước khi stage; ignore không tự loại file đã được theo dõi khỏi Git history. Chỉ stage từng file đã kiểm tra. Remote `origin` trỏ tới repository chính thức nêu trên.
 
-## SQLite Setup
+## SQLite Setup — SUPERSEDED/LEGACY
 
-Hạ tầng SQLite dùng thư viện chuẩn `sqlite3`: database cục bộ `data/input.db`, WAL,
+Không dùng SQLite làm tầng nhập liệu V4. Hạ tầng lịch sử dùng thư viện chuẩn `sqlite3`:
+database cục bộ `data/input.db`, WAL,
 busy timeout 5000 ms và foreign keys bật cho mỗi connection Python mới. Chưa tạo bảng
 nghiệp vụ; schema chờ bằng chứng dữ liệu và quyết định nghiệp vụ được duyệt. Workflow
 Data Contract BT1–BT8 đã RETIRED. Các phần mô tả A1 phía trên là mốc setup ban đầu.
@@ -178,14 +181,15 @@ nguồn trước/sau; thiếu/lỗi nguồn báo FAILED/exit 1, không âm thầ
 - [Data Quality rule specifications](docs/data_quality_rules.md): thiết kế cho pipeline sau này.
 
 Ở mốc Task 06 chưa tạo Source Registry, Source Tables, ETL hoặc Warehouse nghiệp vụ.
-Giữ nguyên kiến trúc CSV Upload → SQLite → DE batch DuckDB → Parquet → Streamlit.
+Nội dung Task06 là evidence lịch sử; kiến trúc nhập liệu SQLite trong tài liệu cũ đã
+được V4 thay bằng direct DuckDB transaction.
 
-## Task 07 — Source Registry & Configuration
+## Task V4-01 — Source Registry & Business Contract Foundation
 
-[config/sources.yaml](config/sources.yaml) mô tả 14 bảng logic thuộc 9 phòng ban,
-dựa trên metadata đã profile của sáu CSV. Loader PyYAML/Pydantic nằm tại `src/config/`.
-Chỉ validate cấu hình, paths, keys/mappings/status và kiểm tra hash file nếu yêu cầu;
-không nạp CSV, kết nối database hoặc tạo Source Tables.
+[config/sources.yaml](config/sources.yaml) mô tả đúng 7 nguồn active (5 Kaggle + 2
+assumptions); [config/contract.yaml](config/contract.yaml) mô tả đúng 14 bảng tại 9
+schema `src_*`. Loader PyYAML/Pydantic và DuckDB `:memory:` preflight nằm tại
+`src/config/`. Nó không mở/ghi warehouse và không tạo Source Tables.
 
 ```powershell
 .\.venv\Scripts\python.exe -m src.validate_source_registry
@@ -194,21 +198,20 @@ không nạp CSV, kết nối database hoặc tạo Source Tables.
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
-CLI mặc định kiểm sáu file tồn tại và hash khớp; `--metadata-only` không yêu cầu CSV
-trên máy nhận. Config VALID có thể vẫn có quyết định pending. Finance cost/HR workforce
-MISSING đúng thiết kế; mọi schema/mapping/upload approval vẫn PENDING_CONFIRMATION,
-upload disabled. **Task 08A** có thể được chuẩn bị trong database/schema thử nghiệm
-tách biệt sau khi phạm vi được duyệt; **Task 08B: NOT_READY** cho dữ liệu chính thức.
-Hướng dẫn cấu trúc, API, lỗi, phê duyệt và bàn giao: [Source Registry](docs/source_registry.md)
-và [config README](config/README.md). CSV Upload→SQLite audit→DE batch→DuckDB→Parquet
-vẫn PLANNED; YAML không phải hệ thống phân quyền hoặc implementation ETL.
+CLI mặc định kiểm đủ tồn tại/hash/BOM/header/type/row count/key/duplicates/ranges của
+7 file; `--metadata-only` chỉ kiểm cấu hình. Finance/HR hiện diện và được đánh dấu
+`ASSUMED`; toàn bộ update policy vẫn `PENDING_CONFIRMATION`. Task08A lịch sử dùng
+adapter/config v1 riêng và vẫn chạy trên fixture. Hướng dẫn: [Source Registry V4](docs/source_registry.md)
+và [config README](config/README.md). Direct DuckDB upload/entry vẫn PLANNED; YAML
+không phải hệ thống phân quyền hoặc implementation ETL.
 
 ## Task 08A — Provisional Historical Source Bootstrap
 
-Sáu CSV lịch sử được preflight và có thể nạp nguyên trạng vào database thử nghiệm
+Sáu CSV lịch sử của registry v1 có thể nạp nguyên trạng vào database thử nghiệm
 `data/warehouse/rohlik_bootstrap_dev.duckdb`. Bootstrap tạo sáu Bronze raw tables,
 12 Source projections trực tiếp và metadata run/lineage/DQ; không ghi SQLite hoặc
-`data/warehouse/rohlik.duckdb`. Finance/HR vẫn MISSING, schema/mapping vẫn pending.
+`data/warehouse/rohlik.duckdb`. Finance/HR `MISSING` chỉ là trạng thái lịch sử của
+Task08A, không phải trạng thái production V4.
 
 ```powershell
 .\.venv\Scripts\python.exe -m src.bootstrap_sources --dry-run

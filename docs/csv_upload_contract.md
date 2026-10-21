@@ -1,5 +1,10 @@
 # CSV Upload Contract — kiến trúc nhập liệu
 
+> **SUPERSEDED/LEGACY cho V4:** luồng SQLite → DuckDB dưới đây chỉ được giữ làm lịch
+> sử thiết kế. V4 đã chốt Streamlit validate/confirm → INSERT trực tiếp DuckDB + audit
+> trong cùng transaction. Chưa có implementation upload/entry trong V4-01; xem
+> `Rohlik_DE_Local_First_V4_HR_Header_Dong_Bo.md` và `docs/source_registry.md`.
+
 **Ngày:** 18/10/2026. **Trạng thái chức năng: PLANNED — chưa triển khai.**
 Nhóm đã thống nhất CSV upload là phương thức nhập liệu chính; không bắt buộc nhập
 từng record bằng form. Tài liệu này mô tả thiết kế, không tạo schema hoặc API thật.

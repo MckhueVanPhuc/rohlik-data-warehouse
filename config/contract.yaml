@@ -1,0 +1,283 @@
+# V4 business contract foundation. Configuration only: no physical tables are created.
+contract_version: 4
+status: IMPLEMENTED_FOUNDATION
+tables:
+  src_sales.orders_daily:
+    schema: src_sales
+    table: orders_daily
+    raw_source: data/raw/orders/train.csv
+    mapping: {warehouse: warehouse, date: date, orders: orders}
+    grain: one row per warehouse and date
+    business_keys: [warehouse, date]
+    columns:
+      warehouse: {type: VARCHAR, required: true, nullable: false}
+      date: {type: DATE, required: true, nullable: false}
+      orders: {type: DOUBLE, required: true, nullable: false}
+    editable_fields: [orders]
+    checks: {orders: {min: 0}}
+    schema_version: 1
+    source_type: KAGGLE_ORIGINAL
+    update_policy: PENDING_CONFIRMATION
+  src_sales.sku_sales_daily:
+    schema: src_sales
+    table: sku_sales_daily
+    raw_source: data/raw/sales/sales_train.csv
+    mapping: {unique_id: unique_id, date: date, warehouse: warehouse, sales: sales, total_orders: total_orders}
+    grain: one row per unique_id and date
+    business_keys: [unique_id, date]
+    columns:
+      unique_id: {type: BIGINT, required: true, nullable: false}
+      date: {type: DATE, required: true, nullable: false}
+      warehouse: {type: VARCHAR, required: true, nullable: false}
+      sales: {type: DOUBLE, required: true, nullable: true}
+      total_orders: {type: DOUBLE, required: true, nullable: true}
+    editable_fields: [sales, total_orders]
+    checks: {sales: {min: 0}, total_orders: {min: 0}}
+    schema_version: 1
+    source_type: KAGGLE_ORIGINAL
+    update_policy: PENDING_CONFIRMATION
+  src_marketing.prices:
+    schema: src_marketing
+    table: prices
+    raw_source: data/raw/sales/sales_train.csv
+    mapping: {unique_id: unique_id, date: date, sell_price_main: sell_price_main}
+    grain: one row per unique_id and date
+    business_keys: [unique_id, date]
+    columns:
+      unique_id: {type: BIGINT, required: true, nullable: false}
+      date: {type: DATE, required: true, nullable: false}
+      sell_price_main: {type: DOUBLE, required: true, nullable: false}
+    editable_fields: [sell_price_main]
+    checks: {sell_price_main: {min: 0.01}}
+    schema_version: 1
+    source_type: KAGGLE_ORIGINAL
+    update_policy: PENDING_CONFIRMATION
+  src_marketing.promotions:
+    schema: src_marketing
+    table: promotions
+    raw_source: data/raw/sales/sales_train.csv
+    mapping: {unique_id: unique_id, date: date, type_0_discount: type_0_discount, type_1_discount: type_1_discount, type_2_discount: type_2_discount, type_3_discount: type_3_discount, type_4_discount: type_4_discount, type_5_discount: type_5_discount, type_6_discount: type_6_discount}
+    grain: one row per unique_id and date
+    business_keys: [unique_id, date]
+    columns:
+      unique_id: {type: BIGINT, required: true, nullable: false}
+      date: {type: DATE, required: true, nullable: false}
+      type_0_discount: {type: DOUBLE, required: true, nullable: false}
+      type_1_discount: {type: DOUBLE, required: true, nullable: false}
+      type_2_discount: {type: DOUBLE, required: true, nullable: false}
+      type_3_discount: {type: DOUBLE, required: true, nullable: false}
+      type_4_discount: {type: DOUBLE, required: true, nullable: false}
+      type_5_discount: {type: DOUBLE, required: true, nullable: false}
+      type_6_discount: {type: DOUBLE, required: true, nullable: false}
+    editable_fields: [type_0_discount, type_1_discount, type_2_discount, type_3_discount, type_4_discount, type_5_discount, type_6_discount]
+    checks:
+      type_0_discount: {min: 0, max: 1}
+      type_1_discount: {min: 0, max: 1}
+      type_2_discount: {min: 0, max: 1}
+      type_3_discount: {min: 0, max: 1}
+      type_4_discount: {min: 0, max: 1}
+      type_5_discount: {min: 0, max: 1}
+      type_6_discount: {min: 0, max: 1}
+    schema_version: 1
+    source_type: KAGGLE_ORIGINAL
+    update_policy: PENDING_CONFIRMATION
+  src_marketing.mov_changes:
+    schema: src_marketing
+    table: mov_changes
+    raw_source: data/raw/orders/train.csv
+    mapping: {warehouse: warehouse, date: date, mov_change: mov_change}
+    grain: one row per warehouse and date
+    business_keys: [warehouse, date]
+    columns:
+      warehouse: {type: VARCHAR, required: true, nullable: false}
+      date: {type: DATE, required: true, nullable: false}
+      mov_change: {type: DOUBLE, required: true, nullable: false}
+    editable_fields: [mov_change]
+    checks: {mov_change: {min: 0, max: 1}}
+    schema_version: 1
+    source_type: KAGGLE_ORIGINAL
+    update_policy: PENDING_CONFIRMATION
+  src_ops.availability:
+    schema: src_ops
+    table: availability
+    raw_source: data/raw/sales/sales_train.csv
+    mapping: {unique_id: unique_id, date: date, availability: availability}
+    grain: one row per unique_id and date
+    business_keys: [unique_id, date]
+    columns:
+      unique_id: {type: BIGINT, required: true, nullable: false}
+      date: {type: DATE, required: true, nullable: false}
+      availability: {type: DOUBLE, required: true, nullable: false}
+    editable_fields: [availability]
+    checks: {availability: {min: 0, max: 1}}
+    schema_version: 1
+    source_type: KAGGLE_ORIGINAL
+    update_policy: PENDING_CONFIRMATION
+  src_ops.ops_events:
+    schema: src_ops
+    table: ops_events
+    raw_source: data/raw/orders/train.csv
+    mapping: {warehouse: warehouse, date: date, shutdown: shutdown, mini_shutdown: mini_shutdown, blackout: blackout, frankfurt_shutdown: frankfurt_shutdown}
+    grain: one row per warehouse and date
+    business_keys: [warehouse, date]
+    columns:
+      warehouse: {type: VARCHAR, required: true, nullable: false}
+      date: {type: DATE, required: true, nullable: false}
+      shutdown: {type: BIGINT, required: true, nullable: false}
+      mini_shutdown: {type: BIGINT, required: true, nullable: false}
+      blackout: {type: BIGINT, required: true, nullable: false}
+      frankfurt_shutdown: {type: BIGINT, required: true, nullable: false}
+    editable_fields: [shutdown, mini_shutdown, blackout, frankfurt_shutdown]
+    checks:
+      shutdown: {min: 0, max: 1}
+      mini_shutdown: {min: 0, max: 1}
+      blackout: {min: 0, max: 1}
+      frankfurt_shutdown: {min: 0, max: 1}
+    schema_version: 1
+    source_type: KAGGLE_ORIGINAL
+    update_policy: PENDING_CONFIRMATION
+  src_category.product_master:
+    schema: src_category
+    table: product_master
+    raw_source: data/raw/sales/inventory.csv
+    mapping: {unique_id: unique_id, product_unique_id: product_unique_id, name: name, L1_category_name_en: L1_category_name_en, L2_category_name_en: L2_category_name_en, L3_category_name_en: L3_category_name_en, L4_category_name_en: L4_category_name_en, warehouse: warehouse}
+    grain: one row per unique_id
+    business_keys: [unique_id]
+    columns:
+      unique_id: {type: BIGINT, required: true, nullable: false}
+      product_unique_id: {type: BIGINT, required: true, nullable: false}
+      name: {type: VARCHAR, required: true, nullable: false}
+      L1_category_name_en: {type: VARCHAR, required: true, nullable: false}
+      L2_category_name_en: {type: VARCHAR, required: true, nullable: false}
+      L3_category_name_en: {type: VARCHAR, required: true, nullable: false}
+      L4_category_name_en: {type: VARCHAR, required: true, nullable: false}
+      warehouse: {type: VARCHAR, required: true, nullable: false}
+    editable_fields: [name, L1_category_name_en, L2_category_name_en, L3_category_name_en, L4_category_name_en, warehouse]
+    checks: {}
+    schema_version: 1
+    source_type: KAGGLE_ORIGINAL
+    update_policy: PENDING_CONFIRMATION
+  src_planning.calendar:
+    schema: src_planning
+    table: calendar
+    raw_source: data/raw/sales/calendar.csv
+    mapping: {warehouse: warehouse, date: date, holiday_name: holiday_name, holiday: holiday, shops_closed: shops_closed, winter_school_holidays: winter_school_holidays, school_holidays: school_holidays}
+    grain: one row per warehouse and date
+    business_keys: [warehouse, date]
+    columns:
+      warehouse: {type: VARCHAR, required: true, nullable: false}
+      date: {type: DATE, required: true, nullable: false}
+      holiday_name: {type: VARCHAR, required: true, nullable: true}
+      holiday: {type: BIGINT, required: true, nullable: false}
+      shops_closed: {type: BIGINT, required: true, nullable: false}
+      winter_school_holidays: {type: BIGINT, required: true, nullable: false}
+      school_holidays: {type: BIGINT, required: true, nullable: false}
+    editable_fields: [holiday_name, holiday, shops_closed, winter_school_holidays, school_holidays]
+    checks:
+      holiday: {min: 0, max: 1}
+      shops_closed: {min: 0, max: 1}
+      winter_school_holidays: {min: 0, max: 1}
+      school_holidays: {min: 0, max: 1}
+    schema_version: 1
+    source_type: KAGGLE_ORIGINAL
+    update_policy: PENDING_CONFIRMATION
+  src_digital.user_activity:
+    schema: src_digital
+    table: user_activity
+    raw_source: data/raw/orders/train.csv
+    mapping: {warehouse: warehouse, date: date, user_activity_1: user_activity_1, user_activity_2: user_activity_2}
+    grain: one row per warehouse and date
+    business_keys: [warehouse, date]
+    columns:
+      warehouse: {type: VARCHAR, required: true, nullable: false}
+      date: {type: DATE, required: true, nullable: false}
+      user_activity_1: {type: DOUBLE, required: true, nullable: false}
+      user_activity_2: {type: DOUBLE, required: true, nullable: false}
+    editable_fields: [user_activity_1, user_activity_2]
+    checks: {user_activity_1: {min: 0}, user_activity_2: {min: 0}}
+    schema_version: 1
+    source_type: KAGGLE_ORIGINAL
+    update_policy: PENDING_CONFIRMATION
+  src_external.weather:
+    schema: src_external
+    table: weather
+    raw_source: data/raw/orders/train.csv
+    mapping: {warehouse: warehouse, date: date, precipitation: precipitation, snow: snow}
+    grain: one row per warehouse and date
+    business_keys: [warehouse, date]
+    columns:
+      warehouse: {type: VARCHAR, required: true, nullable: false}
+      date: {type: DATE, required: true, nullable: false}
+      precipitation: {type: DOUBLE, required: true, nullable: true}
+      snow: {type: DOUBLE, required: true, nullable: true}
+    editable_fields: [precipitation, snow]
+    checks: {precipitation: {min: 0}, snow: {min: 0}}
+    schema_version: 1
+    source_type: KAGGLE_ORIGINAL
+    update_policy: PENDING_CONFIRMATION
+  src_finance.sku_weights:
+    schema: src_finance
+    table: sku_weights
+    raw_source: data/raw/sales/test_weights.csv
+    mapping: {unique_id: unique_id, weight: weight}
+    grain: one row per unique_id
+    business_keys: [unique_id]
+    columns:
+      unique_id: {type: BIGINT, required: true, nullable: false}
+      weight: {type: DOUBLE, required: true, nullable: false}
+    editable_fields: [weight]
+    checks: {weight: {min: 0}}
+    schema_version: 1
+    source_type: KAGGLE_ORIGINAL
+    update_policy: PENDING_CONFIRMATION
+  src_finance.cost_params:
+    schema: src_finance
+    table: cost_params
+    raw_source: data/raw/assumptions/cost_params.csv
+    mapping: {L1_category_name_en: L1_category_name_en, cost_ratio: cost_ratio, shelf_life_days: shelf_life_days, waste_handling_cost_ratio: waste_handling_cost_ratio}
+    grain: one row per L1 category
+    business_keys: [L1_category_name_en]
+    columns:
+      L1_category_name_en: {type: VARCHAR, required: true, nullable: false}
+      cost_ratio: {type: DOUBLE, required: true, nullable: false}
+      shelf_life_days: {type: BIGINT, required: true, nullable: false}
+      waste_handling_cost_ratio: {type: DOUBLE, required: true, nullable: false}
+    editable_fields: [cost_ratio, shelf_life_days, waste_handling_cost_ratio]
+    checks: {cost_ratio: {min: 0, max: 1}, shelf_life_days: {min: 1}, waste_handling_cost_ratio: {min: 0, max: 1}}
+    schema_version: 1
+    source_type: ASSUMED
+    update_policy: PENDING_CONFIRMATION
+  src_hr.workforce_params:
+    schema: src_hr
+    table: workforce_params
+    raw_source: data/raw/assumptions/workforce_params.csv
+    mapping: {warehouse: warehouse, wage_eur_per_hour: hourly_wage_eur, items_per_order: items_per_order, picks_per_hour: picks_per_hour, shift_hours: shift_hours, morning_share: morning_shift_ratio, overtime_multiplier: overtime_multiplier, overtime_cap: overtime_cap_ratio, shortage_penalty: shortage_penalty_multiplier, rule_buffer: legacy_rule_buffer_ratio, orders_per_driver_shift: orders_per_driver_shift}
+    grain: one row per warehouse
+    business_keys: [warehouse]
+    columns:
+      warehouse: {type: VARCHAR, required: true, nullable: false}
+      hourly_wage_eur: {type: DOUBLE, required: true, nullable: false}
+      items_per_order: {type: DOUBLE, required: true, nullable: false}
+      picks_per_hour: {type: DOUBLE, required: true, nullable: false}
+      shift_hours: {type: DOUBLE, required: true, nullable: false}
+      morning_shift_ratio: {type: DOUBLE, required: true, nullable: false}
+      overtime_multiplier: {type: DOUBLE, required: true, nullable: false}
+      overtime_cap_ratio: {type: DOUBLE, required: true, nullable: false}
+      shortage_penalty_multiplier: {type: DOUBLE, required: true, nullable: false}
+      legacy_rule_buffer_ratio: {type: DOUBLE, required: true, nullable: false}
+      orders_per_driver_shift: {type: DOUBLE, required: true, nullable: false}
+    editable_fields: [hourly_wage_eur, items_per_order, picks_per_hour, shift_hours, morning_shift_ratio, overtime_multiplier, overtime_cap_ratio, shortage_penalty_multiplier, legacy_rule_buffer_ratio, orders_per_driver_shift]
+    checks:
+      hourly_wage_eur: {min: 0}
+      items_per_order: {min: 0}
+      picks_per_hour: {min: 0.01}
+      shift_hours: {min: 0.01, max: 24}
+      morning_shift_ratio: {min: 0, max: 1}
+      overtime_multiplier: {min: 1}
+      overtime_cap_ratio: {min: 0, max: 1}
+      shortage_penalty_multiplier: {min: 0}
+      legacy_rule_buffer_ratio: {min: 0, max: 1}
+      orders_per_driver_shift: {min: 0.01}
+    schema_version: 1
+    source_type: ASSUMED
+    update_policy: PENDING_CONFIRMATION
