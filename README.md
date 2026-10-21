@@ -222,6 +222,9 @@ Write cần `--execute --database <isolated.duckdb>` rõ ràng. Target productio
 `PENDING_CONFIRMATION`. Rerun chỉ NO_OP sau khi metadata, batch-owned row counts và
 nội dung canonical cùng khớp; dòng thuộc batch nhập tay khác không bị xóa hoặc thay thế.
 Chưa có production load, user-facing upload/entry, STG/Core/Mart hoặc soft-undo command.
+Handover và đề xuất dừng DE sau V4-03 được ghi riêng tại
+[V4-03 Landing handover](docs/v4_03_landing_handover.md); tài liệu V4 gốc vẫn được giữ
+nguyên để truy vết và đề xuất này không được coi là hoàn thành toàn bộ pipeline V4.
 
 ## Task 08A — Provisional Historical Source Bootstrap
 

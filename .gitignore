@@ -30,6 +30,7 @@ credentials.*
 /data/published/
 /data/backups/
 /data/exports/
+/data/acceptance/
 /data/input.db*
 logs/
 *.duckdb

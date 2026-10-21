@@ -195,6 +195,27 @@ def test_completed_fingerprint_is_noop_and_manual_rows_survive(project):
         assert conn.execute("SELECT count(*) FROM src_sales.orders_daily").fetchone() == (before,)
 
 
+def test_noop_does_not_append_or_modify_batch_audit(project):
+    _execute(project)
+    with connection(project[1]) as conn:
+        before = {
+            table: conn.execute(f"SELECT * FROM meta.{table} ORDER BY ALL").fetchall()
+            for table in (
+                "source_batches",
+                "table_loads",
+                "batch_status_events",
+                "entry_audit_events",
+            )
+        }
+    assert _execute(project)["status"] == "NO_OP"
+    with connection(project[1]) as conn:
+        after = {
+            table: conn.execute(f"SELECT * FROM meta.{table} ORDER BY ALL").fetchall()
+            for table in before
+        }
+    assert after == before
+
+
 def test_noop_blocks_when_completed_batch_row_is_missing(project):
     _execute(project)
     with transaction(project[1]) as conn:
@@ -239,6 +260,59 @@ def test_noop_blocks_equal_count_content_change(project):
                WHERE warehouse = 'warehouse_0'"""
         )
     with pytest.raises(LandingReconciliationError, match="content differs"):
+        _execute(project)
+
+
+@pytest.mark.parametrize(
+    ("column", "replacement"),
+    [
+        ("_source", "data/raw/orders/corrupted.csv"),
+        ("_loaded_at", "2000-01-01 00:00:00"),
+        ("_entered_by", "unexpected-actor"),
+    ],
+)
+def test_noop_blocks_modified_completed_batch_provenance(project, column, replacement):
+    _execute(project)
+    with transaction(project[1]) as conn:
+        batch_id = conn.execute(
+            "SELECT batch_id FROM meta.source_batches WHERE source_id = 'orders'"
+        ).fetchone()[0]
+        conn.execute(
+            f'UPDATE src_sales.orders_daily SET "{column}" = ? '
+            "WHERE _batch_id = ? AND warehouse = 'warehouse_0'",
+            [replacement, batch_id],
+        )
+    with pytest.raises(LandingReconciliationError, match="provenance differs"):
+        _execute(project)
+
+
+def test_noop_blocks_modified_completed_batch_reference(project):
+    _execute(project)
+    with transaction(project[1]) as conn:
+        batch_id = conn.execute(
+            "SELECT batch_id FROM meta.source_batches WHERE source_id = 'orders'"
+        ).fetchone()[0]
+        conn.execute(
+            """UPDATE src_sales.orders_daily SET _batch_id = 'corrupted-batch'
+               WHERE _batch_id = ? AND warehouse = 'warehouse_0'""",
+            [batch_id],
+        )
+    with pytest.raises(LandingReconciliationError, match="row count"):
+        _execute(project)
+
+
+def test_noop_blocks_inconsistent_actor_audit_evidence(project):
+    _execute(project)
+    with transaction(project[1]) as conn:
+        batch_id = conn.execute(
+            "SELECT batch_id FROM meta.source_batches WHERE source_id = 'orders'"
+        ).fetchone()[0]
+        conn.execute(
+            """UPDATE meta.entry_audit_events SET actor = 'unexpected-actor'
+               WHERE batch_id = ? AND target_table = 'src_sales.orders_daily'""",
+            [batch_id],
+        )
+    with pytest.raises(LandingReconciliationError, match="entry audit"):
         _execute(project)
 
 

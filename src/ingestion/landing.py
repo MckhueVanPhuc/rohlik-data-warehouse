@@ -50,6 +50,7 @@ LANDING_METADATA_COLUMNS: tuple[tuple[str, str, bool], ...] = (
 )
 COMPLETED_STATUS = "COMPLETED"
 DEFAULT_ENTERED_BY = "system:v4-03-initial-bootstrap"
+LANDING_MEMORY_LIMIT = "1GB"
 
 
 class LandingIngestionError(RuntimeError):
@@ -252,7 +253,13 @@ def _insert_table(
     )
     conn.execute(
         sql,
-        [batch_id, source.path, loaded_at, entered_by, str(csv_path)],
+        [
+            batch_id,
+            source.path,
+            loaded_at.astimezone(timezone.utc).replace(tzinfo=None),
+            entered_by,
+            str(csv_path),
+        ],
     )
     return conn.execute(
         f"SELECT count(*) FROM {_qualified(table)} WHERE _batch_id = ?", [batch_id]
@@ -277,25 +284,78 @@ def _reconcile_completed_table(
     source: ActiveSource,
     csv_path: Path,
     batch_id: str,
+    loaded_at: str,
+    entered_by: str,
 ) -> None:
-    """Verify metadata, batch-owned rows and exact canonical content without touching manual rows."""
+    """Verify metadata, batch-owned rows and exact content without touching manual rows."""
     metadata = conn.execute(
-        """SELECT source_row_count, loaded_row_count, rejected_row_count, status
+        """SELECT source_row_count, loaded_row_count, rejected_row_count, status, recorded_at
            FROM meta.table_loads WHERE batch_id = ? AND table_name = ?""",
         [batch_id, name],
     ).fetchall()
-    expected_metadata = (source.row_count, source.row_count, 0, COMPLETED_STATUS)
+    expected_metadata = (
+        source.row_count,
+        source.row_count,
+        0,
+        COMPLETED_STATUS,
+        loaded_at,
+    )
     if len(metadata) != 1 or metadata[0] != expected_metadata:
         raise LandingReconciliationError(
             f"{name}: completed batch metadata counts/status do not reconcile; "
             f"expected={expected_metadata}, actual={metadata}"
         )
-    actual_count = conn.execute(
-        f"SELECT count(*) FROM {_qualified(table)} WHERE _batch_id = ?", [batch_id]
-    ).fetchone()[0]
+    audit = conn.execute(
+        """SELECT actor, action, occurred_at, details_json
+           FROM meta.entry_audit_events WHERE batch_id = ? AND target_table = ?""",
+        [batch_id, name],
+    ).fetchall()
+    expected_details = {"source_type": source.source_type, "rows": source.row_count}
+    if len(audit) != 1:
+        raise LandingReconciliationError(
+            f"{name}: expected exactly one bootstrap entry audit event, found {len(audit)}"
+        )
+    audit_actor, action, audit_at, details_json = audit[0]
+    try:
+        details = json.loads(details_json)
+    except (TypeError, json.JSONDecodeError) as exc:
+        raise LandingReconciliationError(
+            f"{name}: bootstrap entry audit details are invalid"
+        ) from exc
+    if (
+        audit_actor != entered_by
+        or action != "INITIAL_BOOTSTRAP"
+        or audit_at != loaded_at
+        or details != expected_details
+    ):
+        raise LandingReconciliationError(
+            f"{name}: bootstrap entry audit does not agree with completed batch evidence"
+        )
+
+    actual_count, bad_source, bad_loaded_at, bad_actor = conn.execute(
+        f"""SELECT count(*),
+                   count(*) FILTER (WHERE _source IS DISTINCT FROM ?),
+                   count(*) FILTER (
+                       WHERE _loaded_at IS DISTINCT FROM
+                           (CAST(? AS TIMESTAMPTZ) AT TIME ZONE 'UTC')
+                   ),
+                   count(*) FILTER (WHERE _entered_by IS DISTINCT FROM ?)
+            FROM {_qualified(table)} WHERE _batch_id = ?""",
+        [source.path, loaded_at, entered_by, batch_id],
+    ).fetchone()
     if actual_count != source.row_count:
         raise LandingReconciliationError(
             f"{name}: completed batch row count {actual_count} != {source.row_count}"
+        )
+    provenance_errors = {
+        "_source": bad_source,
+        "_loaded_at": bad_loaded_at,
+        "_entered_by": bad_actor,
+    }
+    invalid = {field: count for field, count in provenance_errors.items() if count}
+    if invalid:
+        raise LandingReconciliationError(
+            f"{name}: completed batch provenance differs from metadata evidence {invalid}"
         )
 
     canonical_names, projections = _canonical_projection(table)
@@ -391,6 +451,83 @@ def _validate_idempotency(
     return "LOAD", {}
 
 
+def _completed_batch_provenance(
+    conn: duckdb.DuckDBPyConnection,
+    *,
+    source_id: str,
+    source: ActiveSource,
+    batch_id: str,
+) -> tuple[str, str]:
+    """Derive the original load timestamp and actor from mutually agreeing v1 evidence."""
+    row = conn.execute(
+        """SELECT started_at, completed_at, error_message
+           FROM meta.source_batches WHERE batch_id = ? AND source_id = ?""",
+        [batch_id, source_id],
+    ).fetchone()
+    if row is None:
+        raise LandingReconciliationError(
+            f"{source_id}: completed source batch evidence is missing"
+        )
+    started_at, completed_at, error_message = row
+    try:
+        started = datetime.fromisoformat(started_at)
+        completed = datetime.fromisoformat(completed_at)
+    except (TypeError, ValueError) as exc:
+        raise LandingReconciliationError(
+            f"{source_id}: completed source batch timestamps are invalid"
+        ) from exc
+    if (
+        started.utcoffset() != timedelta(0)
+        or completed.utcoffset() != timedelta(0)
+        or completed <= started
+        or error_message is not None
+    ):
+        raise LandingReconciliationError(
+            f"{source_id}: completed source batch timestamps/error state are inconsistent"
+        )
+
+    events = conn.execute(
+        """SELECT status, occurred_at, actor, reason
+           FROM meta.batch_status_events WHERE batch_id = ?""",
+        [batch_id],
+    ).fetchall()
+    if len(events) != 2:
+        raise LandingReconciliationError(
+            f"{source_id}: expected two bootstrap status events, found {len(events)}"
+        )
+    by_status = {
+        status: (occurred_at, actor, reason)
+        for status, occurred_at, actor, reason in events
+    }
+    if set(by_status) != {"RUNNING", COMPLETED_STATUS}:
+        raise LandingReconciliationError(
+            f"{source_id}: bootstrap status audit is incomplete or ambiguous"
+        )
+    running_at, running_actor, running_reason = by_status["RUNNING"]
+    completed_event_at, completed_actor, completed_reason = by_status[COMPLETED_STATUS]
+    expected_lineage = {
+        "mode": "INITIAL_HISTORICAL_BOOTSTRAP",
+        "source_type": source.source_type,
+    }
+    try:
+        reasons = [json.loads(running_reason), json.loads(completed_reason)]
+    except (TypeError, json.JSONDecodeError) as exc:
+        raise LandingReconciliationError(
+            f"{source_id}: bootstrap status audit lineage is invalid"
+        ) from exc
+    if (
+        running_at != started_at
+        or completed_event_at != completed_at
+        or not running_actor
+        or running_actor != completed_actor
+        or reasons != [expected_lineage, expected_lineage]
+    ):
+        raise LandingReconciliationError(
+            f"{source_id}: bootstrap status audit does not agree with source batch evidence"
+        )
+    return started_at, running_actor
+
+
 def ingest_landing(
     database: str | Path,
     *,
@@ -444,6 +581,9 @@ def ingest_landing(
     with transaction(
         target, lock_timeout=lock_timeout, owner_id="v4-03-initial-bootstrap"
     ) as conn:
+        # Keep exact reconciliation bounded on developer machines. DuckDB may spill
+        # to its per-database temporary directory rather than exhausting system RAM.
+        conn.execute(f"SET memory_limit='{LANDING_MEMORY_LIMIT}'")
         action, completed_batches = _validate_idempotency(
             conn, fingerprints, registry, contract.contract_version
         )
@@ -451,6 +591,12 @@ def ingest_landing(
             for source_id, source in registry.active_sources.items():
                 csv_path = source_path(source.path, project_root)
                 _verify_source_unchanged(source_id, source, csv_path)
+                loaded_at, entered_by = _completed_batch_provenance(
+                    conn,
+                    source_id=source_id,
+                    source=source,
+                    batch_id=completed_batches[source_id],
+                )
                 for name, table in grouped[source_id]:
                     if not _table_exists(conn, table):
                         raise IncompleteBatchError(
@@ -464,6 +610,8 @@ def ingest_landing(
                         source=source,
                         csv_path=csv_path,
                         batch_id=completed_batches[source_id],
+                        loaded_at=loaded_at,
+                        entered_by=entered_by,
                     )
                 _verify_source_unchanged(source_id, source, csv_path)
             for source_id, source in registry.active_sources.items():
