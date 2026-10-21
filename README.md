@@ -144,8 +144,9 @@ riêng tại `src/db/duckdb.py`. Chưa tạo schema/bảng nghiệp vụ hoặc 
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
-CLI có thể chạy lại; file đã có được xác minh read-only. Hiện có 14 ca DuckDB và
-14 ca SQLite. Quy tắc một tiến trình ghi, kiểm tra kết nối, backup offline và lỗi
+CLI có thể chạy lại; file đã có được xác minh read-only. V4-02 bổ sung shared
+cross-process writer lock, transaction guard, verified backup và metadata v1. Quy tắc
+một tiến trình ghi, kiểm tra kết nối, backup offline và lỗi
 thường gặp: [DuckDB Setup](docs/duckdb_setup.md). Streamlit dự kiến đọc published
 snapshots; exporter và Warehouse Bronze/Silver/Gold/Mart chưa triển khai.
 
