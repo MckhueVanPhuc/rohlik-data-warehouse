@@ -1,0 +1,14 @@
+# Rohlik Decision Hub — local authentication settings (no secrets).
+credential_store: data/auth/users.json
+admin_username: admin_local
+session_idle_minutes: 30
+
+rate_limit:
+  account_max_failures: 5
+  session_max_failures: 8
+  window_seconds: 900
+  lockout_seconds: 900
+
+password_policy:
+  min_length: 12
+  max_length: 256

@@ -5,3 +5,5 @@ pyyaml
 streamlit
 pydantic
 pytest
+argon2-cffi
+plotly

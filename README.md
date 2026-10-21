@@ -1,5 +1,29 @@
 # Rohlik Decision Hub — V4 Local-first
 
+## Streamlit v3.0 — Admin-only dashboard
+
+Ứng dụng chính thức tại `app/main.py` hiện là dashboard **admin-only, dashboard-only,
+read-only**. Chỉ account cấu hình `admin_local` được đăng nhập; Argon2id, rate limiting,
+opaque server-side sessions, timeout và logout được giữ nguyên. RBAC 7 role, Data Entry,
+CSV Upload, Undo, CRUD và pipeline/model execution đã bị loại khỏi Streamlit.
+
+Dashboard có đúng 8 trang và chỉ đọc năm allowlisted `mart.*` qua DuckDB read-only.
+Warehouse/mart/model chưa sẵn sẽ hiển thị readiness tương ứng, không tạo dữ liệu giả và
+không tự chạy pipeline. Xem [Dashboard Runbook](docs/dashboard_v3_runbook.md),
+[Authentication Runbook](docs/authentication_runbook.md) và
+[Local/LAN Runbook](docs/streamlit_local_lan_runbook.md).
+
+```powershell
+# Localhost mặc định
+.\.venv\Scripts\python.exe -m streamlit run app/main.py
+
+# LAN opt-in; HTTP chỉ dành cho mạng tin cậy/dữ liệu không nhạy cảm
+.\scripts\start_streamlit_lan.ps1
+```
+
+Các mô tả Streamlit upload/write phía dưới là lịch sử DE/V4 hoặc kế hoạch 2.0 đã bị
+Streamlit v3.0 supersede; chúng không mô tả runtime UI hiện tại.
+
 Source of truth hiện hành: [Rohlik DE Local-first V4](Rohlik_DE_Local_First_V4_HR_Header_Dong_Bo.md).
 Task **V4-01 Source Registry & Business Contract Foundation** đã triển khai cấu hình,
 validation và read-only preflight; chưa tạo/nạp Warehouse. Xem

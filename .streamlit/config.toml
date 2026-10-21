@@ -1,3 +1,20 @@
+# Rohlik Decision Hub — default localhost configuration.
+# S04 LAN mode is an explicit CLI override in scripts/start_streamlit_lan.ps1.
+
 [server]
 address = "127.0.0.1"
 port = 8501
+headless = true
+maxUploadSize = 25
+enableCORS = true
+enableXsrfProtection = true
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+base = "dark"
+primaryColor = "#54D2A0"
+backgroundColor = "#09110F"
+secondaryBackgroundColor = "#111D1B"
+textColor = "#EEF4F2"

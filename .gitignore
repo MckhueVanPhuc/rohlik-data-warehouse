@@ -3,6 +3,8 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.pytest_tmp/
+.pytest_tmp*/
 
 # Local secrets and credentials (keep sanitized examples trackable)
 .env
@@ -26,6 +28,7 @@ credentials.*
 # Source data and generated local artifacts
 *.csv
 /data/raw/
+/data/auth/
 /data/warehouse/
 /data/published/
 /data/backups/
