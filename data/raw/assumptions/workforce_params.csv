@@ -1,0 +1,8 @@
+warehouse,wage_eur_per_hour,items_per_order,picks_per_hour,shift_hours,morning_share,overtime_multiplier,overtime_cap,shortage_penalty,rule_buffer,orders_per_driver_shift
+Brno_1,9.0,28,150,8,0.55,1.5,0.25,3.0,0.1,25
+Budapest_1,8.0,28,150,8,0.55,1.5,0.25,3.0,0.1,25
+Frankfurt_1,15.0,28,150,8,0.55,1.5,0.25,3.0,0.1,25
+Munich_1,15.0,28,150,8,0.55,1.5,0.25,3.0,0.1,25
+Prague_1,10.0,28,150,8,0.55,1.5,0.25,3.0,0.1,25
+Prague_2,10.0,28,150,8,0.55,1.5,0.25,3.0,0.1,25
+Prague_3,10.0,28,150,8,0.55,1.5,0.25,3.0,0.1,25

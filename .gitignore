@@ -1,4 +1,4 @@
-# Python environment and caches
+# Machine-local Python environment and caches
 .venv/
 __pycache__/
 *.py[cod]
@@ -6,7 +6,13 @@ __pycache__/
 .pytest_tmp/
 .pytest_tmp*/
 
-# Local secrets and credentials (keep sanitized examples trackable)
+# Machine-local IDE and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local secrets and credentials
 .env
 .env.*
 !.env.example
@@ -24,16 +30,14 @@ credentials.*
 *.key
 *.p12
 *.pfx
-
-# Source data and generated local artifacts
-*.csv
-/data/raw/
 /data/auth/
-/data/warehouse/
-/data/published/
+
+# Local generated runtime artifacts
+/data/acceptance/
 /data/backups/
 /data/exports/
-/data/acceptance/
+/data/published/
+/data/warehouse/
 /data/input.db*
 logs/
 *.duckdb
