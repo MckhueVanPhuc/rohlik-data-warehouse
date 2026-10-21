@@ -95,10 +95,12 @@ class MetadataVersionError(RuntimeError):
 
 def source_batch_history(
     conn: duckdb.DuckDBPyConnection, source_id: str,
-) -> list[tuple[str, str]]:
+) -> list[tuple[str, str, str, int | None, str, int]]:
     """Return fingerprint/status history using the caller's active transaction."""
     return conn.execute(
-        "SELECT source_fingerprint, status FROM meta.source_batches WHERE source_id = ?",
+        """SELECT batch_id, source_fingerprint, status, source_row_count,
+                  source_path, contract_version
+           FROM meta.source_batches WHERE source_id = ? ORDER BY started_at, batch_id""",
         [source_id],
     ).fetchall()
 

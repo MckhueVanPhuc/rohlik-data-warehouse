@@ -33,6 +33,7 @@ from src.ingestion import landing
 from src.ingestion.landing import (
     ChangedSourceError,
     IncompleteBatchError,
+    LandingReconciliationError,
     ingest_landing,
     plan_landing_ingestion,
 )
@@ -194,6 +195,53 @@ def test_completed_fingerprint_is_noop_and_manual_rows_survive(project):
         assert conn.execute("SELECT count(*) FROM src_sales.orders_daily").fetchone() == (before,)
 
 
+def test_noop_blocks_when_completed_batch_row_is_missing(project):
+    _execute(project)
+    with transaction(project[1]) as conn:
+        batch_id = conn.execute(
+            "SELECT batch_id FROM meta.source_batches WHERE source_id = 'orders'"
+        ).fetchone()[0]
+        conn.execute(
+            "DELETE FROM src_sales.orders_daily WHERE _batch_id = ? AND warehouse = 'warehouse_0'",
+            [batch_id],
+        )
+    with pytest.raises(LandingReconciliationError, match="row count"):
+        _execute(project)
+
+
+def test_noop_blocks_metadata_row_count_mismatch(project):
+    _execute(project)
+    with transaction(project[1]) as conn:
+        conn.execute(
+            """UPDATE meta.table_loads SET loaded_row_count = loaded_row_count + 1
+               WHERE table_name = 'src_sales.orders_daily'"""
+        )
+    with pytest.raises(LandingReconciliationError, match="metadata counts"):
+        _execute(project)
+
+
+def test_noop_blocks_source_batch_row_count_mismatch(project):
+    _execute(project)
+    with transaction(project[1]) as conn:
+        conn.execute(
+            """UPDATE meta.source_batches SET source_row_count = source_row_count + 1
+               WHERE source_id = 'orders'"""
+        )
+    with pytest.raises(IncompleteBatchError, match="source metadata"):
+        _execute(project)
+
+
+def test_noop_blocks_equal_count_content_change(project):
+    _execute(project)
+    with transaction(project[1]) as conn:
+        conn.execute(
+            """UPDATE src_sales.orders_daily SET orders = orders + 100
+               WHERE warehouse = 'warehouse_0'"""
+        )
+    with pytest.raises(LandingReconciliationError, match="content differs"):
+        _execute(project)
+
+
 def test_changed_completed_fingerprint_is_blocked(project):
     root, _ = project
     _execute(project)
@@ -245,6 +293,106 @@ def test_non_complete_prior_batch_never_claims_noop(project, status):
         )
     with pytest.raises(IncompleteBatchError, match="refusing NO_OP"):
         ingest_landing(database, execute=True, root=root)
+
+
+@pytest.mark.parametrize("status", ["FAILED", "PARTIAL", "RUNNING"])
+def test_completed_plus_incomplete_history_is_blocked(project, status):
+    _execute(project)
+    with transaction(project[1]) as conn:
+        fingerprint = conn.execute(
+            "SELECT source_fingerprint FROM meta.source_batches WHERE source_id = 'orders'"
+        ).fetchone()[0]
+        conn.execute(
+            """INSERT INTO meta.source_batches
+               (batch_id, source_id, source_path, source_fingerprint, contract_version,
+                status, started_at, source_row_count)
+               VALUES (?, 'orders', 'data/raw/orders/train.csv', ?, 4, ?, 'later', 2)""",
+            [f"mixed-{status}", fingerprint, status],
+        )
+    with pytest.raises(IncompleteBatchError, match="ambiguous batch history"):
+        _execute(project)
+
+
+@pytest.mark.parametrize("second_fingerprint", [None, "different-fingerprint"])
+def test_multiple_completed_batches_are_blocked(project, second_fingerprint):
+    _execute(project)
+    with transaction(project[1]) as conn:
+        fingerprint = conn.execute(
+            "SELECT source_fingerprint FROM meta.source_batches WHERE source_id = 'orders'"
+        ).fetchone()[0]
+        second_fingerprint = second_fingerprint or fingerprint
+        conn.execute(
+            """INSERT INTO meta.source_batches VALUES
+               ('duplicate-complete', 'orders', 'data/raw/orders/train.csv', ?, 4,
+                'COMPLETED', 'later', 'later', 2, NULL)""",
+            [second_fingerprint],
+        )
+    with pytest.raises(IncompleteBatchError, match="ambiguous batch history"):
+        _execute(project)
+
+
+def test_canonical_undone_status_wins_even_when_event_timestamps_tie(project):
+    _execute(project)
+    with transaction(project[1]) as conn:
+        batch_id = conn.execute(
+            "SELECT batch_id FROM meta.source_batches WHERE source_id = 'orders'"
+        ).fetchone()[0]
+        occurred_at = conn.execute(
+            "SELECT occurred_at FROM meta.batch_status_events WHERE batch_id = ? LIMIT 1",
+            [batch_id],
+        ).fetchone()[0]
+        conn.execute(
+            "UPDATE meta.source_batches SET status = 'UNDONE' WHERE batch_id = ?", [batch_id]
+        )
+        conn.execute(
+            "INSERT INTO meta.batch_status_events VALUES "
+            "('simulated-undo', ?, 'UNDONE', ?, 'tester', 'future V4-04 compatibility')",
+            [batch_id, occurred_at],
+        )
+    with pytest.raises(IncompleteBatchError, match="UNDONE"):
+        _execute(project)
+
+
+def test_running_and_completed_events_have_strict_timestamp_order(project):
+    _execute(project)
+    with connection(project[1]) as conn:
+        rows = conn.execute(
+            """SELECT r.occurred_at, c.occurred_at
+               FROM meta.batch_status_events r
+               JOIN meta.batch_status_events c USING (batch_id)
+               WHERE r.status = 'RUNNING' AND c.status = 'COMPLETED'"""
+        ).fetchall()
+    assert len(rows) == 7
+    assert all(running < completed for running, completed in rows)
+
+
+def test_source_change_after_preflight_rolls_back_everything(project, monkeypatch):
+    root, database = project
+    original = landing._insert_table
+    mutated = False
+
+    def mutate_between_projections(*args, **kwargs):
+        nonlocal mutated
+        loaded = original(*args, **kwargs)
+        source = kwargs["source"]
+        if source.path == "data/raw/orders/train.csv" and not mutated:
+            path = root / source.path
+            text = path.read_text(encoding="utf-8")
+            path.write_text(
+                text.replace("warehouse_0,2026-01-01,1,", "warehouse_0,2026-01-01,2,", 1),
+                encoding="utf-8",
+            )
+            mutated = True
+        return loaded
+
+    monkeypatch.setattr(landing, "_insert_table", mutate_between_projections)
+    with pytest.raises(ChangedSourceError, match="changed after preflight"):
+        ingest_landing(database, execute=True, root=root)
+    with connection(database) as conn:
+        assert conn.execute(
+            "SELECT count(*) FROM information_schema.tables WHERE table_schema LIKE 'src%'"
+        ).fetchone() == (0,)
+        assert conn.execute("SELECT count(*) FROM meta.source_batches").fetchone() == (0,)
 
 
 def test_metadata_counts_reconcile_with_landing(project):

@@ -4,13 +4,16 @@
 
 Đã triển khai V4-02: cấu hình DuckDB local, kết nối read-only, write transaction có
 khóa liên tiến trình, backup được xác minh và metadata foundation có version guard.
-Chưa nạp CSV, tạo 14 bảng nghiệp vụ, ETL, stg/core/mart hoặc Model Runner.
-DuckDB có catalog/schema hệ thống mặc định; điều này không có nghĩa đã tạo Warehouse nghiệp vụ.
+V4-03 đã triển khai initial 7-CSV → 14-table landing bootstrap cho database cô lập,
+với dry-run mặc định, fingerprint/idempotency, reconciliation và rollback atomic.
+Production database chưa được nạp; stg/core/mart, user upload/entry và Model Runner chưa triển khai.
 Không thay đổi SQLite Infrastructure tại `data/input.db`.
 
 Kiến trúc V4 dự kiến: Streamlit CSV upload → validate/confirm → DuckDB landing +
-audit trong cùng transaction. Entry/undo/ingestion vẫn **PLANNED**; V4-02 chỉ cung
-cấp hạ tầng writer/transaction/metadata và không chốt update/conflict policy.
+audit trong cùng transaction. Initial bootstrap đã có; entry/undo vẫn **PLANNED** và
+không chốt update/conflict policy. `meta.source_batches.status` là current status
+canonical; `meta.batch_status_events` là immutable audit history, không được suy diễn
+latest state bằng timestamp hoặc UUID của event.
 
 Database mặc định: `data/warehouse/rohlik.duckdb`. Cấu hình tập trung tại
 `warehouse` trong [config/settings.yaml](../config/settings.yaml), được kiểm tra là
@@ -53,6 +56,17 @@ Có thể chọn database riêng:
 ```
 
 Option thực tế là `--database PATH`. Không chạy vào vị trí chứa file nguồn khác.
+
+V4-03 landing CLI mặc định chỉ preflight/dry-run và không mở warehouse để ghi:
+
+```powershell
+.\.venv\Scripts\python.exe -m src.ingest_landing
+```
+
+`--execute` yêu cầu thêm `--database` trỏ tới DuckDB cô lập đã init. CLI từ chối
+production target mặc định trong khi 14 update policies còn `PENDING_CONFIRMATION`.
+NO_OP chỉ được trả về sau khi đối chiếu completed batch metadata, row counts và nội dung
+canonical với source; batch nhập tay khác được bảo toàn.
 
 ## Kiểm tra kết nối, quản lý đọc/ghi
 
@@ -183,4 +197,5 @@ Lệnh cuối phải trống. Không stage file dữ liệu; không tự commit/
 - [x] Backup và metadata foundation được test trên database tạm; không copy database dự án.
 - [x] Git ignore được kiểm tra; SQLite source giữ nguyên.
 - [ ] Setup trên máy sạch, backup/restore vận hành thật: chưa nghiệm thu.
-- [ ] Dataset/contracts và mọi thành phần Warehouse nghiệp vụ: chờ giai đoạn sau.
+- [x] Dataset/contracts và initial landing bootstrap: đã triển khai/test trên database tạm cô lập.
+- [ ] Production load, user entry/undo và STG/Core/Mart: chờ giai đoạn sau/phê duyệt policy.
