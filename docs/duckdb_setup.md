@@ -2,20 +2,23 @@
 
 ## Phạm vi và trạng thái
 
-Đã triển khai file DuckDB rỗng, module kết nối đọc/ghi, transaction và CLI khởi tạo.
-Chưa nạp CSV, tạo schema/bảng nghiệp vụ, ETL, Bronze/Silver/Gold/Mart hoặc Model Runner.
-DuckDB có catalog/schema hệ thống mặc định; điều này không có nghĩa đã tạo Warehouse nghiệp vụ.
+Đã triển khai V4-02: cấu hình DuckDB local, kết nối read-only, write transaction có
+khóa liên tiến trình, backup được xác minh và metadata foundation có version guard.
+V4-03 đã triển khai initial 7-CSV → 14-table landing bootstrap cho database cô lập,
+với dry-run mặc định, fingerprint/idempotency, reconciliation và rollback atomic.
+Production database chưa được nạp; stg/core/mart, user upload/entry và Model Runner chưa triển khai.
 Không thay đổi SQLite Infrastructure tại `data/input.db`.
 
-Kiến trúc nhập liệu dự kiến: Streamlit CSV upload → backend kiểm tra/xác nhận →
-SQLite (`PENDING_SYNC`) → DE chạy batch DuckDB Bronze/Silver/Gold/Mart → kiểm định
-→ Parquet snapshots → Streamlit. Audit/metadata batch được lưu cùng records trong
-transaction SQLite, không ghi trực tiếp vào DuckDB từ upload. Tất cả chức năng
-upload/sync/publish **PLANNED**; xem [CSV Upload Contract](csv_upload_contract.md).
+Kiến trúc V4 dự kiến: Streamlit CSV upload → validate/confirm → DuckDB landing +
+audit trong cùng transaction. Initial bootstrap đã có; entry/undo vẫn **PLANNED** và
+không chốt update/conflict policy. `meta.source_batches.status` là current status
+canonical; `meta.batch_status_events` là immutable audit history, không được suy diễn
+latest state bằng timestamp hoặc UUID của event.
 
 Database mặc định: `data/warehouse/rohlik.duckdb`. Cấu hình tập trung tại
-`DEFAULT_DATABASE` trong [src/db/duckdb.py](../src/db/duckdb.py), dùng `pathlib` tính
-từ vị trí module. Đường dẫn tương đối truyền vào API/CLI cũng tính từ root dự án.
+`warehouse` trong [config/settings.yaml](../config/settings.yaml), được kiểm tra là
+đường dẫn `.duckdb` tương đối nằm dưới `data/warehouse`. Đường dẫn tương đối truyền
+vào API/CLI cũng tính từ root dự án và không được thoát root/đi vào `data/raw`.
 Không dùng chung cấu hình với SQLite để giữ nguyên implementation SQLite đang hoạt động.
 
 ## Setup và CLI
@@ -54,6 +57,17 @@ Có thể chọn database riêng:
 
 Option thực tế là `--database PATH`. Không chạy vào vị trí chứa file nguồn khác.
 
+V4-03 landing CLI mặc định chỉ preflight/dry-run và không mở warehouse để ghi:
+
+```powershell
+.\.venv\Scripts\python.exe -m src.ingest_landing
+```
+
+`--execute` yêu cầu thêm `--database` trỏ tới DuckDB cô lập đã init. CLI từ chối
+production target mặc định trong khi 14 update policies còn `PENDING_CONFIRMATION`.
+NO_OP chỉ được trả về sau khi đối chiếu completed batch metadata, row counts và nội dung
+canonical với source; batch nhập tay khác được bảo toàn.
+
 ## Kiểm tra kết nối, quản lý đọc/ghi
 
 ```powershell
@@ -72,9 +86,11 @@ Kỳ vọng `('v1.5.6',)`, `(42,)`, `[]` ở giai đoạn database rỗng hiện
 | API | Hành vi |
 | --- | --- |
 | `connection(path=DEFAULT_DATABASE, read_only=True)` | Chỉ mở file đã có, mặc định đọc; luôn đóng khi rời context, kể cả có exception. File thiếu báo FileNotFoundError thay vì vô tình tạo DB. |
-| `connection(path, read_only=False)` | Cho phép ghi; mặc định autocommit. Chỉ dùng trong tiến trình DE được giao quyền ghi. |
-| `transaction(path=DEFAULT_DATABASE)` | Mở writer riêng, BEGIN; commit thành công, rollback khi có exception, phát lại lỗi và đóng connection. |
-| `initialize_database(path=DEFAULT_DATABASE)` | Tạo nếu thiếu, xác minh read-only; không tạo application schema. |
+| `connection(path, read_only=False)` | Bị chặn; writable caller phải qua shared writer service. |
+| `transaction(path, lock_timeout=10)` | Lấy khóa OS liên tiến trình, BEGIN; commit thành công, rollback mọi exception; chặn nested transaction. |
+| `initialize_database(path)` | Explicit init; khóa writer, tạo nếu thiếu, không thay file có sẵn; không tạo business schema. |
+| `backup_database(path, backup_directory=...)` | Khóa writer, từ chối khi có WAL, tạo tên unique bằng `xb`, hash + reopen/catalog verify. |
+| `initialize_metadata(path)` | Tạo idempotent 5 bảng `meta.*` v1; shape/version lạ bị chặn, không auto-migrate. |
 
 Truyền giá trị bằng `conn.execute("SELECT ?", (value,))`, không nối chuỗi input vào
 SQL. Không gọi commit/rollback hoặc nhét lệnh điều khiển transaction thủ công trong
@@ -86,7 +102,10 @@ Trong cách dùng file embedded của dự án: một tiến trình DE làm writ
 ghi/đọc chạy tuần tự và đóng connection trước khi đổi chế độ. Không mở đồng thời
 read-only và read-write tới cùng file với cấu hình khác nhau. Nhiều tiến trình có thể
 đọc read-only khi không có writer; không giả định có writer liên tiến trình như SQLite.
-Module không cung cấp lock liên tiến trình, retry hay pooling.
+Khóa dùng byte-range lock của OS (`msvcrt.locking` trên Windows), kết hợp lock nội
+process và timeout hữu hạn. OS tự giải phóng khi process/handle kết thúc; file lock
+chỉ giữ owner metadata, không bị xóa/force-unlock. Mọi CLI/Streamlit writer tương lai
+phải dùng `transaction()`; module không cung cấp pooling hoặc transaction dài.
 Xem [Python DB API](https://duckdb.org/docs/current/clients/python/dbapi) và
 [Concurrency](https://duckdb.org/docs/current/connect/concurrency) của DuckDB.
 
@@ -102,7 +121,8 @@ Không cache/chia sẻ writer toàn cục giữa nhiều phiên Streamlit. Giữ
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
-Kỳ vọng hiện tại: **14 ca DuckDB PASS**, **28 ca toàn bộ PASS** (14 SQLite + 14 DuckDB).
+Test V4-02 bao gồm init/read/commit/rollback, path guards, nested write, process lock,
+timeout, process termination, backup và metadata version/idempotency trên `tmp_path`.
 Test kiểm tra tạo file đúng đường dẫn, không có bảng, query tham số, đóng connection,
 read-only từ chối ghi, commit, rollback do lỗi Python/SQL, init lặp giữ nguyên byte
 và record, chuỗi writer–reader, không tự tạo nguồn thiếu, giữ file hỏng, đường dẫn
@@ -111,44 +131,28 @@ Tất cả ghi test dùng `tmp_path`, không ghi vào database dự án.
 
 ## Backup an toàn và phục hồi
 
-**Chưa có DuckDB backup/restore CLI.** `src.db.backup` là utility **SQLite**, không
-được dùng cho DuckDB. Phương án giai đoạn này là backup **offline**, chỉ khi:
+`src.db.backup` vẫn là utility **SQLite** riêng. DuckDB dùng
+`src.db.duckdb.backup_database()`; helper lấy cùng writer lock với transaction, giữ
+read-only source connection khi copy, yêu cầu không có WAL, tạo tên UTC+UUID không
+ghi đè, so hash/kích thước và mở lại backup read-only để đối chiếu version/catalog.
+Backup chỉ an toàn khi mọi writer của ứng dụng tuân shared service; DBeaver/client
+ngoài service phải đóng trước bảo trì.
 
 1. Dừng tiến trình DE/writer, DBeaver/ứng dụng đang mở DuckDB và mọi tác vụ có thể
    mở lại file. Đảm bảo khoảng bảo trì không có writer khởi động trong lúc copy.
 2. Đóng sạch mọi connection ghi. Nếu còn `.wal`, dừng copy; không xoá WAL. Để người
    phụ trách mở bằng đúng phiên bản DuckDB trong lúc không có client khác, xử lý
    recovery/checkpoint và đóng sạch, rồi kiểm tra lại. Không ép checkpoint để phá transaction.
-3. Chỉ copy file `.duckdb` đã đóng sạch sang **tên mới**; không ghi đè backup cũ.
+3. Gọi `backup_database`; không tự copy hoặc ghi đè backup cũ.
 4. Mở backup read-only, kiểm tra catalog/query. Khi có dữ liệu nghiệp vụ, bổ sung
    đối chiếu schema/số dòng/nội dung theo contract trước khi coi backup đủ điều kiện phục hồi.
 
-Ví dụ thủ công dưới đây chỉ chạy **sau khi đáp ứng các điều kiện offline trên**.
-Kiểm tra WAL không tự chứng minh không có writer; người vận hành phải bảo đảm điều đó.
+Ví dụ chỉ chạy sau khi đáp ứng các điều kiện offline trên:
 
 ```powershell
 @'
-from datetime import datetime, timezone
-from pathlib import Path
-import shutil
-from uuid import uuid4
-from src.db.duckdb import DEFAULT_DATABASE, PROJECT_ROOT, connection
-
-source = DEFAULT_DATABASE
-if not source.is_file():
-    raise FileNotFoundError(source)
-if Path(str(source) + ".wal").exists():
-    raise RuntimeError("WAL present: stop and investigate; do not delete it")
-directory = PROJECT_ROOT / "data" / "backups"
-directory.mkdir(parents=True, exist_ok=True)
-stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
-target = directory / f"rohlik_{stamp}_{uuid4().hex}.duckdb"
-with source.open("rb") as src, target.open("xb") as dst:
-    shutil.copyfileobj(src, dst)
-with connection(target) as conn:
-    assert conn.execute("SELECT 42").fetchone() == (42,)
-    print("Backup tables:", conn.execute("SHOW TABLES").fetchall())
-print("Backup verified:", target)
+from src.db.duckdb import backup_database
+print(backup_database())
 '@ | .\.venv\Scripts\python.exe -
 ```
 
@@ -170,7 +174,8 @@ retention và người chịu trách nhiệm vẫn chờ thống nhất.
 | No module named src | Chạy `-m src.init_duckdb` từ root repository. |
 | Database not found | Kiểm tra đường dẫn, chạy CLI init trước; connection không tự tạo file thiếu. |
 | Could not set lock / conflicting configuration | Đóng client/tiến trình khác, kiểm tra writer đã kết thúc; chạy tuần tự. Không xoá file để né lock. |
-| Cannot execute ... read-only | Context mặc định chỉ đọc; thao tác DE được phép ghi phải chọn `read_only=False` hoặc transaction. |
+| Direct writable connections are blocked | Dùng `transaction()`; không chọn `read_only=False` để bypass lock. |
+| Timed out waiting for writer lock | Writer khác đang hoạt động; chờ hoặc xử lý owner, không xóa/force-unlock file lock. |
 | File is not a valid DuckDB database | Giữ nguyên file, kiểm tra chọn nhầm SQLite/file rỗng hay không; không xoá hoặc tạo đè. |
 | WAL còn lại sau crash | Dừng thao tác backup/copy, bảo toàn DB và WAL; điều tra recovery với phiên bản phù hợp. |
 | Permission denied | Kiểm tra quyền file/thư mục và ổ cục bộ, bảo đảm thư mục không read-only. |
@@ -188,8 +193,9 @@ git ls-files -- '*.duckdb' '*.duckdb.wal' 'data/warehouse/*'
 Lệnh cuối phải trống. Không stage file dữ liệu; không tự commit/push.
 
 - [x] DuckDB 1.5.6: init lần đầu và chạy lại thành công; file thật không có bảng.
-- [x] 14 ca DuckDB và 14 ca SQLite PASS trên môi trường hiện tại.
-- [x] Backup offline đã được test trên database tạm, không copy database dự án lần này.
+- [x] Cross-process lock/timeout/process termination được test bằng subprocess thật.
+- [x] Backup và metadata foundation được test trên database tạm; không copy database dự án.
 - [x] Git ignore được kiểm tra; SQLite source giữ nguyên.
 - [ ] Setup trên máy sạch, backup/restore vận hành thật: chưa nghiệm thu.
-- [ ] Dataset/contracts và mọi thành phần Warehouse nghiệp vụ: chờ giai đoạn sau.
+- [x] Dataset/contracts và initial landing bootstrap: đã triển khai/test trên database tạm cô lập.
+- [ ] Production load, user entry/undo và STG/Core/Mart: chờ giai đoạn sau/phê duyệt policy.

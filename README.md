@@ -10,19 +10,20 @@ Hướng dẫn setup và vận hành chính của Data Engineering:
 [Living Setup Tutorial & Technical Handover](docs/setup_tutorial.md).
 Tài liệu phân biệt hạ tầng đã kiểm chứng, xác nhận DBeaver của người dùng và roadmap chưa triển khai.
 
-Dự án đã có Python, DuckDB infrastructure, V4 registry/contract/preflight và Task08A
-provisional historical bootstrap trong DuckDB thử nghiệm riêng. Warehouse chính thức,
-landing/stg/core/mart, model integration, direct-DuckDB CSV Upload và dashboard nghiệp
-vụ chưa được triển khai. SQLite code/docs/tests được giữ làm lịch sử nhưng không còn
-thuộc critical path V4. Repository chính thức:
+Dự án đã có Python, DuckDB infrastructure V4-02, V4 registry/contract/preflight,
+V4-03 initial landing bootstrap và Task08A provisional historical bootstrap trong
+DuckDB thử nghiệm riêng. V4-03 có thể tạo đúng 14 bảng landing trên một database cô lập
+được chọn rõ ràng; production ingestion vẫn bị chặn. STG/Core/Mart, model integration,
+direct-DuckDB CSV Upload và dashboard nghiệp vụ chưa được triển khai. SQLite
+code/docs/tests được giữ làm lịch sử nhưng không còn thuộc critical path V4. Repository chính thức:
 https://github.com/MckhueVanPhuc/rohlik-data-warehouse (`main`).
 
 ## Yêu cầu và tech stack
 
 Kiến trúc V4 đã chốt: **Streamlit upload/preview/validate/confirm → DuckDB landing +
 audit trong cùng transaction**. Backend phải kiểm quyền/schema/keys/types/DQ và giữ
-lịch sử batch/soft undo. Toàn bộ chức năng nhập liệu vẫn **PLANNED**; V4-01 chỉ chốt
-contract. [CSV Upload Contract cũ](docs/csv_upload_contract.md) đã được đánh dấu
+lịch sử batch/soft undo. Initial historical CSV bootstrap đã được triển khai ở V4-03;
+upload/entry của người dùng và soft undo vẫn **PLANNED**. [CSV Upload Contract cũ](docs/csv_upload_contract.md) đã được đánh dấu
 superseded/legacy. Raw gồm 5 Kaggle CSV + 2 assumptions CSV, đều read-only.
 
 - Windows 11, PowerShell, VS Code, Git.
@@ -144,8 +145,9 @@ riêng tại `src/db/duckdb.py`. Chưa tạo schema/bảng nghiệp vụ hoặc 
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
-CLI có thể chạy lại; file đã có được xác minh read-only. Hiện có 14 ca DuckDB và
-14 ca SQLite. Quy tắc một tiến trình ghi, kiểm tra kết nối, backup offline và lỗi
+CLI có thể chạy lại; file đã có được xác minh read-only. V4-02 bổ sung shared
+cross-process writer lock, transaction guard, verified backup và metadata v1. Quy tắc
+một tiến trình ghi, kiểm tra kết nối, backup offline và lỗi
 thường gặp: [DuckDB Setup](docs/duckdb_setup.md). Streamlit dự kiến đọc published
 snapshots; exporter và Warehouse Bronze/Silver/Gold/Mart chưa triển khai.
 
@@ -205,6 +207,25 @@ adapter/config v1 riêng và vẫn chạy trên fixture. Hướng dẫn: [Source
 và [config README](config/README.md). Direct DuckDB upload/entry vẫn PLANNED; YAML
 không phải hệ thống phân quyền hoặc implementation ETL.
 
+## Task V4-02/V4-03 — DuckDB Safety và Initial Landing Bootstrap
+
+V4-02 cung cấp read-only connection, shared cross-process writer lock, transaction,
+backup an toàn và metadata v1. V4-03 dùng hạ tầng đó để preflight 7 CSV và bootstrap
+đúng 14 bảng tại 9 schema `src_*` vào database cô lập. CLI mặc định chỉ dry-run:
+
+```powershell
+.\.venv\Scripts\python.exe -m src.ingest_landing
+```
+
+Write cần `--execute --database <isolated.duckdb>` rõ ràng. Target production
+`data/warehouse/rohlik.duckdb` bị từ chối trong V4-03; mọi `update_policy` vẫn
+`PENDING_CONFIRMATION`. Rerun chỉ NO_OP sau khi metadata, batch-owned row counts và
+nội dung canonical cùng khớp; dòng thuộc batch nhập tay khác không bị xóa hoặc thay thế.
+Chưa có production load, user-facing upload/entry, STG/Core/Mart hoặc soft-undo command.
+Handover và đề xuất dừng DE sau V4-03 được ghi riêng tại
+[V4-03 Landing handover](docs/v4_03_landing_handover.md); tài liệu V4 gốc vẫn được giữ
+nguyên để truy vết và đề xuất này không được coi là hoàn thành toàn bộ pipeline V4.
+
 ## Task 08A — Provisional Historical Source Bootstrap
 
 Sáu CSV lịch sử của registry v1 có thể nạp nguyên trạng vào database thử nghiệm
@@ -221,8 +242,8 @@ Task08A, không phải trạng thái production V4.
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
-Lần xác minh hiện tại: dry run, execute, validate và rerun no-op đều SUCCESS; 21 test
-Task 08A và **109 test toàn bộ PASS**. Báo cáo JSON/database đều được ignore. Xem
+Tại mốc hoàn thành Task 08A: dry run, execute, validate và rerun no-op đều SUCCESS;
+21 test Task 08A và 109 test toàn bộ khi đó PASS. Báo cáo JSON/database đều được ignore. Xem
 [Historical Source Bootstrap](docs/bootstrap_sources.md) cho bảng, row counts,
 calendar rule, DBeaver queries, recovery và ranh giới Task 08B/09.
 
