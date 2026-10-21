@@ -5,6 +5,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from uuid import uuid4
 
 import duckdb
 
@@ -90,6 +91,97 @@ _EXPECTED_COLUMNS = {
 
 class MetadataVersionError(RuntimeError):
     """The on-disk metadata version/shape is incompatible with this code."""
+
+
+def source_batch_history(
+    conn: duckdb.DuckDBPyConnection, source_id: str,
+) -> list[tuple[str, str]]:
+    """Return fingerprint/status history using the caller's active transaction."""
+    return conn.execute(
+        "SELECT source_fingerprint, status FROM meta.source_batches WHERE source_id = ?",
+        [source_id],
+    ).fetchall()
+
+
+def start_source_batch(
+    conn: duckdb.DuckDBPyConnection,
+    *,
+    batch_id: str,
+    source_id: str,
+    source_path: str,
+    source_fingerprint: str,
+    contract_version: int,
+    started_at: str,
+    source_row_count: int,
+) -> None:
+    """Record a running batch without opening a nested writer connection."""
+    conn.execute(
+        """INSERT INTO meta.source_batches
+           (batch_id, source_id, source_path, source_fingerprint, contract_version,
+            status, started_at, completed_at, source_row_count, error_message)
+           VALUES (?, ?, ?, ?, ?, 'RUNNING', ?, NULL, ?, NULL)""",
+        [batch_id, source_id, source_path, source_fingerprint, contract_version,
+         started_at, source_row_count],
+    )
+
+
+def complete_source_batch(
+    conn: duckdb.DuckDBPyConnection, *, batch_id: str, completed_at: str,
+) -> None:
+    """Mark a batch complete inside the caller's landing transaction."""
+    conn.execute(
+        "UPDATE meta.source_batches SET status = 'COMPLETED', completed_at = ? WHERE batch_id = ?",
+        [completed_at, batch_id],
+    )
+
+
+def record_batch_status(
+    conn: duckdb.DuckDBPyConnection,
+    *,
+    batch_id: str,
+    status: str,
+    occurred_at: str,
+    actor: str,
+    reason: str | None,
+) -> None:
+    """Append an immutable batch status event in the active transaction."""
+    conn.execute(
+        "INSERT INTO meta.batch_status_events VALUES (?, ?, ?, ?, ?, ?)",
+        [uuid4().hex, batch_id, status, occurred_at, actor, reason],
+    )
+
+
+def record_table_load(
+    conn: duckdb.DuckDBPyConnection,
+    *,
+    batch_id: str,
+    table_name: str,
+    source_row_count: int,
+    loaded_row_count: int,
+    recorded_at: str,
+) -> None:
+    """Record a reconciled landing projection; rejected rows are never hidden."""
+    conn.execute(
+        "INSERT INTO meta.table_loads VALUES (?, ?, ?, ?, 0, 'COMPLETED', ?)",
+        [batch_id, table_name, source_row_count, loaded_row_count, recorded_at],
+    )
+
+
+def record_entry_audit(
+    conn: duckdb.DuckDBPyConnection,
+    *,
+    batch_id: str,
+    actor: str,
+    action: str,
+    target_table: str,
+    occurred_at: str,
+    details_json: str,
+) -> None:
+    """Append a future-soft-undo-compatible audit record in the active transaction."""
+    conn.execute(
+        "INSERT INTO meta.entry_audit_events VALUES (?, ?, ?, ?, ?, ?, ?)",
+        [uuid4().hex, batch_id, actor, action, target_table, occurred_at, details_json],
+    )
 
 
 def _validate_shapes(conn: duckdb.DuckDBPyConnection) -> None:
