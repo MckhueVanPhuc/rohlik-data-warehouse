@@ -1,298 +1,664 @@
 # Rohlik Decision Hub — V4 Local-first
 
-## Streamlit v3.0 — Admin-only dashboard
+Rohlik Decision Hub là repository kết hợp Data Engineering V4 và ứng dụng Streamlit
+v3.0 phục vụ dashboard nội bộ. Runtime Streamlit hiện tại là **admin-only,
+dashboard-only và read-only**.
 
-Ứng dụng chính thức tại `app/main.py` hiện là dashboard **admin-only, dashboard-only,
-read-only**. Chỉ account cấu hình `admin_local` được đăng nhập; Argon2id, rate limiting,
-opaque server-side sessions, timeout và logout được giữ nguyên. RBAC 7 role, Data Entry,
-CSV Upload, Undo, CRUD và pipeline/model execution đã bị loại khỏi Streamlit.
+> Hướng dẫn này dành cho Windows 11, PowerShell và Python 3.13 64-bit. Người clone mới
+> có thể cài môi trường, chạy test và mở ứng dụng chỉ bằng các bước bên dưới. Credential,
+> raw data và DuckDB thật không nằm trên Git và phải được bàn giao riêng khi cần.
 
-Dashboard có đúng 8 trang và chỉ đọc năm allowlisted `mart.*` qua DuckDB read-only.
-Warehouse/mart/model chưa sẵn sẽ hiển thị readiness tương ứng, không tạo dữ liệu giả và
-không tự chạy pipeline. Xem [Dashboard Runbook](docs/dashboard_v3_runbook.md),
-[Authentication Runbook](docs/authentication_runbook.md) và
-[Local/LAN Runbook](docs/streamlit_local_lan_runbook.md).
+## Trạng thái hiện tại
+
+### Streamlit v3.0
+
+- Entry point chính thức: `app/main.py`.
+- Chỉ username local `admin_local` được đăng nhập.
+- Argon2id, rate limiting, opaque server-side sessions, idle timeout và logout.
+- Đúng 8 dashboard pages.
+- Chỉ đọc 5 reporting marts được allowlist qua DuckDB read-only.
+- Không có 7-role RBAC, CSV Upload, Data Entry, Undo, CRUD hoặc pipeline/model execution.
+- BT1–BT8 chưa sẵn sàng; UI hiển thị `PENDING_MODEL`, không tạo forecast giả.
+- Localhost là mặc định; LAN chỉ bật thủ công sau khi auth local đã được nghiệm thu.
+
+### Data Engineering V4
+
+- Source registry V4: 7 active sources.
+- Business contract: 14 landing tables trong 9 schema `src_*`.
+- Có DuckDB safety layer, writer lock, transaction, backup và metadata.
+- Có initial landing ingestion vào database cô lập.
+- STG/Core/5 Mart chính thức và model adapters chưa hoàn tất.
+- Production ingestion vẫn fail closed khi update policies còn chờ xác nhận.
+
+### Dashboard readiness
+
+| Trạng thái | Ý nghĩa |
+| --- | --- |
+| `WAREHOUSE_NOT_READY` | File warehouse chưa tồn tại hoặc không mở read-only được. |
+| `TABLE_NOT_AVAILABLE` | Warehouse tồn tại nhưng mart của trang chưa được publish. |
+| `DATA_READY` | Mart tồn tại; filter, aggregate và pagination đọc dữ liệu thật. |
+| `PENDING_MODEL` | Output BT1–BT8 chưa được bàn giao/kiểm định. |
+
+Warehouse chính hiện chưa có đủ 5 reporting marts. Việc ứng dụng hiển thị readiness
+thay vì KPI là hành vi đúng, không phải lỗi setup.
+
+## Ba mức sử dụng repository
+
+| Mục tiêu | Chỉ cần Git? | Thành phần bổ sung |
+| --- | --- | --- |
+| Chạy code và test | Có | Không. Test dùng file/database tạm. |
+| Mở màn hình login | Có | Không. |
+| Đăng nhập dashboard | Không | `data/auth/users.json` và password `admin_local`. |
+| Xem dashboard có dữ liệu | Không | Credential và `rohlik.duckdb` đã publish đủ marts. |
+| Làm Data Engineering | Không | 7 raw sources đúng registry, bàn giao qua kênh riêng. |
+
+## 1. Điều kiện máy nhận
+
+### Bắt buộc
+
+- Windows 11;
+- PowerShell;
+- Git for Windows;
+- Python 3.13 64-bit;
+- mạng để clone repository và tải dependencies;
+- quyền đọc/ghi thư mục làm việc.
+
+### Tùy chọn
+
+- VS Code và Microsoft Python extension;
+- DBeaver để kiểm tra DuckDB sau khi writer đã đóng;
+- Codex hoặc công cụ phát triển khác, không bắt buộc cho runtime.
+
+Kiểm tra công cụ:
 
 ```powershell
-# Localhost mặc định
-.\.venv\Scripts\python.exe -m streamlit run app/main.py
-
-# LAN opt-in; HTTP chỉ dành cho mạng tin cậy/dữ liệu không nhạy cảm
-.\scripts\start_streamlit_lan.ps1
+git --version
+Get-Command git -ErrorAction Stop
+Get-Command py -ErrorAction SilentlyContinue
+Get-Command python -All -ErrorAction SilentlyContinue
+where.exe python
+$pyLauncher = Get-Command py -ErrorAction SilentlyContinue
+if ($pyLauncher) { py -0p } else { Write-Output 'Python Launcher chưa được cài/nhận diện.' }
 ```
 
-Các mô tả Streamlit upload/write phía dưới là lịch sử DE/V4 hoặc kế hoạch 2.0 đã bị
-Streamlit v3.0 supersede; chúng không mô tả runtime UI hiện tại.
+`py -0p` liệt kê các Python mà launcher nhận diện. Nếu `python --version` đang là 3.11,
+3.12 hoặc 3.14, không cần gỡ phiên bản đó; cài thêm Python 3.13 64-bit và dùng riêng cho
+repository này.
 
-Source of truth hiện hành: [Rohlik DE Local-first V4](Rohlik_DE_Local_First_V4_HR_Header_Dong_Bo.md).
-Task **V4-01 Source Registry & Business Contract Foundation** đã triển khai cấu hình,
-validation và read-only preflight; chưa tạo/nạp Warehouse. Xem
-[V4 Source Registry](docs/source_registry.md), [settings](config/settings.yaml),
-[7-source registry](config/sources.yaml) và [14-table contract](config/contract.yaml).
+## 2. Clone repository
 
-Hướng dẫn setup và vận hành chính của Data Engineering:
-[Living Setup Tutorial & Technical Handover](docs/setup_tutorial.md).
-Tài liệu phân biệt hạ tầng đã kiểm chứng, xác nhận DBeaver của người dùng và roadmap chưa triển khai.
+### Máy chưa có repository
 
-Dự án đã có Python, DuckDB infrastructure V4-02, V4 registry/contract/preflight,
-V4-03 initial landing bootstrap và Task08A provisional historical bootstrap trong
-DuckDB thử nghiệm riêng. V4-03 có thể tạo đúng 14 bảng landing trên một database cô lập
-được chọn rõ ràng; production ingestion vẫn bị chặn. STG/Core/Mart, model integration,
-direct-DuckDB CSV Upload và dashboard nghiệp vụ chưa được triển khai. SQLite
-code/docs/tests được giữ làm lịch sử nhưng không còn thuộc critical path V4. Repository chính thức:
-https://github.com/MckhueVanPhuc/rohlik-data-warehouse (`main`).
+```powershell
+Set-Location -LiteralPath "$env:USERPROFILE\Documents"
+git clone https://github.com/MckhueVanPhuc/rohlik-data-warehouse.git
+Set-Location -LiteralPath .\rohlik-data-warehouse
+git switch main
+git pull --ff-only origin main
+git status --short --branch
+git log -1 --oneline
+```
 
-## Yêu cầu và tech stack
+Kỳ vọng branch là `main` và working tree sạch. Nếu repository private, người nhận cần
+được cấp quyền GitHub trước. Không lưu GitHub token trong repository, `.env`, tài liệu
+hoặc script.
 
-Kiến trúc V4 đã chốt: **Streamlit upload/preview/validate/confirm → DuckDB landing +
-audit trong cùng transaction**. Backend phải kiểm quyền/schema/keys/types/DQ và giữ
-lịch sử batch/soft undo. Initial historical CSV bootstrap đã được triển khai ở V4-03;
-upload/entry của người dùng và soft undo vẫn **PLANNED**. [CSV Upload Contract cũ](docs/csv_upload_contract.md) đã được đánh dấu
-superseded/legacy. Raw gồm 5 Kaggle CSV + 2 assumptions CSV, đều read-only.
+### Máy đã có repository
 
-- Windows 11, PowerShell, VS Code, Git.
-- Python **3.13** (môi trường hiện tại: **3.13.15**) và virtual environment `.venv`.
-- DuckDB, Pandas, PyArrow: công cụ xử lý dữ liệu cho giai đoạn sau.
-- PyYAML, Pydantic: cấu hình và kiểm tra dữ liệu cho giai đoạn sau.
-- Streamlit: giao diện dự kiến; Pytest: kiểm thử.
-- Danh sách thư viện nằm trong `requirements.txt`; hiện không khóa phiên bản.
+Không chạy `git clone` đè lên thư mục cũ. Mở đúng root rồi kiểm tra trước:
 
-## Tạo môi trường trên Windows
+```powershell
+# Thay đường dẫn ví dụ bằng vị trí repository thực tế.
+Set-Location -LiteralPath 'C:\duong-dan\rohlik-data-warehouse'
+Test-Path -LiteralPath .\.git
+git remote -v
+git status --short --branch
+```
 
-Chạy trong thư mục gốc dự án. Chỉ tạo `.venv` nếu chưa có:
+Nếu có thay đổi local, không pull/checkout đè lên chúng; commit, stash có chủ đích hoặc
+trao đổi với người sở hữu thay đổi trước. Chỉ khi working tree sạch và remote đúng:
+
+```powershell
+git switch main
+git pull --ff-only origin main
+```
+
+## 3. Chọn đúng Python
+
+```powershell
+py -0p
+py -3.13 --version
+py -3.13 -c "import sys, struct; print(sys.executable); print(sys.version); print('bits:', struct.calcsize('P') * 8)"
+```
+
+Chỉ tiếp tục khi output là Python `3.13.x` và `bits: 64`.
+
+### Nếu máy chỉ có Python phiên bản khác
+
+Giữ nguyên Python đang dùng cho dự án khác. Cài thêm Python 3.13 64-bit side-by-side từ
+nguồn chính thức của Python, đóng terminal/VS Code cũ, mở lại và chạy `py -0p`. Không
+thay interpreter toàn hệ thống nếu `py -3.13` đã hoạt động.
+
+### Nếu không có `py` launcher
+
+Kiểm tra vị trí cài theo user:
+
+```powershell
+$python313 = Join-Path $env:LOCALAPPDATA 'Programs\Python\Python313\python.exe'
+Test-Path -LiteralPath $python313
+& $python313 --version
+& $python313 -c "import struct; print(struct.calcsize('P') * 8)"
+```
+
+Nếu Python nằm ở vị trí khác, dùng đường dẫn `python.exe` thực tế đã xác minh. Không dùng
+Microsoft Store alias chỉ để vượt qua bước này.
+
+## 4. Tạo virtual environment
+
+### Clone mới, chưa có `.venv`
 
 ```powershell
 py -3.13 -m venv .venv
 ```
 
-Tại máy hiện tại, launcher `py` chưa nhận bản Python đã cài. Có thể dùng đường dẫn đã xác nhận trong cấu hình `.venv` (máy khác cần điều chỉnh đường dẫn):
+Hoặc khi không có launcher:
 
 ```powershell
-& "$env:LOCALAPPDATA\Programs\Python\Python313\python.exe" -m venv .venv
+& $python313 -m venv .venv
 ```
 
-Chọn `.venv\Scripts\python.exe` bằng **Python: Select Interpreter** trong VS Code. Có thể kích hoạt bằng ` .\.venv\Scripts\Activate.ps1`; nếu PowerShell chặn script, dùng trực tiếp Python trong `.venv` như các lệnh dưới đây.
+Không copy `.venv` từ máy khác. Virtual environment chứa đường dẫn interpreter và binary
+phụ thuộc máy cục bộ.
 
-## Cài thư viện
+### Repository đã có `.venv`
+
+Kiểm tra trước khi sử dụng:
 
 ```powershell
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+Test-Path -LiteralPath .\.venv\Scripts\python.exe
+Get-Content -LiteralPath .\.venv\pyvenv.cfg
+.\.venv\Scripts\python.exe --version
+.\.venv\Scripts\python.exe -c "import sys, struct; print(sys.executable); print(sys.base_prefix); print('bits:', struct.calcsize('P') * 8)"
 ```
 
-## Kiểm tra môi trường
+Nếu không phải Python 3.13 64-bit, đóng process đang dùng venv và giữ bản cũ ngoài repo:
+
+```powershell
+$projectRoot = (Resolve-Path -LiteralPath .).Path
+$venvPath = (Resolve-Path -LiteralPath .\.venv -ErrorAction Stop).Path
+if ($venvPath -ne (Join-Path $projectRoot '.venv')) { throw 'Sai đường dẫn .venv; dừng thao tác.' }
+$savedVenv = Join-Path $env:TEMP ("rohlik-venv-backup-" + [guid]::NewGuid().ToString('N'))
+Move-Item -LiteralPath $venvPath -Destination $savedVenv
+Write-Output "Venv cũ được giữ tại: $savedVenv"
+py -3.13 -m venv .venv
+```
+
+Nếu không có `py`, thay dòng cuối bằng đường dẫn Python 3.13 đã xác minh.
+
+### Activate và VS Code
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+Nếu PowerShell chặn activate, dùng trực tiếp `.venv\Scripts\python.exe`; không cần hạ
+execution policy toàn máy.
+
+Trong VS Code: `Ctrl+Shift+P` → **Python: Select Interpreter** → chọn
+`<repo>\.venv\Scripts\python.exe`, sau đó mở terminal mới.
+
+Xác minh:
 
 ```powershell
 .\.venv\Scripts\python.exe --version
-.\.venv\Scripts\python.exe -c "import sys; print(sys.executable); print('Virtual environment:', sys.prefix != sys.base_prefix)"
-.\.venv\Scripts\python.exe -c "import duckdb, pandas, pyarrow, yaml, streamlit, pydantic, pytest; print('All imports OK')"
+.\.venv\Scripts\python.exe -c "import sys, struct; print(sys.executable); print('venv:', sys.prefix != sys.base_prefix); print('bits:', struct.calcsize('P') * 8)"
+.\.venv\Scripts\python.exe -m pip --version
+```
+
+Python và pip phải cùng nằm dưới `<repo>\.venv`.
+
+## 5. Cài dependencies
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe -m pip check
+```
+
+Kiểm tra import:
+
+```powershell
+.\.venv\Scripts\python.exe -c "import argon2, duckdb, pandas, plotly, pyarrow, yaml, streamlit, pydantic, pytest; print('All imports OK')"
 .\.venv\Scripts\python.exe -m streamlit --version
 .\.venv\Scripts\python.exe -c "import duckdb; c=duckdb.connect(':memory:'); print(c.execute('SELECT 42').fetchone()); c.close()"
-git --version
-git status --short
-git ls-files
-git check-ignore -v -- .venv/Scripts/python.exe sales_test.csv data/raw/orders/train.csv data/warehouse/probe.duckdb .env .streamlit/secrets.toml
 ```
 
-Truy vấn trên chỉ chạy trong bộ nhớ, không tạo database vật lý. Các đường dẫn `probe` chỉ dùng kiểm tra quy tắc ignore, không cần tạo file.
+`requirements.txt` hiện chưa khóa phiên bản. Nếu cần tái lập chính xác giữa nhiều máy,
+lưu output `pip freeze` trong artifact bàn giao và cân nhắc bổ sung lockfile riêng.
 
-## Cấu trúc thư mục hiện tại
+### Ranh giới môi trường Machine Learning
+
+`.venv` Python 3.13 ở root chỉ là môi trường đã nghiệm thu cho Streamlit, Data
+Engineering và test hiện có. Không cài toàn bộ thư viện BT1–BT8 vào venv này.
+
+Notebook của Data Science có thể được phát triển trên Google Colab/Linux với Python
+3.10 hoặc 3.11. Các package như `prophet`, `xgboost`, `lightgbm`, `tensorflow`, `torch`,
+`statsmodels`, `optuna` hoặc `pulp` phụ thuộc cụ thể vào phiên bản package, Python, hệ
+điều hành, CPU/GPU và wheel được phát hành. Không giả định một package chạy trên Colab
+sẽ cài được trên Python 3.13/Windows; phải kiểm tra theo từng model handover.
+
+Nguyên tắc:
+
+- không downgrade `.venv` root để chữa lỗi một model;
+- không trộn site-packages của Streamlit/DE và ML;
+- mỗi BT dùng môi trường riêng, đúng Python/OS đã được model owner xác nhận;
+- nếu cần parity với Colab, ưu tiên môi trường Linux riêng như Colab hoặc WSL2 đã được
+  nhóm phê duyệt, không ép cài vào Windows root venv;
+- dashboard không import/chạy model; nó chỉ đọc output đã được kiểm định và publish;
+- không thêm ML dependencies vào root `requirements.txt` trước khi có source, lock,
+  artifact và test tái lập thực tế.
+
+Ví dụ chỉ sau khi BT1 xác nhận dùng Python 3.11 trên Windows và các wheel tương thích:
+
+```powershell
+$mlEnv = Join-Path $env:USERPROFILE '.virtualenvs\rohlik-bt1-py311'
+py -3.11 -m venv $mlEnv
+& "$mlEnv\Scripts\python.exe" -m pip install --upgrade pip
+& "$mlEnv\Scripts\python.exe" -m pip install -r .\models\bt1\requirements.txt
+& "$mlEnv\Scripts\python.exe" -m pip check
+```
+
+Đường dẫn `models\bt1\requirements.txt` chỉ là contract kỳ vọng trong tương lai; không
+chạy ví dụ khi model handover chưa cung cấp file thật. Nếu model chỉ chạy trên Linux,
+không dùng lệnh Windows này.
+
+Mỗi model owner phải bàn giao tối thiểu:
+
+| Nhóm bằng chứng | Nội dung bắt buộc |
+| --- | --- |
+| Runtime | OS, Python exact version, CPU/GPU, CUDA nếu có. |
+| Dependencies | File requirements/lock từ môi trường chạy thật và lệnh cài. |
+| Source | Notebook/source revision, entry command, seed và cấu hình. |
+| Input | Dataset version, schema, keys, grain, units, date/as-of và null policy. |
+| Artifact | Model/preprocessor files, format, loader và checksum. |
+| Output | Schema, keys, grain, horizon, units, allowed/null values. |
+| Verification | Metrics, tolerance và một lần tái lập trên môi trường đích. |
+
+BT1–BT8 hiện vẫn `PENDING_MODEL_HANDOVER`; chưa có môi trường ML nào được tuyên bố hỗ
+trợ production trong repository.
+
+## 6. Chạy test
+
+Không cần credential, raw CSV hoặc database thật để chạy test:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest -q
+.\.venv\Scripts\python.exe -m pip check
+```
+
+Baseline tại lần cập nhật README là `207 passed`. Sau commit mới, số test có thể tăng;
+điều kiện nghiệm thu là không có test fail.
+
+Nếu Windows giữ lock thư mục temp cũ:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest -q --basetemp=.pytest_tmp_handover
+```
+
+Không xóa thư mục không xác định để chữa lỗi test.
+
+## 7. File local không có trên Git
+
+`.gitignore` cố ý loại các thành phần sau:
+
+- `.venv/`, cache Python và pytest temp;
+- `.env`, `.streamlit/secrets.toml`, private keys và credential phổ biến;
+- `data/auth/`;
+- `data/raw/`;
+- `data/warehouse/` và mọi `*.duckdb`;
+- backup, export, acceptance output và log;
+- CSV nguồn.
+
+Kiểm tra:
+
+```powershell
+git check-ignore -v -- `
+  .venv/Scripts/python.exe `
+  data/auth/users.json `
+  data/raw/orders/train.csv `
+  data/warehouse/rohlik.duckdb `
+  .env `
+  .streamlit/secrets.toml
+```
+
+Không sửa `.gitignore` để commit các file này. Credential, raw data và database phải đi
+qua kênh bàn giao bảo mật/được phê duyệt.
+
+## 8. Provision tài khoản `admin_local`
+
+### Ràng buộc
+
+- Username duy nhất: `admin_local`.
+- Cấu hình không chứa secret: `config/auth.yaml`.
+- Credential store: `data/auth/users.json`.
+- CLI fail closed nếu account chưa tồn tại; không tự tạo hoặc reset admin.
+
+Do `users.json` không nằm trên Git, clone mới chỉ mở được màn hình login nhưng chưa thể
+đăng nhập.
+
+### Bàn giao credential
+
+Người phụ trách chuyển `data/auth/users.json` qua kênh bảo mật. Password được truyền qua
+kênh khác. Không gửi file hoặc password qua commit, issue, screenshot hay log.
+
+Trên máy nhận:
+
+```powershell
+New-Item -ItemType Directory -Force -Path .\data\auth | Out-Null
+# Đặt users.json được bàn giao vào .\data\auth\users.json.
+git check-ignore -v -- data/auth/users.json
+.\.venv\Scripts\python.exe -m scripts.create_user status
+```
+
+Kỳ vọng output chỉ có username và enabled state, không có password hash. Sau khi nhận:
+
+```powershell
+.\.venv\Scripts\python.exe -m scripts.create_user change-password
+```
+
+Password được nhập bằng prompt ẩn. Các lệnh quản trị khác:
+
+```powershell
+.\.venv\Scripts\python.exe -m scripts.create_user disable
+.\.venv\Scripts\python.exe -m scripts.create_user enable
+.\.venv\Scripts\python.exe -m scripts.create_user status
+```
+
+Nếu muốn máy mới tự tạo admin mà không chuyển credential store, cần triển khai một
+first-time bootstrap flow riêng; repository hiện chưa có flow này.
+
+## 9. Chạy dashboard local
+
+```powershell
+.\.venv\Scripts\python.exe -m streamlit run app/main.py
+```
+
+Mở `http://127.0.0.1:8501` và đăng nhập bằng `admin_local`.
+
+Checklist local:
+
+- anonymous/direct URL chỉ thấy login;
+- login/logout hoạt động;
+- có đúng 8 pages;
+- sidebar hiển thị `LOCAL`;
+- không có upload, data entry, Undo, CRUD hoặc pipeline/model action;
+- thiếu warehouse/mart/model được báo bằng readiness;
+- không có KPI hoặc forecast giả.
+
+Dừng bằng `Ctrl+C`. Không dùng `app_smoke.py`; đó là entry point lịch sử.
+
+## 10. Raw data cho Data Engineering
+
+Người chỉ chạy test/dashboard shell không cần raw data. Người làm Data Engineering cần
+nhận đúng 7 active sources:
 
 ```text
-rohlik-data-warehouse/
-├── .git/                     # repository cục bộ
-├── .venv/                    # môi trường Python, được ignore
-├── config/
-├── data/
-│   ├── raw/
-│   │   ├── orders/            # CSV gốc hiện có
-│   │   └── sales/             # CSV gốc hiện có
-│   ├── warehouse/
-│   ├── published/
-│   ├── backups/
-│   └── exports/
-├── docs/
-├── logs/
-├── src/
-│   ├── models/
-│   └── services/
-├── tests/
-├── .gitignore
-├── README.md
-└── requirements.txt
+data/raw/orders/train.csv
+data/raw/sales/sales_train.csv
+data/raw/sales/inventory.csv
+data/raw/sales/calendar.csv
+data/raw/sales/test_weights.csv
+data/raw/assumptions/cost_params.csv
+data/raw/assumptions/workforce_params.csv
 ```
 
-Thư mục gốc còn có CSV `sales_test.csv`, `test.csv`, `test_calendar.csv` cùng các tài liệu MD, DOCX và TSV có sẵn. CSV được ignore; dữ liệu và tài liệu gốc được giữ nguyên. Các thư mục trống không được Git lưu tự động.
+`config/sources.yaml` là source of truth cho path, SHA-256, row count, headers, types,
+business keys và checks. Không chỉnh raw CSV hoặc sửa registry để hợp thức hóa file khác.
 
-## Phân công dự kiến sau khi A1 được phê duyệt
-
-| Vai trò | Phạm vi dự kiến |
-| --- | --- |
-| E1 Data Engineer | Xác nhận nguồn dữ liệu, phụ trách xử lý dữ liệu và kho dữ liệu sau khi chốt yêu cầu. |
-| Streamlit | Xây giao diện sử dụng đầu ra dữ liệu đã được thống nhất. |
-| ML | Xác định bài toán và xây mô hình sau khi dữ liệu, mục tiêu và tiêu chí đánh giá được phê duyệt. |
-
-Phạm vi A1 kết thúc ở setup và kiểm tra môi trường. Chờ phê duyệt trước khi chuyển sang phần tiếp theo.
-
-## Quy tắc Git và dữ liệu cục bộ
-
-`.gitignore` bỏ qua môi trường, cache, CSV, database, đầu ra dữ liệu, log và các tên file secrets phổ biến. File nhạy cảm có tên khác cần được rà soát trước khi stage; ignore không tự loại file đã được theo dõi khỏi Git history. Chỉ stage từng file đã kiểm tra. Remote `origin` trỏ tới repository chính thức nêu trên.
-
-## SQLite Setup — SUPERSEDED/LEGACY
-
-Không dùng SQLite làm tầng nhập liệu V4. Hạ tầng lịch sử dùng thư viện chuẩn `sqlite3`:
-database cục bộ `data/input.db`, WAL,
-busy timeout 5000 ms và foreign keys bật cho mỗi connection Python mới. Chưa tạo bảng
-nghiệp vụ; schema chờ bằng chứng dữ liệu và quyết định nghiệp vụ được duyệt. Workflow
-Data Contract BT1–BT8 đã RETIRED. Các phần mô tả A1 phía trên là mốc setup ban đầu.
+Sau khi đặt file:
 
 ```powershell
-.\.venv\Scripts\python.exe -m src.init_sqlite
-.\.venv\Scripts\python.exe -m pytest -q
-.\.venv\Scripts\python.exe -m src.db.backup
-```
-
-Khởi tạo có thể chạy lại, không xoá dữ liệu. Module dùng chung cho backend/Streamlit
-nằm tại `src/db/sqlite.py`; backup dùng SQLite Backup API và kiểm tra integrity.
-Hướng dẫn DBeaver, transaction, backup và xử lý lỗi: [SQLite Setup](docs/sqlite_setup.md).
-Database nằm trên máy chủ cục bộ; người dùng truy cập ứng dụng qua LAN.
-Hoàn thành giai đoạn này thì chờ nghiệm thu, chưa chuyển sang Data Warehouse.
-
-## DuckDB Infrastructure Setup
-
-Đã có database rỗng `data/warehouse/rohlik.duckdb`, module đọc/ghi và transaction
-riêng tại `src/db/duckdb.py`. Chưa tạo schema/bảng nghiệp vụ hoặc nạp CSV.
-
-```powershell
-.\.venv\Scripts\python.exe -m src.init_duckdb
-.\.venv\Scripts\python.exe -m pytest tests/test_duckdb.py -q
-.\.venv\Scripts\python.exe -m pytest -q
-```
-
-CLI có thể chạy lại; file đã có được xác minh read-only. V4-02 bổ sung shared
-cross-process writer lock, transaction guard, verified backup và metadata v1. Quy tắc
-một tiến trình ghi, kiểm tra kết nối, backup offline và lỗi
-thường gặp: [DuckDB Setup](docs/duckdb_setup.md). Streamlit dự kiến đọc published
-snapshots; exporter và Warehouse Bronze/Silver/Gold/Mart chưa triển khai.
-
-## Model Integration — hướng dẫn và bàn giao kỹ thuật (PLANNED)
-
-- [Model Integration Guide BT1–BT8](docs/model_integration_contract.md): ranh giới DE/ML/người tích hợp, input/output, execution và phụ thuộc tham khảo chưa xác nhận.
-- [Model Handover Checklist](docs/model_handover_checklist.md): notebook và toàn bộ file liên quan, thông tin môi trường và bảng theo dõi nhận bàn giao.
-
-Đây là tài liệu kỹ thuật DRAFT; xác minh trực tiếp từ notebook/source/output/artifact,
-không yêu cầu biểu mẫu Data Contract riêng. Chưa có Model Runner, chuyển đổi notebook,
-training hoặc tích hợp Streamlit. Gold/Data Mart và dataset chính thức vẫn chờ xác nhận.
-
-## Task 06 — Source Profiling, Dictionary và V3 Gap Analysis
-
-Đã có CLI chỉ phân tích sáu CSV lịch sử bằng DuckDB `:memory:`, không mở SQLite
-hoặc DuckDB nghiệp vụ, không sửa nguồn và không đọc CSV test Kaggle:
-
-```powershell
-.\.venv\Scripts\python.exe -m src.profile_sources
-.\.venv\Scripts\python.exe -m pytest tests/test_profile_sources.py -q
-.\.venv\Scripts\python.exe -m pytest -q
-```
-
-Summary JSON được ghi vào `data/exports/source_profiling/profile.json` (được ignore);
-mọi đường dẫn nguồn tính từ vị trí project root. CLI báo SUCCESS sau kiểm tra hash
-nguồn trước/sau; thiếu/lỗi nguồn báo FAILED/exit 1, không âm thầm bỏ qua.
-Đã chạy đầy đủ trên dữ liệu hiện tại; 10 test profiling và 38 test toàn bộ PASS.
-
-- [Data Dictionary: 64 cột thực tế](docs/data_dictionary.md).
-- [Profiling Report và gap với v3](docs/data_profiling_report.md).
-- [Mapping 14 Source Tables](docs/source_mapping.md): 12 bảng có source fields,
-  Finance cost/HR workforce MISSING; tất cả schema nghiệp vụ còn cần xác nhận.
-- [Data Quality rule specifications](docs/data_quality_rules.md): thiết kế cho pipeline sau này.
-
-Ở mốc Task 06 chưa tạo Source Registry, Source Tables, ETL hoặc Warehouse nghiệp vụ.
-Nội dung Task06 là evidence lịch sử; kiến trúc nhập liệu SQLite trong tài liệu cũ đã
-được V4 thay bằng direct DuckDB transaction.
-
-## Task V4-01 — Source Registry & Business Contract Foundation
-
-[config/sources.yaml](config/sources.yaml) mô tả đúng 7 nguồn active (5 Kaggle + 2
-assumptions); [config/contract.yaml](config/contract.yaml) mô tả đúng 14 bảng tại 9
-schema `src_*`. Loader PyYAML/Pydantic và DuckDB `:memory:` preflight nằm tại
-`src/config/`. Nó không mở/ghi warehouse và không tạo Source Tables.
-
-```powershell
+git check-ignore -v -- data/raw/orders/train.csv
 .\.venv\Scripts\python.exe -m src.validate_source_registry
-.\.venv\Scripts\python.exe -m src.validate_source_registry --metadata-only --json
-.\.venv\Scripts\python.exe -m pytest tests/test_source_registry.py -q
-.\.venv\Scripts\python.exe -m pytest -q
+.\.venv\Scripts\python.exe -m src.ingest_landing
 ```
 
-CLI mặc định kiểm đủ tồn tại/hash/BOM/header/type/row count/key/duplicates/ranges của
-7 file; `--metadata-only` chỉ kiểm cấu hình. Finance/HR hiện diện và được đánh dấu
-`ASSUMED`; toàn bộ update policy vẫn `PENDING_CONFIRMATION`. Task08A lịch sử dùng
-adapter/config v1 riêng và vẫn chạy trên fixture. Hướng dẫn: [Source Registry V4](docs/source_registry.md)
-và [config README](config/README.md). Direct DuckDB upload/entry vẫn PLANNED; YAML
-không phải hệ thống phân quyền hoặc implementation ETL.
+Lệnh `src.ingest_landing` không có `--execute` chỉ preflight read-only.
 
-## Task V4-02/V4-03 — DuckDB Safety và Initial Landing Bootstrap
+`data/raw/orders/train_calendar.csv` thuộc Task08A lịch sử, không phải active source của
+V4 pipeline. Chỉ bàn giao khi cần tái hiện workflow lịch sử.
 
-V4-02 cung cấp read-only connection, shared cross-process writer lock, transaction,
-backup an toàn và metadata v1. V4-03 dùng hạ tầng đó để preflight 7 CSV và bootstrap
-đúng 14 bảng tại 9 schema `src_*` vào database cô lập. CLI mặc định chỉ dry-run:
+## 11. DuckDB và reporting marts
+
+Dashboard mặc định đọc `data/warehouse/rohlik.duckdb` bằng connection read-only và chỉ
+cho phép năm object:
+
+```text
+mart.sales_orders_day
+mart.ops_warehouse_day
+mart.category_sku_day
+mart.marketing_promo_day
+mart.exec_kpi_month
+```
+
+### Initial landing ingestion
+
+Dry-run:
 
 ```powershell
 .\.venv\Scripts\python.exe -m src.ingest_landing
 ```
 
-Write cần `--execute --database <isolated.duckdb>` rõ ràng. Target production
-`data/warehouse/rohlik.duckdb` bị từ chối trong V4-03; mọi `update_policy` vẫn
-`PENDING_CONFIRMATION`. Rerun chỉ NO_OP sau khi metadata, batch-owned row counts và
-nội dung canonical cùng khớp; dòng thuộc batch nhập tay khác không bị xóa hoặc thay thế.
-Chưa có production load, user-facing upload/entry, STG/Core/Mart hoặc soft-undo command.
-Handover và đề xuất dừng DE sau V4-03 được ghi riêng tại
-[V4-03 Landing handover](docs/v4_03_landing_handover.md); tài liệu V4 gốc vẫn được giữ
-nguyên để truy vết và đề xuất này không được coi là hoàn thành toàn bộ pipeline V4.
-
-## Task 08A — Provisional Historical Source Bootstrap
-
-Sáu CSV lịch sử của registry v1 có thể nạp nguyên trạng vào database thử nghiệm
-`data/warehouse/rohlik_bootstrap_dev.duckdb`. Bootstrap tạo sáu Bronze raw tables,
-12 Source projections trực tiếp và metadata run/lineage/DQ; không ghi SQLite hoặc
-`data/warehouse/rohlik.duckdb`. Finance/HR `MISSING` chỉ là trạng thái lịch sử của
-Task08A, không phải trạng thái production V4.
+Execute chỉ được dùng với database cô lập đã khởi tạo rõ ràng:
 
 ```powershell
-.\.venv\Scripts\python.exe -m src.bootstrap_sources --dry-run
-.\.venv\Scripts\python.exe -m src.bootstrap_sources --execute --provisional
-.\.venv\Scripts\python.exe -m src.bootstrap_sources --validate-only
-.\.venv\Scripts\python.exe -m pytest tests/test_bootstrap_sources.py -q
+.\.venv\Scripts\python.exe -m src.init_duckdb `
+  --database .\data\warehouse\rohlik_landing_dev.duckdb
+
+.\.venv\Scripts\python.exe -m src.ingest_landing `
+  --execute `
+  --database .\data\warehouse\rohlik_landing_dev.duckdb `
+  --entered-by "developer:<TEN_NGUOI_NHAN>"
+```
+
+V4-03 từ chối ghi vào production warehouse mặc định khi update policies còn
+`PENDING_CONFIRMATION`. Đóng DBeaver và mọi DuckDB client trước khi chạy writer.
+
+Landing tạo 14 `src_*` tables nhưng không tạo STG/Core/5 Mart. Không đổi tên
+`rohlik_bootstrap_dev.duckdb` hoặc landing database thành production warehouse để đánh
+lừa readiness. Dashboard chỉ hiển thị dữ liệu khi nhận được warehouse đã kiểm định hoặc
+khi pipeline mart thật được triển khai.
+
+Khi cập nhật warehouse:
+
+1. Dừng Streamlit.
+2. Đóng mọi database client.
+3. Chạy DE pipeline độc lập.
+4. Xác minh DQ và mart contract.
+5. Khởi động lại Streamlit.
+
+Không chạy writer/pipeline từ Streamlit UI.
+
+## 12. LAN opt-in
+
+Chỉ bật LAN sau khi login/logout đã pass trên localhost:
+
+```powershell
+.\scripts\start_streamlit_lan.ps1
+```
+
+Script chạy một foreground Streamlit process trên `0.0.0.0:8501`, đặt sidebar mode
+`LAN` và không tự sửa Windows Firewall.
+
+Tra IPv4 host:
+
+```powershell
+Get-NetIPAddress -AddressFamily IPv4 |
+  Where-Object { $_.IPAddress -notlike '127.*' -and $_.IPAddress -notlike '169.254.*' } |
+  Format-Table InterfaceAlias,IPAddress
+```
+
+Client cùng LAN mở `http://<HOST_IPV4>:8501`.
+
+LAN dùng HTTP. Chỉ dùng mạng tin cậy và dữ liệu không nhạy cảm; không port-forward ra
+Internet. Firewall phải do người quản trị phê duyệt và giới hạn `Private`/`LocalSubnet`.
+Xem `docs/streamlit_local_lan_runbook.md`.
+
+## 13. Cấu trúc repository
+
+```text
+rohlik-data-warehouse/
+├── .streamlit/config.toml        # localhost-default, XSRF/CORS và theme
+├── app/
+│   ├── main.py                   # Streamlit entry point
+│   ├── auth.py                   # login/logout và require_admin
+│   ├── navigation.py             # đúng 8 pages
+│   ├── common.py                 # readiness/dashboard renderer
+│   ├── services/
+│   │   ├── identity.py           # Argon2id, credential, session, rate limit
+│   │   └── reporting.py          # 5-mart allowlist, DuckDB read-only
+│   └── views/                    # 8 page renderers
+├── config/
+│   ├── auth.yaml                 # auth policy, không chứa secret
+│   ├── sources.yaml              # 7-source registry
+│   └── contract.yaml             # 14 landing-table contract
+├── data/                         # local/ignored, không có sau clone
+│   ├── auth/users.json
+│   ├── raw/
+│   └── warehouse/
+├── docs/
+│   └── setup_tutorial.md         # tutorial/handover đầy đủ
+├── scripts/
+│   ├── create_user.py
+│   └── start_streamlit_lan.ps1
+├── src/                          # Data Engineering và DB safety
+├── tests/                        # test dùng fixtures/temp databases
+└── requirements.txt              # dependencies chưa pin version
+```
+
+## 14. Troubleshooting
+
+### Python mặc định không phải 3.13
+
+```powershell
+py -0p
+Get-Command python -All -ErrorAction SilentlyContinue
+where.exe python
+```
+
+Dùng `py -3.13` hoặc đường dẫn Python 3.13 thật. Không uninstall Python của dự án khác
+và không sửa `pyvenv.cfg` thủ công.
+
+### `No module named ...`
+
+```powershell
+.\.venv\Scripts\python.exe -c "import sys; print(sys.executable)"
+.\.venv\Scripts\python.exe -m pip --version
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+```
+
+Không dùng lệnh `pip` trần vì nó có thể thuộc Python global khác.
+
+### Không tìm thấy DuckDB wheel
+
+```powershell
+.\.venv\Scripts\python.exe --version
+.\.venv\Scripts\python.exe -c "import struct; print(struct.calcsize('P') * 8)"
+```
+
+Kỳ vọng Python 3.13.x và 64. Nếu vẫn lỗi, lưu log và kiểm tra proxy/package index; không
+tự chuyển sang build source.
+
+### PowerShell chặn `Activate.ps1`
+
+Không cần activate:
+
+```powershell
 .\.venv\Scripts\python.exe -m pytest -q
+.\.venv\Scripts\python.exe -m streamlit run app/main.py
 ```
 
-Tại mốc hoàn thành Task 08A: dry run, execute, validate và rerun no-op đều SUCCESS;
-21 test Task 08A và 109 test toàn bộ khi đó PASS. Báo cáo JSON/database đều được ignore. Xem
-[Historical Source Bootstrap](docs/bootstrap_sources.md) cho bảng, row counts,
-calendar rule, DBeaver queries, recovery và ranh giới Task 08B/09.
-
-## Task 05 — Streamlit Infrastructure Smoke Test
-
-Task 05 cung cấp cấu hình localhost-only ở `.streamlit/config.toml` và ứng dụng kiểm tra
-read-only `app_smoke.py`. Ứng dụng xác minh runtime cùng `SELECT 42` trên SQLite/DuckDB;
-không tạo database, schema, dữ liệu, dashboard nghiệp vụ hoặc chạy ETL/model.
+### Login thất bại
 
 ```powershell
-.\.venv\Scripts\python.exe -m streamlit run app_smoke.py
-.\.venv\Scripts\python.exe -m pytest tests/test_streamlit_smoke.py -q
+Test-Path -LiteralPath .\data\auth\users.json
+.\.venv\Scripts\python.exe -m scripts.create_user status
 ```
 
-Truy cập `http://127.0.0.1:8501`, dừng bằng `Ctrl+C`. Xem
-[Streamlit Infrastructure Setup](docs/streamlit_setup.md) để biết trạng thái, xử lý lỗi
-và ranh giới với ứng dụng chính thức. LAN/public hosting chưa bật.
+Nếu file thiếu, provision theo phần 8. Nếu disabled, dùng `enable`. Không sửa JSON/hash
+thủ công và không dùng `change-password` để tạo account mới.
 
-## Quyết định quy trình và bước tiếp theo
+### Warehouse chưa sẵn sàng
 
-Workflow Data Contract BT1–BT8 đã **RETIRED** từ 19/10/2026. Source Bootstrap không
-còn phụ thuộc việc điền biểu mẫu riêng. DE sử dụng sáu CSV, profiling, dictionary,
-mapping, registry, DQ rules và bằng chứng kỹ thuật thực tế. Việc bỏ workflow không
-tự phê duyệt schema/mapping, không xác nhận model đã tích hợp và không bật ingestion.
+```powershell
+Test-Path -LiteralPath .\data\warehouse\rohlik.duckdb
+```
 
-Bước tiếp theo dự kiến là Task 08A — provisional historical bootstrap trong môi trường
-thử nghiệm tách biệt, chỉ sau khi phạm vi được phê duyệt. Task 08B — finalization chính
-thức vẫn chờ schema, mapping, chính sách dữ liệu và nguồn Finance/HR được duyệt.
+File thiếu là trạng thái hợp lệ. Nếu file có nhưng mart thiếu, phải triển khai pipeline
+mart hoặc nhận warehouse đã publish; không fallback sang raw CSV.
+
+### Port 8501 đang được dùng
+
+```powershell
+Get-NetTCPConnection -State Listen -LocalPort 8501
+```
+
+Xác định process hiện hữu. Không chạy nhiều Streamlit process cùng port và không kill
+PID không rõ nguồn gốc.
+
+### DuckDB bị lock
+
+Dừng Streamlit và đóng DBeaver/client trước khi chạy writer. Không xóa `.duckdb.wal`
+hoặc database để chữa lock.
+
+### Khác dependency giữa hai máy
+
+```powershell
+.\.venv\Scripts\python.exe -m pip freeze
+.\.venv\Scripts\python.exe -m pip check
+```
+
+Lưu output vào artifact bàn giao. Không commit `.venv`.
+
+## 15. Checklist nghiệm thu máy nhận
+
+- [ ] Clone đúng `origin/main`; working tree sạch.
+- [ ] Python 3.13 64-bit và `.venv` local hoạt động.
+- [ ] Python/pip đều trỏ vào `<repo>\.venv`.
+- [ ] Requirements cài thành công; imports và `pip check` pass.
+- [ ] Toàn bộ pytest pass.
+- [ ] `users.json`, raw CSV và DuckDB đều được Git ignore.
+- [ ] Nếu cần login: `admin_local` enabled và người nhận đã đổi password local.
+- [ ] Localhost login/logout và đủ 8 pages hoạt động.
+- [ ] Người nhận hiểu readiness của warehouse, marts và models.
+- [ ] Nếu làm DE: 7 source files khớp registry và validation pass.
+- [ ] Nếu bật LAN: auth local đã pass, firewall được duyệt, không expose Internet.
+
+## 16. Tài liệu chính
+
+- [Setup & Technical Handover](docs/setup_tutorial.md)
+- [Dashboard v3 Runbook](docs/dashboard_v3_runbook.md)
+- [Authentication Runbook](docs/authentication_runbook.md)
+- [Local/LAN Runbook](docs/streamlit_local_lan_runbook.md)
+- [Dashboard v3 Refactor Audit](docs/dashboard_v3_refactor_audit.md)
+- [V4 Source Registry](docs/source_registry.md)
+- [DuckDB Setup](docs/duckdb_setup.md)
+- [V4-03 Landing Handover](docs/v4_03_landing_handover.md)
+- [Historical Task08A Bootstrap](docs/bootstrap_sources.md)
+- [Model Integration Guide](docs/model_integration_contract.md)
+- [Model Handover Checklist](docs/model_handover_checklist.md)
+- [V4 Architecture](Rohlik_DE_Local_First_V4_HR_Header_Dong_Bo.md)
+
+Các tài liệu Streamlit 2.0, SQLite upload/write và Task05 smoke app được giữ làm lịch sử.
+Khi có mâu thuẫn, ưu tiên code/test hiện tại, README này, setup tutorial và các runbook
+v3.0. Không suy ra tính năng production từ kế hoạch hoặc tài liệu lịch sử.
+
+## 17. Quy tắc Git và bảo mật
+
+- Không commit credential, password/hash, `.env`, raw data, database, WAL hoặc backup.
+- Không force-push `main` cho quy trình bàn giao thông thường.
+- Trước commit: chạy test, `pip check`, `git diff --check` và xem từng file staged.
+- Dùng database tạm/cô lập cho test và Data Engineering development.
+- Không mở DuckDB writer đồng thời với Streamlit/DBeaver reader trong MVP.
+- Không expose Streamlit HTTP trực tiếp ra Internet.
+- Không tạo dữ liệu forecast/model giả để che trạng thái chưa sẵn sàng.
