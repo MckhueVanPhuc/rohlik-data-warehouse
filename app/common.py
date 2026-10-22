@@ -11,7 +11,9 @@ from typing import Sequence
 import pandas as pd
 import streamlit as st
 
-from app.services.reporting import MartInfo, QueryResult, ReportingError, ReportingService, WarehouseInfo
+from app.services.reporting import (
+    BASE_MARTS, MODEL_MARTS, MartInfo, QueryResult, ReportingError, ReportingService, WarehouseInfo,
+)
 
 
 class DataStatus(str, Enum):
@@ -30,6 +32,7 @@ class DataStatus(str, Enum):
 class ModelState:
     title: str
     detail: str
+    mart: str | None = None          # mart kết quả mô hình (D05); chưa có → PENDING_MODEL
 
 
 @dataclass(frozen=True)
@@ -46,7 +49,7 @@ _STATUS_META = {
     DataStatus.DATA_READY: ("success", "Dữ liệu sẵn sàng"),
     DataStatus.PENDING_MODEL: ("model", "Chờ mô hình"),
     DataStatus.DQ_FAILED: ("danger", "Kiểm tra chất lượng thất bại"),
-    DataStatus.REFRESH_REQUIRED: ("warning", "Dữ liệu cần được cập nhật ngoài UI"),
+    DataStatus.REFRESH_REQUIRED: ("warning", "Có lô nhập liệu chưa vào báo cáo – cần cập nhật kho"),
     DataStatus.SOURCES_READY: ("success", "Nguồn sẵn sàng"),
     DataStatus.LANDING_READY: ("success", "Landing sẵn sàng"),
     DataStatus.MART_READY: ("success", "Mart sẵn sàng"),
@@ -148,15 +151,16 @@ def network_mode() -> str:
 def render_sidebar_context(username: str, warehouse: WarehouseInfo) -> None:
     if not warehouse.exists:
         warehouse_label = "Không tìm thấy warehouse"
-    elif warehouse.ready_mart_count == len(warehouse.marts):
-        warehouse_label = "5/5 reporting marts sẵn sàng"
+    elif warehouse.ready_mart_count == len(BASE_MARTS):
+        warehouse_label = f"{len(BASE_MARTS)}/{len(BASE_MARTS)} reporting marts sẵn sàng"
     else:
-        warehouse_label = f"{warehouse.ready_mart_count}/5 reporting marts sẵn sàng"
+        warehouse_label = f"{warehouse.ready_mart_count}/{len(BASE_MARTS)} reporting marts sẵn sàng"
+    model_label = f"{warehouse.ready_model_mart_count}/{len(MODEL_MARTS)} mart kết quả mô hình"
     st.sidebar.markdown(
         f"""
         <div class="rdh-brand">
           <div class="rdh-brand__name">Rohlik Decision Hub</div>
-          <div class="rdh-brand__meta">Dashboard quản trị · Chỉ đọc</div>
+          <div class="rdh-brand__meta">Dashboard quản trị · Xem + nhập liệu</div>
           <div class="rdh-mode">{network_mode()}</div>
         </div>
         """,
@@ -164,8 +168,20 @@ def render_sidebar_context(username: str, warehouse: WarehouseInfo) -> None:
     )
     st.sidebar.caption("Trạng thái warehouse")
     st.sidebar.caption(warehouse_label)
+    st.sidebar.caption(model_label)
+    pending = _pending_batches()
+    if pending:
+        st.sidebar.caption(f"⏳ {pending} lô nhập liệu/undo chờ cập nhật kho")
     st.sidebar.caption(f"Đăng nhập: **{username}**")
     st.sidebar.divider()
+
+
+def _pending_batches() -> int:
+    try:
+        from app.services.operations import OperationsService
+        return OperationsService().pending_refresh()
+    except Exception:  # noqa: BLE001 – sidebar không được làm hỏng trang
+        return 0
 
 
 def _page_heading(spec: PageSpec) -> None:
@@ -184,20 +200,35 @@ def _readiness(status: DataStatus, detail: str) -> None:
     )
 
 
-def _model_states(states: Sequence[ModelState]) -> None:
+def _model_states(states: Sequence[ModelState], service: ReportingService | None = None,
+                  warehouse: WarehouseInfo | None = None) -> None:
+    """Khối "Đầu ra mô hình": mart kết quả có sẵn → DATA_READY + bảng/biểu đồ; chưa có → PENDING_MODEL."""
     if not states:
         return
     st.subheader("Đầu ra mô hình")
+    ready = {m.name: m for m in (warehouse.marts if warehouse and warehouse.exists else ()) if m.exists}
     rows = "".join(
             f'<div class="rdh-model" role="listitem"><div class="rdh-model__title">{escape(state.title)}</div>'
             f'<div class="rdh-model__copy">{escape(state.detail)}</div>'
-            f'<div>{status_badge(DataStatus.PENDING_MODEL)}</div></div>'
+            f'<div>{status_badge(DataStatus.DATA_READY if state.mart in ready else DataStatus.PENDING_MODEL)}</div></div>'
             for state in states
     )
     st.markdown(
         f'<div role="list" aria-label="Trạng thái đầu ra mô hình">{rows}</div>',
         unsafe_allow_html=True,
     )
+    if service is None:
+        return
+    for state in states:
+        if state.mart in ready:
+            with st.expander(f"{state.title} – xem kết quả ({state.mart})", expanded=False):
+                try:
+                    _render_ready_mart(service, ready[state.mart], key_prefix=state.mart.replace(".", "-"))
+                except ReportingError as exc:
+                    _readiness(DataStatus.WAREHOUSE_NOT_READY, str(exc))
+        elif state.mart:
+            st.caption(f"{state.title}: chưa có {state.mart} – chạy `python -m pipeline.run models` "
+                       "(hoặc `import-outputs`) rồi tải lại trang.")
 
 
 def _find_column(info: MartInfo, names: Sequence[str]) -> str | None:
@@ -325,7 +356,7 @@ def render_page(spec: PageSpec) -> None:
             _render_ready_mart(service, info, key_prefix=spec.mart.replace(".", "-"))
         except ReportingError as exc:
             _readiness(DataStatus.WAREHOUSE_NOT_READY, str(exc))
-    _model_states(spec.model_states)
+    _model_states(spec.model_states, service, warehouse)
 
 
 def render_explorer() -> None:
@@ -350,7 +381,7 @@ def render_explorer() -> None:
     elif not ready:
         _readiness(DataStatus.TABLE_NOT_AVAILABLE, "Chưa có reporting mart nào để truy vấn.")
     else:
-        _readiness(DataStatus.DATA_READY, f"{len(ready)}/5 mart sẵn sàng cho EDA allowlisted.")
+        _readiness(DataStatus.DATA_READY, f"{len(ready)}/{len(warehouse.marts)} mart (nền + kết quả mô hình) sẵn sàng cho EDA allowlisted.")
         selected = st.selectbox("Reporting mart", tuple(mart.name for mart in ready), key="eda-mart")
         info = next(mart for mart in ready if mart.name == selected)
         try:
@@ -365,7 +396,7 @@ def render_system() -> None:
     require_admin()
     spec = PageSpec(
         "Vận hành hệ thống",
-        "Theo dõi khả dụng của warehouse và reporting marts ở chế độ chỉ đọc.",
+        "Theo dõi kho, kiểm định chất lượng dữ liệu (DQ), các lần chạy pipeline và 8 mô hình.",
         "mart.exec_kpi_month",
     )
     _page_heading(spec)
@@ -376,17 +407,43 @@ def render_system() -> None:
         _readiness(DataStatus.WAREHOUSE_NOT_READY, str(exc))
         return
     if not warehouse.exists:
-        _readiness(DataStatus.WAREHOUSE_NOT_READY, "Không tìm thấy warehouse; UI không tự khởi tạo.")
-    elif warehouse.ready_mart_count == len(warehouse.marts):
+        _readiness(DataStatus.WAREHOUSE_NOT_READY, "Không tìm thấy warehouse; chạy `python -m pipeline.run init` trên Terminal.")
+        return
+    from app.services.operations import OperationsService
+    ops = OperationsService()
+    dq = ops.quality_report()
+    if not dq.empty and (dq["status"] == "FAIL").any():
+        _readiness(DataStatus.DQ_FAILED, "Lần refresh gần nhất có kiểm tra ERROR – dữ liệu báo cáo vẫn là bản trước đó.")
+    elif ops.pending_refresh():
+        _readiness(DataStatus.REFRESH_REQUIRED, f"{ops.pending_refresh()} lô nhập liệu/undo chưa vào báo cáo – bấm "
+                   "\"Cập nhật kho\" ở trang Nhập dữ liệu.")
+    elif warehouse.ready_mart_count == len(BASE_MARTS):
         _readiness(DataStatus.DATA_READY, "Tất cả reporting marts mục tiêu đang sẵn sàng.")
     else:
         _readiness(
             DataStatus.TABLE_NOT_AVAILABLE,
-            f"{warehouse.ready_mart_count}/5 reporting marts sẵn sàng. Pipeline chỉ được vận hành ngoài Streamlit.",
+            f"{warehouse.ready_mart_count}/{len(BASE_MARTS)} reporting marts sẵn sàng – chạy `python -m pipeline.run refresh`.",
         )
     rows = [
-        {"Mart": mart.name, "Trạng thái": "DATA_READY" if mart.exists else "TABLE_NOT_AVAILABLE", "Số cột": len(mart.columns)}
+        {"Mart": mart.name, "Loại": "nền" if mart.name in BASE_MARTS else "kết quả mô hình",
+         "Trạng thái": "DATA_READY" if mart.exists else ("PENDING_MODEL" if mart.name in MODEL_MARTS else "TABLE_NOT_AVAILABLE"),
+         "Số cột": len(mart.columns)}
         for mart in warehouse.marts
     ]
     st.dataframe(rows, use_container_width=True, hide_index=True)
-    st.caption("Không có nút init, refresh pipeline hoặc chạy model trên trang này.")
+    st.subheader("Kiểm định chất lượng – lần refresh gần nhất")
+    if dq.empty:
+        st.info("Chưa có báo cáo DQ.")
+    else:
+        m = st.columns(3)
+        m[0].metric("PASS", int((dq["status"] == "PASS").sum()))
+        m[1].metric("WARN", int((dq["status"] == "WARN").sum()))
+        m[2].metric("FAIL", int((dq["status"] == "FAIL").sum()))
+        st.dataframe(dq, use_container_width=True, hide_index=True)
+    st.subheader("8 mô hình – lần chạy gần nhất")
+    mr = ops.model_runs()
+    st.dataframe(mr, use_container_width=True, hide_index=True) if not mr.empty else st.info("Chưa chạy mô hình.")
+    st.subheader("Lịch sử chạy pipeline")
+    pr = ops.pipeline_runs()
+    st.dataframe(pr, use_container_width=True, hide_index=True) if not pr.empty else st.info("Chưa có lần chạy nào.")
+    st.caption("Chạy mô hình bằng lệnh `python -m pipeline.run models` trên Terminal (không chạy từ giao diện).")

@@ -7,8 +7,10 @@ SPEC = PageSpec(
     description="Khám phá lịch sử SKU và category để chuẩn bị quyết định bổ sung hàng.",
     mart="mart.category_sku_day",
     model_states=(
-        ModelState("BT3 · Lost demand", "Chờ output ước lượng nhu cầu bị mất đã xác minh."),
-        ModelState("BT4 / BT6", "Chờ forecast SKU và khuyến nghị replenishment có contract hợp lệ."),
+        ModelState("BT3 · Lost demand", "Nhu cầu bị mất do hết hàng theo kho × ngành × ngày (M4 LightGBM Tweedie).",
+                   "mart.bt3_lost_sales_day"),
+        ModelState("BT4 / BT6", "Dự báo nhu cầu SKU P50/P90 14 ngày + lượng đặt hàng newsvendor, gộp theo ngành.",
+                   "mart.bt4_bt6_sku_plan_day"),
     ),
 )
 

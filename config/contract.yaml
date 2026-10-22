@@ -1,4 +1,6 @@
-# V4 business contract foundation. Configuration only: no physical tables are created.
+# V4 business contract. Landing tables are created by src.ingest_landing; update_policy
+# APPEND_FULL_ROW_SOFT_UNDO (D02/D13 approved 22/10/2026): append full rows, newest wins in STG,
+# soft undo via meta.batch_status_events (no DELETE).
 contract_version: 4
 status: IMPLEMENTED_FOUNDATION
 tables:
@@ -17,7 +19,7 @@ tables:
     checks: {orders: {min: 0}}
     schema_version: 1
     source_type: KAGGLE_ORIGINAL
-    update_policy: PENDING_CONFIRMATION
+    update_policy: APPEND_FULL_ROW_SOFT_UNDO
   src_sales.sku_sales_daily:
     schema: src_sales
     table: sku_sales_daily
@@ -35,7 +37,7 @@ tables:
     checks: {sales: {min: 0}, total_orders: {min: 0}}
     schema_version: 1
     source_type: KAGGLE_ORIGINAL
-    update_policy: PENDING_CONFIRMATION
+    update_policy: APPEND_FULL_ROW_SOFT_UNDO
   src_marketing.prices:
     schema: src_marketing
     table: prices
@@ -51,7 +53,7 @@ tables:
     checks: {sell_price_main: {min: 0.01}}
     schema_version: 1
     source_type: KAGGLE_ORIGINAL
-    update_policy: PENDING_CONFIRMATION
+    update_policy: APPEND_FULL_ROW_SOFT_UNDO
   src_marketing.promotions:
     schema: src_marketing
     table: promotions
@@ -80,7 +82,7 @@ tables:
       type_6_discount: {min: 0, max: 1}
     schema_version: 1
     source_type: KAGGLE_ORIGINAL
-    update_policy: PENDING_CONFIRMATION
+    update_policy: APPEND_FULL_ROW_SOFT_UNDO
   src_marketing.mov_changes:
     schema: src_marketing
     table: mov_changes
@@ -96,7 +98,7 @@ tables:
     checks: {mov_change: {min: 0, max: 1}}
     schema_version: 1
     source_type: KAGGLE_ORIGINAL
-    update_policy: PENDING_CONFIRMATION
+    update_policy: APPEND_FULL_ROW_SOFT_UNDO
   src_ops.availability:
     schema: src_ops
     table: availability
@@ -112,7 +114,7 @@ tables:
     checks: {availability: {min: 0, max: 1}}
     schema_version: 1
     source_type: KAGGLE_ORIGINAL
-    update_policy: PENDING_CONFIRMATION
+    update_policy: APPEND_FULL_ROW_SOFT_UNDO
   src_ops.ops_events:
     schema: src_ops
     table: ops_events
@@ -135,7 +137,7 @@ tables:
       frankfurt_shutdown: {min: 0, max: 1}
     schema_version: 1
     source_type: KAGGLE_ORIGINAL
-    update_policy: PENDING_CONFIRMATION
+    update_policy: APPEND_FULL_ROW_SOFT_UNDO
   src_category.product_master:
     schema: src_category
     table: product_master
@@ -156,7 +158,7 @@ tables:
     checks: {}
     schema_version: 1
     source_type: KAGGLE_ORIGINAL
-    update_policy: PENDING_CONFIRMATION
+    update_policy: APPEND_FULL_ROW_SOFT_UNDO
   src_planning.calendar:
     schema: src_planning
     table: calendar
@@ -180,7 +182,7 @@ tables:
       school_holidays: {min: 0, max: 1}
     schema_version: 1
     source_type: KAGGLE_ORIGINAL
-    update_policy: PENDING_CONFIRMATION
+    update_policy: APPEND_FULL_ROW_SOFT_UNDO
   src_digital.user_activity:
     schema: src_digital
     table: user_activity
@@ -197,7 +199,7 @@ tables:
     checks: {user_activity_1: {min: 0}, user_activity_2: {min: 0}}
     schema_version: 1
     source_type: KAGGLE_ORIGINAL
-    update_policy: PENDING_CONFIRMATION
+    update_policy: APPEND_FULL_ROW_SOFT_UNDO
   src_external.weather:
     schema: src_external
     table: weather
@@ -214,7 +216,7 @@ tables:
     checks: {precipitation: {min: 0}, snow: {min: 0}}
     schema_version: 1
     source_type: KAGGLE_ORIGINAL
-    update_policy: PENDING_CONFIRMATION
+    update_policy: APPEND_FULL_ROW_SOFT_UNDO
   src_finance.sku_weights:
     schema: src_finance
     table: sku_weights
@@ -229,7 +231,7 @@ tables:
     checks: {weight: {min: 0}}
     schema_version: 1
     source_type: KAGGLE_ORIGINAL
-    update_policy: PENDING_CONFIRMATION
+    update_policy: APPEND_FULL_ROW_SOFT_UNDO
   src_finance.cost_params:
     schema: src_finance
     table: cost_params
@@ -246,12 +248,12 @@ tables:
     checks: {cost_ratio: {min: 0, max: 1}, shelf_life_days: {min: 1}, waste_handling_cost_ratio: {min: 0, max: 1}}
     schema_version: 1
     source_type: ASSUMED
-    update_policy: PENDING_CONFIRMATION
+    update_policy: APPEND_FULL_ROW_SOFT_UNDO
   src_hr.workforce_params:
     schema: src_hr
     table: workforce_params
     raw_source: data/raw/assumptions/workforce_params.csv
-    mapping: {warehouse: warehouse, wage_eur_per_hour: hourly_wage_eur, items_per_order: items_per_order, picks_per_hour: picks_per_hour, shift_hours: shift_hours, morning_share: morning_shift_ratio, overtime_multiplier: overtime_multiplier, overtime_cap: overtime_cap_ratio, shortage_penalty: shortage_penalty_multiplier, rule_buffer: legacy_rule_buffer_ratio, orders_per_driver_shift: orders_per_driver_shift}
+    mapping: {warehouse: warehouse, hourly_wage_eur: hourly_wage_eur, items_per_order: items_per_order, picks_per_hour: picks_per_hour, shift_hours: shift_hours, morning_share: morning_shift_ratio, overtime_multiplier: overtime_multiplier, overtime_cap: overtime_cap_ratio, shortage_penalty: shortage_penalty_multiplier, rule_buffer: legacy_rule_buffer_ratio, orders_per_driver_shift: orders_per_driver_shift}
     grain: one row per warehouse
     business_keys: [warehouse]
     columns:
@@ -280,4 +282,4 @@ tables:
       orders_per_driver_shift: {min: 0.01}
     schema_version: 1
     source_type: ASSUMED
-    update_policy: PENDING_CONFIRMATION
+    update_policy: APPEND_FULL_ROW_SOFT_UNDO

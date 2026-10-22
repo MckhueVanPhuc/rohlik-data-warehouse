@@ -1,0 +1,31 @@
+{
+ "bt_id": "BT1",
+ "model_version": "default-22/10/2026",
+ "source": "MẶC ĐỊNH – tạm. Chạy `python -m pipeline.run evaluate` 1 lần để thay bằng tham số tính trên dữ liệu của bạn.",
+ "params": {
+  "p90_hs": {
+   "orders": {
+    "Brno_1": 0.044338,
+    "Budapest_1": 0.044338,
+    "Frankfurt_1": 0.044338,
+    "Munich_1": 0.044338,
+    "Prague_1": 0.044338,
+    "Prague_2": 0.044338,
+    "Prague_3": 0.044338
+   },
+   "order_index": {
+    "Brno_1": 0.038433,
+    "Budapest_1": 0.038433,
+    "Frankfurt_1": 0.038433,
+    "Munich_1": 0.038433,
+    "Prague_1": 0.038433,
+    "Prague_2": 0.038433,
+    "Prague_3": 0.038433
+   }
+  },
+  "p90_method": {
+   "orders": "chung",
+   "order_index": "chung"
+  }
+ }
+}

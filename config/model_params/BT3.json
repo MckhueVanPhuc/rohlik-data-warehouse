@@ -1,0 +1,9 @@
+{
+ "bt_id": "BT3",
+ "model_version": "default-22/10/2026",
+ "source": "MẶC ĐỊNH – tạm. Chạy `python -m pipeline.run evaluate` 1 lần để thay bằng tham số tính trên dữ liệu của bạn.",
+ "params": {
+  "best_iter": 500,
+  "final_model": "M4_LightGBM_Tweedie"
+ }
+}

@@ -13,13 +13,24 @@ import duckdb
 from src.db.duckdb import DEFAULT_DATABASE, connection, resolve_database
 
 
-ALLOWED_MARTS = (
+BASE_MARTS = (
     "mart.sales_orders_day",
     "mart.ops_warehouse_day",
     "mart.category_sku_day",
     "mart.marketing_promo_day",
     "mart.exec_kpi_month",
 )
+# Mart kết quả 8 mô hình (D05 đã duyệt 22/10/2026) – view trên pred.* do `python -m pipeline.run models` tạo
+MODEL_MARTS = (
+    "mart.bt1_forecast_orders",
+    "mart.bt2_staff_driver_plan",
+    "mart.bt3_lost_sales_day",
+    "mart.bt4_bt6_sku_plan_day",
+    "mart.bt5_promo_effect",
+    "mart.bt7_markdown_day",
+    "mart.bt8_growth_month",
+)
+ALLOWED_MARTS = BASE_MARTS + MODEL_MARTS
 MAX_PAGE_SIZE = 500
 _IDENTIFIER = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 _NUMERIC_TYPES = {
@@ -79,7 +90,11 @@ class WarehouseInfo:
 
     @property
     def ready_mart_count(self) -> int:
-        return sum(mart.exists for mart in self.marts)
+        return sum(mart.exists for mart in self.marts if mart.name in BASE_MARTS)
+
+    @property
+    def ready_model_mart_count(self) -> int:
+        return sum(mart.exists for mart in self.marts if mart.name in MODEL_MARTS)
 
 
 @dataclass(frozen=True)

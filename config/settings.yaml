@@ -1,9 +1,32 @@
+# Rohlik Decision Hub — cài đặt chung của pipeline (D03, D07 đã duyệt 22/10/2026).
+# src/db/duckdb.py chỉ đọc khoá `warehouse`; các khoá còn lại do src/config/settings.py đọc.
 warehouse: data/warehouse/rohlik.duckdb
 raw_dir: data/raw
 horizon_days: 14
 sku_scope:
-  warehouses:
-    - Prague_1
-  train_from: '2022-06-01'
+  warehouses: [Prague_1, Prague_2, Prague_3, Brno_1, Budapest_1, Munich_1, Frankfurt_1]
+  train_from: '2020-12-05'          # ngày đầu dữ liệu dùng cho Core/Mart/mô hình
+as_of: '2024-03-15'                 # ngày cuối có số thật ("hôm nay" của dự án)
+test_start: '2024-03-02'            # kỳ kiểm tra = 14 ngày cuối: 02/03 → 15/03/2024
+forecast_start: '2024-03-16'        # = as_of + 1
+forecast_end: '2024-03-29'          # = as_of + horizon_days
+seed: 42
+currency_by_warehouse:              # D07
+  Prague_1: CZK
+  Prague_2: CZK
+  Prague_3: CZK
+  Brno_1: CZK
+  Budapest_1: HUF
+  Munich_1: EUR
+  Frankfurt_1: EUR
+fx_eur: {CZK: 0.04, HUF: 0.0025, EUR: 1.0}   # tỷ giá GIẢ ĐỊNH (ASSUMED) – dùng thống nhất STG/Core/Mart/8 mô hình
+new_warehouses: [Munich_1, Frankfurt_1]      # kho mới cho BT8 / trang Tăng trưởng
+upload:
+  max_rows: 50000                   # giới hạn dòng mỗi file upload (đã duyệt)
+  lock_timeout_seconds: 10          # chờ writer lock tối đa rồi báo "Hệ thống đang bận"
+models:
+  params_dir: data/models/params    # tham số chốt do `evaluate` ghi; nếu chưa có thì dùng config/model_params/
+  runs_dir: data/models/runs        # thư mục tạm/nhật ký mỗi lần chạy mô hình (không commit)
+  n_jobs: -1                        # số luồng CPU cho LightGBM (-1 = tất cả)
 runner: local
 source_mode: kaggle_original

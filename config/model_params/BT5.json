@@ -1,0 +1,10 @@
+{
+ "bt_id": "BT5",
+ "model_version": "default-22/10/2026",
+ "source": "MẶC ĐỊNH – theo duyệt E2. Chạy `python -m pipeline.run evaluate` 1 lần để thay bằng tham số tính trên dữ liệu của bạn.",
+ "params": {
+  "final_method": "E2 FE SKU + kiểm soát",
+  "do_tin_cay": "cao",
+  "placebo_pass_rate": null
+ }
+}
