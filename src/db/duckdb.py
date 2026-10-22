@@ -93,7 +93,7 @@ def _ensure_writable_target(database: Path) -> None:
         (PROJECT_ROOT / "data" / "warehouse" / "rohlik_bootstrap_dev.duckdb").resolve(),
     }
     if database in protected:
-        raise UnsafeWriteError(f"V4 writer service refuses the protected Task08A database: {database}")
+        raise UnsafeWriteError(f"V4 writer service refuses the protected legacy bootstrap database: {database}")
 
 
 def _lock_path(database: Path) -> Path:

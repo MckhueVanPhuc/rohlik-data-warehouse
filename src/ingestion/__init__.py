@@ -1,4 +1,1 @@
-"""Historical ingestion utilities.
-
-Task 08A is intentionally isolated from the production DuckDB and SQLite paths.
-"""
+"""Landing-ingestion services for the V4-05 DuckDB pipeline."""

@@ -81,12 +81,12 @@ def test_default_database_comes_from_v4_settings():
     assert DEFAULT_DATABASE == (PROJECT_ROOT / "data" / "warehouse" / "rohlik.duckdb").resolve()
 
 
-def test_task08a_database_is_protected_from_v4_writes(tmp_path, monkeypatch):
+def test_legacy_bootstrap_database_is_protected_from_v4_writes(tmp_path, monkeypatch):
     import src.db.duckdb as module
 
     monkeypatch.setattr(module, "PROJECT_ROOT", tmp_path)
     protected = tmp_path / "data" / "warehouse" / "rohlik_bootstrap_dev.duckdb"
-    with pytest.raises(UnsafeWriteError, match="protected Task08A"):
+    with pytest.raises(UnsafeWriteError, match="protected legacy bootstrap"):
         initialize_database(protected)
     assert not protected.exists()
 

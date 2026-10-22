@@ -1,17 +1,15 @@
-# Cấu hình V4 Local-first
+# Cấu hình V4-05
 
-- `settings.yaml`: DuckDB local, raw root, horizon, SKU scope và runner.
-- `sources.yaml`: production registry v4 với đúng 7 active sources; Finance/HR là
-  `ASSUMED`; `train_calendar.csv` chỉ historical-only.
-- `contract.yaml`: đúng 14 business contracts tại 9 schema `src_*`; mọi update
-  policy chưa được duyệt được ghi rõ `PENDING_CONFIRMATION`.
-- `sources_task08a.yaml`: registry v1 chỉ cho bootstrap lịch sử Task08A.
+- `settings.yaml`: đường dẫn DuckDB, mốc thời gian, seed, giới hạn upload, writer lock và thư mục run.
+- `sources.yaml`: registry production với đúng 7 nguồn active; Finance/workforce được gắn nhãn giả định khi áp dụng; `historical_sources.orders_calendar` chỉ là metadata lịch sử.
+- `contract.yaml`: 14 landing contract trong 9 schema `src_*`, gồm khóa, schema và update policy.
+- `model_params/BT1.json` … `BT8.json`: tham số có version cho model runner.
 
 ```powershell
 .\.venv\Scripts\python.exe -m src.validate_source_registry --metadata-only --json
 .\.venv\Scripts\python.exe -m src.validate_source_registry --json
 ```
 
-Validation production không tạo bảng, không ingest và không mở database vật lý.
-Chi tiết: [V4 Source Registry](../docs/source_registry.md). Tài liệu registry v1 được
-giữ tại [legacy Task08A guide](../docs/source_registry_task08a.md).
+Validation không tự ingest hoặc tạo database. Xem [data contract](../docs/data_contract.md), [pipeline](../docs/pipeline.md) và [models](../docs/models.md).
+
+V4-05 không dùng registry Task08A hay runtime SQLite.

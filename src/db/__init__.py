@@ -1,1 +1,1 @@
-"""Reusable SQLite infrastructure, independent of the UI."""
+"""DuckDB infrastructure for the local-first warehouse."""

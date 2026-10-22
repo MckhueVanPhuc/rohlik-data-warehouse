@@ -8,7 +8,7 @@ import tomllib
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 CONFIG_PATH = PROJECT_ROOT / ".streamlit" / "config.toml"
 SCRIPT_PATH = PROJECT_ROOT / "scripts" / "start_streamlit_lan.ps1"
-RUNBOOK_PATH = PROJECT_ROOT / "docs" / "streamlit_local_lan_runbook.md"
+RUNBOOK_PATH = PROJECT_ROOT / "docs" / "dashboard.md"
 
 
 def test_default_streamlit_config_stays_local_and_protected() -> None:
