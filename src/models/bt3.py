@@ -22,6 +22,8 @@ from pathlib import Path
 from typing import Any
 
 import lightgbm as lgb
+import warnings as _warnings
+_warnings.filterwarnings("ignore", message="The default of observed=False", category=FutureWarning)
 import numpy as np
 import pandas as pd
 

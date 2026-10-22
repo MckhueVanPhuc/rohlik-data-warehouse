@@ -37,6 +37,8 @@ class Settings:
     runs_dir: Path
     n_jobs: int
     raw: dict[str, Any] = field(repr=False, default_factory=dict)
+    models_isolate: bool = True          # chạy mỗi BT trong tiến trình riêng (V4-05.1)
+    path: Path | None = None             # file settings.yaml đã đọc (để tiến trình con đọc lại đúng file)
 
     def currency(self, warehouse: str) -> str:
         return self.currency_by_warehouse[warehouse]
@@ -130,4 +132,6 @@ def load_settings(path: str | Path = DEFAULT_SETTINGS_PATH) -> Settings:
         runs_dir=PROJECT_ROOT / str(models.get("runs_dir", "data/models/runs")),
         n_jobs=int(models.get("n_jobs", -1)),
         raw=data,
+        models_isolate=bool(models.get("isolate", True)),
+        path=Path(path).resolve(),
     )

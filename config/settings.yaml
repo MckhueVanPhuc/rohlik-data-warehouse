@@ -27,6 +27,7 @@ upload:
 models:
   params_dir: data/models/params    # tham số chốt do `evaluate` ghi; nếu chưa có thì dùng config/model_params/
   runs_dir: data/models/runs        # thư mục tạm/nhật ký mỗi lần chạy mô hình (không commit)
-  n_jobs: -1                        # số luồng CPU cho LightGBM (-1 = tất cả)
+  n_jobs: -1                        # số luồng CPU cho LightGBM (-1 = tất cả; máy lỗi đa luồng: đặt 1)
+  isolate: true                     # mỗi BT chạy trong tiến trình riêng: chống xung đột thư viện gốc, trả RAM sau mỗi BT
 runner: local
 source_mode: kaggle_original

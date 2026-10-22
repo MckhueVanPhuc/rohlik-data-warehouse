@@ -8,6 +8,7 @@
     python -m pipeline.run all             # init (nếu chưa có kho) / ingest → refresh → models
     python -m pipeline.run import-outputs --from "/Users/namnut/Downloads/Final Code"
     python -m pipeline.run status          # tóm tắt số dòng, DQ, lần chạy gần nhất
+    python -m pipeline.run doctor          # chẩn đoán thư viện mô hình (LightGBM/runtime C++) trên máy này
 
 Tuỳ chọn chung: --database data/warehouse/rohlik.duckdb (mặc định theo config/settings.yaml), --bt BT1 BT3 …
 Mã thoát: 0 = thành công; 1 = lỗi cấu hình/kho bận; 2 = DQ có ERROR (dữ liệu cũ giữ nguyên) hoặc mô hình lỗi.
@@ -99,7 +100,8 @@ def _models(args, settings, database: Path, mode: str) -> int:
     run_id = new_run_id(mode)
     record_run(database, run_id, mode, "RUNNING", settings, lock_timeout=args.lock_timeout)
     t0 = time.time()
-    results = run_models(database, settings, mode=mode, bts=args.bt, run_id=run_id, lock_timeout=args.lock_timeout)
+    results = run_models(database, settings, mode=mode, bts=args.bt, run_id=run_id, lock_timeout=args.lock_timeout,
+                         isolate=False if args.no_isolate else None)
     bad = [r for r in results if r.status != "SUCCESS"]
     record_run(database, run_id, mode, "SUCCESS" if not bad else "FAILED", settings,
                details={r.bt_id: {"status": r.status, "sec": round(r.runtime_sec, 1), "outputs": r.outputs} for r in results},
@@ -177,7 +179,12 @@ def cmd_status(args, settings, database: Path) -> int:
     return 0
 
 
-COMMANDS = {"init": cmd_init, "ingest": cmd_ingest, "refresh": cmd_refresh, "models": cmd_models,
+def cmd_doctor(args, settings, database: Path) -> int:
+    from src.models.doctor import doctor
+    return doctor(settings.n_jobs)
+
+
+COMMANDS = {"doctor": cmd_doctor, "init": cmd_init, "ingest": cmd_ingest, "refresh": cmd_refresh, "models": cmd_models,
             "evaluate": cmd_evaluate, "all": cmd_all, "import-outputs": cmd_import, "status": cmd_status}
 
 
@@ -192,6 +199,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--force", action="store_true", help="vẫn chạy mô hình khi refresh gần nhất chưa SUCCESS")
     parser.add_argument("--entered-by", default=DEFAULT_ENTERED_BY, help="ghi vào _entered_by của lô nạp nguồn")
     parser.add_argument("--lock-timeout", type=float, default=None, help="giây chờ khoá ghi (mặc định settings)")
+    parser.add_argument("--no-isolate", action="store_true",
+                        help="chạy mô hình ngay trong tiến trình này (gỡ lỗi); mặc định mỗi BT chạy trong tiến trình riêng")
     parser.add_argument("--project-root", type=Path, default=PROJECT_ROOT, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
     try:
