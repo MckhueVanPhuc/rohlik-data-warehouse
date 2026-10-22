@@ -1,0 +1,21 @@
+# Decision proposals from Rohlik_HD_xay_dung_he_thong_DE_BI_Local_Cloud.md v2.0.
+# DO NOT change status to APPROVED without evidence in M5.
+# Only a signed/reviewed decision can unblock production changes.
+source_of_truth: Rohlik_HD_xay_dung_he_thong_DE_BI_Local_Cloud.md
+source_version: "2.0"
+decisions:
+  D01:
+    status: PENDING
+    proposal: "A + Core mong (2 facts, 2 params, 5 marts; no STG/upload/undo/7 roles)"
+  D02:
+    status: PENDING
+    proposal: "Source-only read-only updates; precise implementation policy requires DE review"
+  D03:
+    status: PENDING
+    proposal: "7 warehouses, train_from 2020-12-05, as_of 2024-03-15, forecast 2024-03-16 to 2024-03-29"
+  D04:
+    status: PENDING
+    proposal: "Preserve nulls, anomaly flags; approved policy required before any discount normalization"
+  D05:
+    status: PENDING
+    proposal: "Five marts; exact columns and types from approved M2 spec"
