@@ -77,7 +77,7 @@ def test_cost_and_hr_headers_and_assumed_status():
         "L1_category_name_en", "cost_ratio", "shelf_life_days", "waste_handling_cost_ratio"
     ]
     assert registry.active_sources["workforce_params"].header == [
-        "warehouse", "wage_eur_per_hour", "items_per_order", "picks_per_hour",
+        "warehouse", "hourly_wage_eur", "items_per_order", "picks_per_hour",
         "shift_hours", "morning_share", "overtime_multiplier", "overtime_cap",
         "shortage_penalty", "rule_buffer", "orders_per_driver_shift",
     ]
@@ -88,11 +88,11 @@ def test_cost_and_hr_headers_and_assumed_status():
     assert catalog.tables["src_hr.workforce_params"].source_type == "ASSUMED"
 
 
-def test_hr_mapping_has_five_renames_and_all_eleven_canonical_columns():
+def test_hr_mapping_has_four_renames_and_all_eleven_canonical_columns():
+    # Final Code workforce_params.csv already uses hourly_wage_eur (approved 22/10/2026).
     table = load_contract().tables["src_hr.workforce_params"]
     renames = {raw: canonical for raw, canonical in table.mapping.items() if raw != canonical}
     assert renames == {
-        "wage_eur_per_hour": "hourly_wage_eur",
         "morning_share": "morning_shift_ratio",
         "overtime_cap": "overtime_cap_ratio",
         "shortage_penalty": "shortage_penalty_multiplier",
@@ -145,7 +145,7 @@ def test_wrong_header_is_blocked(tmp_path):
     data = registry_data()
     make_source_fixture(tmp_path, data)
     target = tmp_path / data["active_sources"]["workforce_params"]["path"]
-    text = target.read_text(encoding="utf-8").replace("wage_eur_per_hour", "wrong_wage", 1)
+    text = target.read_text(encoding="utf-8").replace("hourly_wage_eur", "wrong_wage", 1)
     target.write_text(text, encoding="utf-8")
     data["active_sources"]["workforce_params"]["sha256"] = hashlib.sha256(target.read_bytes()).hexdigest()
     with pytest.raises(RegistryError, match="wrong header"):
@@ -189,5 +189,14 @@ def test_contract_mapping_must_cover_canonical_columns():
         validate_contract(data, registry)
 
 
-def test_update_policies_are_explicitly_pending_not_invented():
-    assert all(table.update_policy == "PENDING_CONFIRMATION" for table in load_contract().tables.values())
+def test_update_policies_are_the_approved_d02_value():
+    # D02/D13 (22/10/2026): all 14 landing tables accept full-row append + soft undo.
+    assert all(table.update_policy == "APPEND_FULL_ROW_SOFT_UNDO" for table in load_contract().tables.values())
+
+
+def test_unknown_update_policy_is_rejected():
+    registry = load_registry()
+    data = contract_data()
+    data["tables"]["src_sales.orders_daily"]["update_policy"] = "OVERWRITE"
+    with pytest.raises(RegistryError):
+        validate_contract(data, registry)

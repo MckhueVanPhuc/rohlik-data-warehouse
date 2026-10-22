@@ -1,0 +1,9 @@
+# Thư viện cho 8 mô hình BT1–BT8 (bản tinh gọn src/models/). Cài chung 1 .venv với requirements.txt (đã duyệt).
+# macOS: LightGBM cần OpenMP → chạy `brew install libomp` trước khi pip install.
+lightgbm==4.7.0
+scikit-learn==1.9.1
+scipy==1.18.1
+PuLP==2.9.0
+pyfixest==0.60.0
+python-dateutil==2.9.0.post0
+statsforecast==2.1.1   # chỉ dùng khi `evaluate` BT1 (mô hình đối chứng SeasonalNaive)

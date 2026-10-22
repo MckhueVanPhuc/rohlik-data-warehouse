@@ -45,3 +45,6 @@ logs/
 *.db
 *.db-wal
 *.db-shm
+
+# Pipeline V4-05: tham số evaluate cục bộ + nhật ký chạy mô hình (máy cá nhân, không commit)
+/data/models/

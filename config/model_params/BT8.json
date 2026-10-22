@@ -1,0 +1,11 @@
+{
+ "bt_id": "BT8",
+ "model_version": "default-22/10/2026",
+ "source": "MẶC ĐỊNH – mô hình chọn trong Final Code. Chạy `python -m pipeline.run evaluate` 1 lần để thay bằng tham số tính trên dữ liệu của bạn.",
+ "params": {
+  "final_models": {
+   "Munich_1": "Gompertz",
+   "Frankfurt_1": "Tuyến tính"
+  }
+ }
+}

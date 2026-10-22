@@ -518,7 +518,14 @@ with transaction(sys.argv[1], lock_timeout=5, owner_id='landing-test-holder'):
     assert ingest_landing(database, execute=True, root=root)["status"] == "COMPLETED"
 
 
-def test_production_database_execution_is_blocked_before_open(project):
+def test_production_database_execution_is_blocked_while_policy_pending(project):
     root, _ = project
+    contract_path = root / "config" / "contract.yaml"
+    contract_path.write_text(
+        contract_path.read_text(encoding="utf-8").replace(
+            "update_policy: APPEND_FULL_ROW_SOFT_UNDO", "update_policy: PENDING_CONFIRMATION"
+        ),
+        encoding="utf-8",
+    )
     with pytest.raises(UnsafeWriteError, match="PENDING_CONFIRMATION"):
         ingest_landing(DEFAULT_DATABASE, execute=True, root=root)

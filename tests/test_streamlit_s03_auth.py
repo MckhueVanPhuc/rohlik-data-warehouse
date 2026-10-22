@@ -162,6 +162,17 @@ def test_cli_refuses_to_create_missing_admin(tmp_path, monkeypatch) -> None:
     assert not store.path.exists()
 
 
+def test_cli_init_admin_creates_once_and_never_overwrites(tmp_path, monkeypatch) -> None:
+    hasher = PasswordHasher(time_cost=1, memory_cost=8192, parallelism=1, type=Type.ID)
+    store = CredentialStore(tmp_path / "users.json", password_hasher=hasher)
+    monkeypatch.setattr(create_user, "load_cli_dependencies", lambda: (store, PasswordPolicy(), "admin_local"))
+    monkeypatch.setattr(create_user, "prompt_new_password", lambda: VALID_PASSWORD)
+    assert create_user.main(["init-admin"]) == 0
+    assert store.find_by_username("admin_local").enabled is True
+    assert create_user.main(["init-admin"]) == 1          # đã có → từ chối, không ghi đè
+    assert len(store.list_users()) == 1
+
+
 def test_anonymous_main_and_generic_login_failure() -> None:
     app = AppTest.from_file(str(PROJECT_ROOT / "app/main.py")).run(timeout=10)
     assert not app.exception

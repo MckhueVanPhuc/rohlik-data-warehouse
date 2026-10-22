@@ -1,0 +1,15 @@
+{
+ "bt_id": "BT7",
+ "model_version": "default-22/10/2026",
+ "source": "MẶC ĐỊNH – theo Final Code. Chạy `python -m pipeline.run evaluate` 1 lần để thay bằng tham số tính trên dữ liệu của bạn.",
+ "params": {
+  "policy": "optimal",
+  "levels": [
+   0.0,
+   0.1,
+   0.2,
+   0.3
+  ],
+  "scenario_q": "p30"
+ }
+}

@@ -41,6 +41,7 @@ EXPECTED_SCHEMAS = frozenset({
     "src_digital", "src_external", "src_finance", "src_hr",
 })
 ASSUMED_SOURCES = frozenset({"cost_params", "workforce_params"})
+APPROVED_UPDATE_POLICY = "APPEND_FULL_ROW_SOFT_UNDO"
 DUCKDB_TYPES = frozenset({"VARCHAR", "DATE", "BIGINT", "DOUBLE", "BOOLEAN"})
 Identifier = Annotated[str, Field(pattern=r"^[A-Za-z_][A-Za-z0-9_]*$")]
 
@@ -128,7 +129,8 @@ class BusinessContract(StrictModel):
     checks: dict[Identifier, RangeCheck]
     schema_version: Annotated[int, Field(ge=1)]
     source_type: Literal["KAGGLE_ORIGINAL", "ASSUMED"]
-    update_policy: Literal["PENDING_CONFIRMATION"]
+    # PENDING_CONFIRMATION = fail closed (V4-03). APPEND_FULL_ROW_SOFT_UNDO = D02/D13 approved 22/10/2026.
+    update_policy: Literal["PENDING_CONFIRMATION", "APPEND_FULL_ROW_SOFT_UNDO"]
 
 
 class ContractCatalog(StrictModel):

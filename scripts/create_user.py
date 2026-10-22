@@ -1,6 +1,7 @@
 """Manage the configured Rohlik Decision Hub admin without exposing passwords.
 
 Examples:
+    python -m scripts.create_user init-admin        # tạo admin_local lần đầu trên máy mới (D14, chỉ khi chưa có)
     python -m scripts.create_user change-password
     python -m scripts.create_user disable
     python -m scripts.create_user enable
@@ -76,6 +77,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     commands = parser.add_subparsers(dest="command", required=True)
 
+    commands.add_parser("init-admin", help="Tạo tài khoản admin cấu hình sẵn lần đầu (từ chối nếu đã có)")
     commands.add_parser("change-password", help="Đổi mật khẩu")
     commands.add_parser("disable", help="Vô hiệu hóa admin")
     commands.add_parser("enable", help="Khôi phục quyền truy cập admin")
@@ -86,6 +88,15 @@ def build_parser() -> argparse.ArgumentParser:
 def run_command(args: argparse.Namespace) -> int:
     store, password_policy, admin_username = load_cli_dependencies()
     current = store.find_by_username(admin_username)
+    if args.command == "init-admin":
+        if current is not None:
+            raise AccountConflictError("Admin đã tồn tại – dùng change-password nếu cần đổi mật khẩu.")
+        print(f"Tạo tài khoản {admin_username} (mật khẩu ≥ {password_policy.min_length} ký tự, không hiện khi gõ).")
+        password = prompt_new_password()
+        user = store.create_user(admin_username, password, "admin", valid_roles={"admin"},
+                                 password_policy=password_policy)
+        print(f"Đã tạo: {user.username}")
+        return 0
     if current is None:
         raise AccountConflictError(
             "Configured admin does not exist. Refusing to create or reset an account automatically."

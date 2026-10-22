@@ -119,15 +119,15 @@ active_sources:
     path: data/raw/assumptions/workforce_params.csv
     status: ACTIVE
     source_type: ASSUMED
-    sha256: 2af353b29c5b08108b273b5bfed76ada3d2daadc0066523228c9e5e863d8d49b
+    sha256: c73c7e937dda16d7ce3d3f1ba002aa02398641d49921afeefd59e4fd304bb016
     row_count: 7
     encoding: UTF-8
     bom: false
-    header: [warehouse, wage_eur_per_hour, items_per_order, picks_per_hour, shift_hours, morning_share, overtime_multiplier, overtime_cap, shortage_penalty, rule_buffer, orders_per_driver_shift]
-    column_types: {warehouse: VARCHAR, wage_eur_per_hour: DOUBLE, items_per_order: DOUBLE, picks_per_hour: DOUBLE, shift_hours: DOUBLE, morning_share: DOUBLE, overtime_multiplier: DOUBLE, overtime_cap: DOUBLE, shortage_penalty: DOUBLE, rule_buffer: DOUBLE, orders_per_driver_shift: DOUBLE}
+    header: [warehouse, hourly_wage_eur, items_per_order, picks_per_hour, shift_hours, morning_share, overtime_multiplier, overtime_cap, shortage_penalty, rule_buffer, orders_per_driver_shift]
+    column_types: {warehouse: VARCHAR, hourly_wage_eur: DOUBLE, items_per_order: DOUBLE, picks_per_hour: DOUBLE, shift_hours: DOUBLE, morning_share: DOUBLE, overtime_multiplier: DOUBLE, overtime_cap: DOUBLE, shortage_penalty: DOUBLE, rule_buffer: DOUBLE, orders_per_driver_shift: DOUBLE}
     business_keys: [warehouse]
     checks:
-      wage_eur_per_hour: {min: 0}
+      hourly_wage_eur: {min: 0}
       items_per_order: {min: 0}
       picks_per_hour: {min: 0.01}
       shift_hours: {min: 0.01, max: 24}
@@ -137,7 +137,7 @@ active_sources:
       shortage_penalty: {min: 0}
       rule_buffer: {min: 0, max: 1}
       orders_per_driver_shift: {min: 0.01}
-    evidence: V4 assumptions file supplied by project team; not actual business results
+    evidence: V4 assumptions file supplied by project team (Final Code BT2_Input, header hourly_wage_eur, approved 22/10/2026); not actual business results
 historical_sources:
   orders_calendar:
     path: data/raw/orders/train_calendar.csv

@@ -1,9 +1,12 @@
-duckdb
-pandas
-pyarrow
-pyyaml
-streamlit
-pydantic
-pytest
-argon2-cffi
-plotly
+# Rohlik Decision Hub – thư viện nền (DE + dashboard + test). D09: ghim theo bộ đã chạy pass test ngày 22/10/2026
+# (Python 3.13). Cài: python -m pip install -r requirements.txt -r requirements-models.txt
+duckdb==1.5.6
+pandas==2.3.3
+numpy==2.5.3
+pyarrow==25.0.1
+pyyaml==6.0.3
+streamlit==1.65.0
+pydantic==2.13.5
+pytest==9.1.1
+argon2-cffi==25.1.0
+plotly==7.1.0

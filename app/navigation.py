@@ -1,4 +1,4 @@
-"""Stable registry for the eight authenticated dashboard pages."""
+"""Stable registry for the ten authenticated dashboard pages (8 trang báo cáo + 2 trang nhập liệu, D01)."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from typing import Callable
 
 import streamlit as st
 
-from app.views import demand, explorer, growth, logistics, ops, overview, pricing, system
+from app.views import batches, demand, entry, explorer, growth, logistics, ops, overview, pricing, system
 
 
 @dataclass(frozen=True)
@@ -29,6 +29,8 @@ PAGE_DEFINITIONS = (
     PageDefinition("pricing", "Khuyến mãi", ":material/sell:", "khuyen-mai", "Nghiệp vụ", pricing.render),
     PageDefinition("growth", "Tăng trưởng", ":material/trending_up:", "tang-truong", "Nghiệp vụ", growth.render),
     PageDefinition("explorer", "Truy vấn & EDA", ":material/query_stats:", "truy-van-eda", "Dữ liệu & hệ thống", explorer.render),
+    PageDefinition("entry", "Nhập dữ liệu", ":material/upload_file:", "nhap-du-lieu", "Dữ liệu & hệ thống", entry.render),
+    PageDefinition("batches", "Lịch sử lô / Undo", ":material/history:", "lich-su-lo", "Dữ liệu & hệ thống", batches.render),
     PageDefinition("system", "Vận hành hệ thống", ":material/settings_suggest:", "van-hanh-he-thong", "Dữ liệu & hệ thống", system.render),
 )
 

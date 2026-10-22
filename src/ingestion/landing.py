@@ -13,6 +13,7 @@ from uuid import uuid4
 import duckdb
 
 from src.config.source_registry import (
+    APPROVED_UPDATE_POLICY,
     EXPECTED_SCHEMAS,
     EXPECTED_TABLES,
     PROJECT_ROOT,
@@ -556,9 +557,14 @@ def ingest_landing(
             "database_path": str(resolve_database(database)),
         }
     target = resolve_database(database)
-    if target == DEFAULT_DATABASE:
+    pending = sorted(
+        name for name, table in contract.tables.items()
+        if table.update_policy != APPROVED_UPDATE_POLICY
+    )
+    if target == DEFAULT_DATABASE and pending:
         raise UnsafeWriteError(
-            "V4-03 refuses production ingestion while update policies are PENDING_CONFIRMATION"
+            "V4-03 refuses production ingestion while update policies are PENDING_CONFIRMATION: "
+            + ", ".join(pending)
         )
     if not target.is_file():
         raise FileNotFoundError(
