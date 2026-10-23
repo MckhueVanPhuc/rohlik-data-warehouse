@@ -11,6 +11,10 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 import importlib
 import json
+import os
+import shutil
+import subprocess
+import sys
 from pathlib import Path
 import time
 import traceback
@@ -33,6 +37,49 @@ class ModelResult:
     outputs: dict[str, int] = field(default_factory=dict)
     message: str = ""
     params_file: str | None = None
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+# Mã thoát khi tiến trình con bị hệ điều hành dừng (lỗi trong thư viện gốc, không phải lỗi Python)
+_CRASH_CODES = {3221225477: "access violation (0xC0000005)", -11: "segmentation fault (SIGSEGV)",
+                3221225725: "stack overflow (0xC00000FD)", -6: "abort (SIGABRT)", -9: "bị dừng do hết bộ nhớ (SIGKILL)",
+                3221226505: "lỗi nghiêm trọng của runtime (0xC0000409)"}
+
+
+class ModelCrash(RuntimeError):
+    """Tiến trình con chạy mô hình bị dừng bất thường (lỗi thư viện gốc / hết RAM)."""
+
+
+def _run_isolated(bt: str, module: str, mode: str, database, settings: Settings, run_id: str, n_jobs: int,
+                  extra_config: dict) -> tuple[dict, dict | None]:
+    """Chạy 1 BT trong tiến trình con (src/models/worker.py), đọc kết quả Parquet trả về."""
+    import pandas as pd
+
+    out_dir = Path(settings.runs_dir) / run_id / f"{bt}_io"
+    if out_dir.exists():
+        shutil.rmtree(out_dir, ignore_errors=True)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    cmd = [sys.executable, "-X", "utf8", "-m", "src.models.worker", "--bt", bt, "--module", module, "--mode", mode,
+           "--database", str(database), "--run-id", run_id, "--out-dir", str(out_dir), "--n-jobs", str(n_jobs),
+           "--extra-config", json.dumps(extra_config or {})]
+    if getattr(settings, "path", None):
+        cmd += ["--settings", str(settings.path)]
+    env = {**os.environ, "PYTHONIOENCODING": "utf-8"}
+    env["PYTHONPATH"] = str(PROJECT_ROOT) + (os.pathsep + env["PYTHONPATH"] if env.get("PYTHONPATH") else "")
+    proc = subprocess.run(cmd, cwd=str(PROJECT_ROOT), env=env)
+    err_file, res_file = out_dir / "error.json", out_dir / "result.json"
+    if proc.returncode != 0 or not res_file.is_file():
+        if err_file.is_file():
+            err = json.loads(err_file.read_text(encoding="utf-8"))
+            raise RuntimeError(f"{err['type']}: {err['message']}")
+        why = _CRASH_CODES.get(proc.returncode, f"mã thoát {proc.returncode}")
+        raise ModelCrash(f"tiến trình mô hình bị dừng bất thường – {why}. Đây là lỗi thư viện gốc (LightGBM/OpenMP/"
+                         f"runtime C++) hoặc hết RAM, không phải lỗi dữ liệu. Chạy `python -m pipeline.run doctor` để chẩn đoán.")
+    res = json.loads(res_file.read_text(encoding="utf-8"))
+    out = {name: pd.read_parquet(out_dir / fname) for name, fname in res["tables"].items()}
+    shutil.rmtree(out_dir, ignore_errors=True)
+    return out, res.get("params")
 
 
 def _needs(mod, mode: str) -> list[str]:
@@ -62,6 +109,7 @@ def run_models(
     run_id: str,
     lock_timeout: float = 10.0,
     progress: Callable[[str], None] = print,
+    isolate: bool | None = None,
 ) -> list[ModelResult]:
     if mode not in ("models", "evaluate"):
         raise ValueError("mode phải là 'models' hoặc 'evaluate'")
@@ -92,15 +140,21 @@ def run_models(
                 frozen = load_params(settings, bt)
                 if frozen is None:
                     raise RuntimeError(f"Chưa có tham số chốt cho {bt} (config/model_params/{bt}.json) – chạy evaluate trước")
-            with connection(database) as conn:
-                inputs = read_inputs(conn, names, settings)
-            cfg: dict[str, Any] = {**settings.model_config(), "mode": mode, "frozen": frozen,
-                                   "n_jobs": spec.n_jobs if spec.n_jobs is not None else settings.n_jobs,
-                                   **spec.extra_config}
-            progress(f"[{bt}] chạy mô hình ({mode}) …")
-            out = mod.run_model(inputs=inputs, config=cfg, artifact_dir=settings.runs_dir / run_id / bt)
-            new_params = out.pop("_params", None)
-            run_log = out.pop("run_log", None)
+            n_jobs = spec.n_jobs if spec.n_jobs is not None else settings.n_jobs
+            use_isolation = settings.models_isolate if isolate is None else isolate
+            progress(f"[{bt}] chạy mô hình ({mode}{', tiến trình riêng' if use_isolation else ''}) …")
+            if use_isolation:
+                out, new_params = _run_isolated(bt, spec.module, mode, database, settings, run_id, n_jobs,
+                                                spec.extra_config)
+                run_log = None                       # tiến trình con đã tự lưu run_log
+            else:
+                with connection(database) as conn:
+                    inputs = read_inputs(conn, names, settings)
+                cfg: dict[str, Any] = {**settings.model_config(), "mode": mode, "frozen": frozen,
+                                       "n_jobs": n_jobs, **spec.extra_config}
+                out = mod.run_model(inputs=inputs, config=cfg, artifact_dir=settings.runs_dir / run_id / bt)
+                new_params = out.pop("_params", None)
+                run_log = out.pop("run_log", None)
             pred = {k: v for k, v in out.items() if k in spec.pred_tables}
             evals = {k: v for k, v in out.items() if k in spec.eval_tables}
             status = "FINAL"
@@ -114,7 +168,8 @@ def run_models(
             pfile = None
             if mode == "evaluate" and new_params:
                 pfile = str(save_params(settings, bt, new_params, run_id=run_id, model_version=spec.model_version))
-            save_run_log(settings.runs_dir, run_id, bt, run_log)
+            if run_log is not None:
+                save_run_log(settings.runs_dir, run_id, bt, run_log)
             res = ModelResult(bt, "SUCCESS", time.time() - t0, counts,
                               f"tham số: {frozen.get('_source') if frozen else 'tính mới (evaluate)'}", pfile)
         except Exception as exc:  # noqa: BLE001 – 1 BT lỗi không làm dừng các BT độc lập khác

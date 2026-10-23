@@ -57,83 +57,10 @@ _STATUS_META = {
 
 
 def apply_app_styles() -> None:
-    """Apply the established restrained dark visual system."""
+    """Apply the Modern Commerce Analytics light visual system."""
+    from app.ui.styles import APP_CSS
 
-    st.markdown(
-        """
-        <style>
-        :root {
-            --rdh-ink: #eef4f2; --rdh-muted: #a5b5b0; --rdh-line: #263b37;
-            --rdh-panel: #111d1b; --rdh-accent: #54d2a0;
-            --rdh-warning: #f1bd66; --rdh-danger: #ff8585;
-        }
-        .stApp { background: #09110f; }
-        .block-container { max-width: 1180px; padding-top: 2.7rem; }
-        [data-testid="stSidebar"] { border-right: 1px solid var(--rdh-line); }
-        [data-testid="stSidebarNav"] { padding-top: 0.4rem; }
-        [data-testid="stSidebarNav"] span { letter-spacing: -0.01em; }
-        .rdh-brand { padding: 0.35rem 0 0.9rem; }
-        .rdh-brand__name { color: var(--rdh-ink); font-size: 1.06rem; font-weight: 720; }
-        .rdh-brand__meta { color: var(--rdh-muted); font-size: 0.77rem; margin-top: 0.2rem; }
-        .rdh-mode {
-            align-items: center; background: #10241e; border: 1px solid #285a49;
-            border-radius: 999px; color: #9aebca; display: inline-flex;
-            font-size: 0.68rem; font-weight: 750; letter-spacing: 0.09em;
-            margin-top: 0.7rem; padding: 0.23rem 0.58rem;
-        }
-        .rdh-mode::before {
-            background: var(--rdh-accent); border-radius: 50%; content: "";
-            height: 0.42rem; margin-right: 0.42rem; width: 0.42rem;
-        }
-        .rdh-heading-copy { border-bottom: 1px solid var(--rdh-line); padding-bottom: 1.5rem; }
-        h1 { color: var(--rdh-ink); font-size: 2.65rem; letter-spacing: -0.035em; line-height: 1.05; }
-        .rdh-heading-copy p {
-            color: var(--rdh-muted); font-size: 1rem; line-height: 1.65;
-            margin: 0.8rem 0 0; max-width: 72ch;
-        }
-        .rdh-readiness {
-            align-items: flex-start; background: var(--rdh-panel); border: 1px solid var(--rdh-line);
-            border-radius: 0.7rem; display: flex; gap: 0.9rem; margin: 1.5rem 0 2rem;
-            padding: 1rem 1.1rem;
-        }
-        .rdh-readiness__copy { color: var(--rdh-muted); font-size: 0.88rem; line-height: 1.55; }
-        .rdh-status {
-            border: 1px solid currentColor; border-radius: 999px; display: inline-flex;
-            flex: 0 0 auto; font-size: 0.64rem; font-weight: 780; letter-spacing: 0.07em;
-            line-height: 1; padding: 0.34rem 0.5rem; text-transform: uppercase;
-        }
-        .rdh-status--warning { color: var(--rdh-warning); }
-        .rdh-status--neutral { color: #b8c5c1; }
-        .rdh-status--success { color: var(--rdh-accent); }
-        .rdh-status--model { color: #b7c3ff; }
-        .rdh-status--danger { color: var(--rdh-danger); }
-        .rdh-empty { max-width: 72ch; padding: 0.4rem 0 1.4rem; }
-        .rdh-empty h3 { color: var(--rdh-ink); margin-bottom: 0.45rem; }
-        .rdh-empty p { color: var(--rdh-muted); line-height: 1.65; }
-        .rdh-model {
-            border-top: 1px solid var(--rdh-line); display: grid; gap: 1rem;
-            grid-template-columns: minmax(12rem, .7fr) minmax(16rem, 1.4fr) auto; padding: 1rem 0;
-        }
-        .rdh-model:last-child { border-bottom: 1px solid var(--rdh-line); }
-        .rdh-model__title { color: var(--rdh-ink); font-weight: 650; }
-        .rdh-model__copy { color: var(--rdh-muted); font-size: .86rem; line-height: 1.55; }
-        div[data-testid="stMetric"] { background: var(--rdh-panel); border: 1px solid var(--rdh-line); padding: .9rem 1rem; }
-        div[data-testid="stDataFrame"] { border: 1px solid var(--rdh-line); }
-        div.stButton > button:focus-visible, input:focus-visible,
-        [role="combobox"]:focus-visible { outline: 2px solid var(--rdh-accent); outline-offset: 2px; }
-        ::selection { background: #256e56; color: #fff; }
-        * { scrollbar-color: #35534b #0d1715; }
-        [data-testid="stMetricValue"] { font-variant-numeric: tabular-nums; }
-        @media (max-width: 700px) {
-            .block-container { padding-top: 1.8rem; }
-            h1 { font-size: 2.1rem; }
-            .rdh-model { grid-template-columns: 1fr; gap: .45rem; }
-            .rdh-readiness { flex-direction: column; }
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
+    st.markdown(APP_CSS, unsafe_allow_html=True)
 
 
 def status_badge(status: DataStatus) -> str:
@@ -150,30 +77,47 @@ def network_mode() -> str:
 
 def render_sidebar_context(username: str, warehouse: WarehouseInfo) -> None:
     if not warehouse.exists:
-        warehouse_label = "Không tìm thấy warehouse"
+        warehouse_label = "Chưa có warehouse"
+        badge_variant = "warning"
+        badge_text = "CHƯA KHỞI TẠO"
     elif warehouse.ready_mart_count == len(BASE_MARTS):
-        warehouse_label = f"{len(BASE_MARTS)}/{len(BASE_MARTS)} reporting marts sẵn sàng"
+        warehouse_label = f"{len(BASE_MARTS)}/{len(BASE_MARTS)} reporting marts"
+        badge_variant = "success"
+        badge_text = "SẴN SÀNG"
     else:
-        warehouse_label = f"{warehouse.ready_mart_count}/{len(BASE_MARTS)} reporting marts sẵn sàng"
-    model_label = f"{warehouse.ready_model_mart_count}/{len(MODEL_MARTS)} mart kết quả mô hình"
+        warehouse_label = f"{warehouse.ready_mart_count}/{len(BASE_MARTS)} reporting marts"
+        badge_variant = "neutral"
+        badge_text = f"{warehouse.ready_mart_count}/{len(BASE_MARTS)}"
+    model_label = f"{warehouse.ready_model_mart_count}/{len(MODEL_MARTS)} mart mô hình"
+
     st.sidebar.markdown(
         f"""
         <div class="rdh-brand">
-          <div class="rdh-brand__name">Rohlik Decision Hub</div>
-          <div class="rdh-brand__meta">Dashboard quản trị · Xem + nhập liệu</div>
-          <div class="rdh-mode">{network_mode()}</div>
+          <div class="rdh-brand__header">
+            <div class="rdh-brand__name">Rohlik Decision Hub</div>
+            <div class="rdh-mode">{network_mode()}</div>
+          </div>
+          <div class="rdh-brand__meta">Executive BI & Analytics · Desktop-first</div>
+        </div>
+        <div class="rdh-sidebar-card">
+          <div class="rdh-sidebar-card__title">Kho dữ liệu DuckDB</div>
+          <div class="rdh-sidebar-card__item">
+            <span>📊 {warehouse_label}</span>
+            <span class="rdh-status rdh-status--{badge_variant}" style="margin-left: auto;">{badge_text}</span>
+          </div>
+          <div class="rdh-sidebar-card__item" style="margin-top: 0.35rem;">
+            <span>🤖 {model_label}</span>
+          </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
-    st.sidebar.caption("Trạng thái warehouse")
-    st.sidebar.caption(warehouse_label)
-    st.sidebar.caption(model_label)
     pending = _pending_batches()
     if pending:
-        st.sidebar.caption(f"⏳ {pending} lô nhập liệu/undo chờ cập nhật kho")
-    st.sidebar.caption(f"Đăng nhập: **{username}**")
+        st.sidebar.warning(f"⏳ {pending} lô nhập liệu/undo chờ cập nhật kho")
+    st.sidebar.caption(f"Tài khoản quản trị: **{username}**")
     st.sidebar.divider()
+
 
 
 def _pending_batches() -> int:
