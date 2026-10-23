@@ -62,7 +62,10 @@ def test_isolated_run_returns_results_and_survives_native_crash(project, fake_mo
     results = runner.run_models(database, settings, mode="evaluate", run_id="iso_test", isolate=True, progress=logs.append)
     by = {r.bt_id: r for r in results}
     assert by["BTC"].status == "FAILED"
-    assert "dừng bất thường" in by["BTC"].message
+    # Linux/macOS: tiến trình con bị hệ điều hành dừng (SIGSEGV) → thông báo "dừng bất thường".
+    # Windows: ctypes bắt lỗi truy cập bộ nhớ thành OSError ngay trong tiến trình con → worker ghi error.json.
+    # Cả hai trường hợp: BT bị sập chỉ FAILED, không làm dừng pipeline.
+    assert ("dừng bất thường" in by["BTC"].message) or ("access violation" in by["BTC"].message)
     assert by["BTO"].status == "SUCCESS", by["BTO"].message
     with connection(database) as conn:
         rows = conn.execute("SELECT warehouse, n FROM pred.fake_out ORDER BY 1").fetchall()
