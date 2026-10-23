@@ -44,6 +44,7 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "short_tol": 0.5,                  # "giờ thiếu = 0" ⇔ ≤ 0,5 giờ
     "assumed_defaults": {"morning_share": 0.55, "overtime_cap": 0.25, "shortage_penalty": 3.0, "rule_buffer": 0.10},
     "solver_time_limit": 60,           # giây / lần giải MIP cải tiến (notebook: 60)
+    "solver_threads": 1,               # CBC 1 luồng như notebook (n_jobs=-1 truyền vào CBC thành "-threads -1" → treo/chậm trên Windows)
     "solver_gap_rel": 1e-4,
     "percentiles": list(range(5, 100, 5)),   # 19 kịch bản sai số
     "min_past_errors": 30,
@@ -156,7 +157,7 @@ def run_model(*, inputs: dict[str, pd.DataFrame], config: dict[str, Any], artifa
         cfg["required_inputs"] = FAST_INPUTS
     log: list = []
     _log(log, "config", None, None, f"as_of={cfg['as_of']}, horizon={cfg['horizon']}, policies={cfg['policies']}, "
-                                    f"solver_time_limit={cfg['solver_time_limit']}s, gapRel={cfg['solver_gap_rel']}, threads={cfg['n_jobs']}; "
+                                    f"solver_time_limit={cfg['solver_time_limit']}s, gapRel={cfg['solver_gap_rel']}, threads={max(1, int(cfg.get('solver_threads', 1)))}; "
                                     "artifact_dir không dùng (tối ưu lại mỗi run)")
     d = _prepare(inputs, cfg, log)
     train, cal, WAREHOUSES = d["train"], d["calendar"], d["warehouses"]
@@ -349,7 +350,7 @@ def run_model(*, inputs: dict[str, pd.DataFrame], config: dict[str, Any], artifa
                     prob += HS * on[(s, i)] + ot + sh >= need
                     objective.append((OT_MULT * wage * ot + penalty * wage * sh) / len(e))
         prob += pulp.lpSum(objective)
-        solver = pulp.PULP_CBC_CMD(msg=0, timeLimit=cfg["solver_time_limit"], gapRel=cfg["solver_gap_rel"], threads=int(cfg["n_jobs"]))
+        solver = pulp.PULP_CBC_CMD(msg=0, timeLimit=cfg["solver_time_limit"], gapRel=cfg["solver_gap_rel"], threads=max(1, int(cfg.get("solver_threads", 1))))
         prob.solve(solver)
         if pulp.LpStatus[prob.status] != "Optimal":
             raise RuntimeError(f"{BT_ID}: MIP cải tiến không tìm được nghiệm cho {w} ({tag}): {pulp.LpStatus[prob.status]}")
